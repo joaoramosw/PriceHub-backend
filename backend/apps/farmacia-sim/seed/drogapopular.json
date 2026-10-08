@@ -1,0 +1,106 @@
+{
+  "farmaciaId": "drogapopular",
+  "farmaciaNome": "DrogaPopular Express",
+  "produtos": [
+    {
+      "id": 1,
+      "codigo": "DP-0001",
+      "precoCentavos": 999,
+      "dados": {
+        "COD": "DP-0001",
+        "DESCRICAO": "METFORMINA 500MG C/30 COMP LIB PROL",
+        "LAB": "MERCK"
+      }
+    },
+    {
+      "id": 2,
+      "codigo": "DP-0002",
+      "precoCentavos": 749,
+      "dados": {
+        "COD": "DP-0002",
+        "DESCRICAO": "LOSARTANA POTASSICA 50MG C/30 COMP REV",
+        "LAB": "MEDLEY"
+      }
+    },
+    {
+      "id": 3,
+      "codigo": "DP-0003",
+      "precoCentavos": 599,
+      "dados": {
+        "COD": "DP-0003",
+        "DESCRICAO": "DIPIRONA SODICA 500MG/ML GTS FR 20ML",
+        "LAB": "NEO QUIMICA"
+      }
+    },
+    {
+      "id": 4,
+      "codigo": "DP-0004",
+      "precoCentavos": 1399,
+      "dados": {
+        "COD": "DP-0004",
+        "DESCRICAO": "OMEPRAZOL 20MG C/28 CAPS",
+        "LAB": "TEUTO"
+      }
+    },
+    {
+      "id": 5,
+      "codigo": "DP-0005",
+      "precoCentavos": 399,
+      "dados": {
+        "COD": "DP-0005",
+        "DESCRICAO": "HIDROCLOROTIAZIDA 25MG C/30 COMP",
+        "LAB": "EMS S/A"
+      }
+    },
+    {
+      "id": 6,
+      "codigo": "DP-0006",
+      "precoCentavos": 1099,
+      "dados": {
+        "COD": "DP-0006",
+        "DESCRICAO": "NIMESULIDA 100MG C/12 COMP",
+        "LAB": "ACHE"
+      }
+    },
+    {
+      "id": 7,
+      "codigo": "DP-0007",
+      "precoCentavos": 2999,
+      "dados": {
+        "COD": "DP-0007",
+        "DESCRICAO": "TADALAFILA 5MG C/30 COMP REV",
+        "LAB": "EUROFARMA"
+      }
+    },
+    {
+      "id": 8,
+      "codigo": "DP-0008",
+      "precoCentavos": 1299,
+      "dados": {
+        "COD": "DP-0008",
+        "DESCRICAO": "SINVASTATINA 20MG C/30 COMP REV",
+        "LAB": "SANDOZ"
+      }
+    },
+    {
+      "id": 9,
+      "codigo": "DP-0009",
+      "precoCentavos": 1499,
+      "dados": {
+        "COD": "DP-0009",
+        "DESCRICAO": "IBUPROFENO 600MG C/20 COMP REV",
+        "LAB": "NEO QUIMICA"
+      }
+    },
+    {
+      "id": 10,
+      "codigo": "DP-0010",
+      "precoCentavos": 799,
+      "dados": {
+        "COD": "DP-0010",
+        "DESCRICAO": "SIMETICONA 75MG/ML GTS FR 15ML",
+        "LAB": "CIMED"
+      }
+    }
+  ]
+}

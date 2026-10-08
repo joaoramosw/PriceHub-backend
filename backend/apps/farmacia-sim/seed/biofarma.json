@@ -1,0 +1,166 @@
+{
+  "farmaciaId": "biofarma",
+  "farmaciaNome": "BioFarma Verde",
+  "produtos": [
+    {
+      "id": 1,
+      "codigo": "BIO-0001",
+      "precoCentavos": 1490,
+      "dados": {
+        "id": 1,
+        "sku": "BIO-0001",
+        "nome": "Metformina / Glifage XR",
+        "dosagem": "500mg",
+        "apresentacao": "30 comprimidos de liberação prolongada",
+        "principioAtivo": "Cloridrato de Metformina 500mg",
+        "laboratorio": "Merck / EMS Genéricos",
+        "registroMS": "MS 1.0089.0345.001-9",
+        "categoria": "Diabetes & Metabolismo"
+      }
+    },
+    {
+      "id": 2,
+      "codigo": "BIO-0002",
+      "precoCentavos": 1150,
+      "dados": {
+        "id": 2,
+        "sku": "BIO-0002",
+        "nome": "Losartana Potássica",
+        "dosagem": "50mg",
+        "apresentacao": "30 comprimidos revestidos",
+        "principioAtivo": "Losartana Potássica 50mg",
+        "laboratorio": "Medley / Eurofarma",
+        "registroMS": "MS 1.0181.0421.002-3",
+        "categoria": "Hipertensão & Coração"
+      }
+    },
+    {
+      "id": 3,
+      "codigo": "BIO-0003",
+      "precoCentavos": 890,
+      "dados": {
+        "id": 3,
+        "sku": "BIO-0003",
+        "nome": "Dipirona Sódica Gotas",
+        "dosagem": "500mg/ml",
+        "apresentacao": "Frasco conta-gotas 20ml",
+        "principioAtivo": "Dipirona Monoidratada 500mg/ml",
+        "laboratorio": "Neo Química / Sanofi",
+        "registroMS": "MS 1.5584.0092.001-5",
+        "categoria": "Dores & Febre"
+      }
+    },
+    {
+      "id": 4,
+      "codigo": "BIO-0004",
+      "precoCentavos": 1990,
+      "dados": {
+        "id": 4,
+        "sku": "BIO-0004",
+        "nome": "Omeprazol",
+        "dosagem": "20mg",
+        "apresentacao": "28 cápsulas duras gastro-resistentes",
+        "principioAtivo": "Omeprazol Microgrânulos 20mg",
+        "laboratorio": "Teuto / Cimed",
+        "registroMS": "MS 1.0370.0210.003-8",
+        "categoria": "Estômago & Digestão"
+      }
+    },
+    {
+      "id": 5,
+      "codigo": "BIO-0005",
+      "precoCentavos": 650,
+      "dados": {
+        "id": 5,
+        "sku": "BIO-0005",
+        "nome": "Hidroclorotiazida",
+        "dosagem": "25mg",
+        "apresentacao": "30 comprimidos",
+        "principioAtivo": "Hidroclorotiazida 25mg",
+        "laboratorio": "EMS S/A",
+        "registroMS": "MS 1.0235.0560.001-2",
+        "categoria": "Hipertensão & Diuréticos"
+      }
+    },
+    {
+      "id": 6,
+      "codigo": "BIO-0006",
+      "precoCentavos": 1520,
+      "dados": {
+        "id": 6,
+        "sku": "BIO-0006",
+        "nome": "Nimesulida",
+        "dosagem": "100mg",
+        "apresentacao": "12 comprimidos",
+        "principioAtivo": "Nimesulida 100mg",
+        "laboratorio": "Aché / Medley",
+        "registroMS": "MS 1.0573.0112.002-1",
+        "categoria": "Anti-inflamatórios"
+      }
+    },
+    {
+      "id": 7,
+      "codigo": "BIO-0007",
+      "precoCentavos": 4200,
+      "dados": {
+        "id": 7,
+        "sku": "BIO-0007",
+        "nome": "Tadalafila Diário",
+        "dosagem": "5mg",
+        "apresentacao": "30 comprimidos revestidos",
+        "principioAtivo": "Tadalafila Micronizada 5mg",
+        "laboratorio": "Eurofarma / Eli Lilly",
+        "registroMS": "MS 1.0043.0811.004-9",
+        "categoria": "Saúde Masculina"
+      }
+    },
+    {
+      "id": 8,
+      "codigo": "BIO-0008",
+      "precoCentavos": 1890,
+      "dados": {
+        "id": 8,
+        "sku": "BIO-0008",
+        "nome": "Sinvastatina",
+        "dosagem": "20mg",
+        "apresentacao": "30 comprimidos revestidos",
+        "principioAtivo": "Sinvastatina 20mg",
+        "laboratorio": "Sandoz / EMS",
+        "registroMS": "MS 1.0047.0319.001-4",
+        "categoria": "Colesterol & Lipídios"
+      }
+    },
+    {
+      "id": 9,
+      "codigo": "BIO-0009",
+      "precoCentavos": 2150,
+      "dados": {
+        "id": 9,
+        "sku": "BIO-0009",
+        "nome": "Ibuprofeno",
+        "dosagem": "600mg",
+        "apresentacao": "20 comprimidos revestidos",
+        "principioAtivo": "Ibuprofeno 600mg",
+        "laboratorio": "Neo Química / Abbott",
+        "registroMS": "MS 1.5584.0215.003-7",
+        "categoria": "Dores & Febre"
+      }
+    },
+    {
+      "id": 10,
+      "codigo": "BIO-0010",
+      "precoCentavos": 1280,
+      "dados": {
+        "id": 10,
+        "sku": "BIO-0010",
+        "nome": "Simeticona Gotas",
+        "dosagem": "75mg/ml",
+        "apresentacao": "Frasco conta-gotas com 15ml",
+        "principioAtivo": "Simeticona Emulsão 75mg/ml",
+        "laboratorio": "Cimed / Takeda (Luftal)",
+        "registroMS": "MS 1.4381.0028.001-0",
+        "categoria": "Estômago & Digestão"
+      }
+    }
+  ]
+}
