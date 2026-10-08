@@ -2,8 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
-    "customConditions": ["@pricehub/source"]
+    "outDir": "dist"
   },
   "include": ["src"]
 }

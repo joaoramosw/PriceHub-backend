@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { aplicarTopologia, type DefinicoesRabbitMq } from '@pricehub/messaging'
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql'
 import { RabbitMQContainer, type StartedRabbitMQContainer } from '@testcontainers/rabbitmq'
 import { connect } from 'amqplib'
+import { aplicarTopologia, type DefinicoesRabbitMq } from './topologia.js'
 
 const raizDoRepositorio = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..')
 

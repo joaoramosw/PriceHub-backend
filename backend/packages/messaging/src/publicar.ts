@@ -1,7 +1,7 @@
 import type { Evento } from '@pricehub/contracts'
 import type { ConfirmChannel, Options } from 'amqplib'
 import type { ConexaoRabbitMq } from './conexao.js'
-import { exchangeDeEventos } from './topologia.js'
+import { exchangeDeEventos } from './nomes.js'
 
 export function publicarComConfirmacao(
   canal: ConfirmChannel,

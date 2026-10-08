@@ -1,11 +1,5 @@
 import type { Channel } from 'amqplib'
 
-export const exchangeDeEventos = 'pricehub.events'
-export const exchangeDeMortas = 'pricehub.dlx'
-
-export const filaDeRetry = (fila: string) => `${fila}.retry`
-export const filaDeMortas = (fila: string) => `${fila}.dlq`
-
 export type DefinicoesRabbitMq = {
   exchanges?: { name: string; type: string; durable: boolean; arguments?: Record<string, unknown> }[]
   queues?: { name: string; durable: boolean; arguments?: Record<string, unknown> }[]

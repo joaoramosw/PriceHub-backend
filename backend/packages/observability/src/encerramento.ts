@@ -2,7 +2,10 @@ import type { Logger } from 'pino'
 
 export type TarefaDeEncerramento = () => Promise<unknown> | unknown
 
-export function encerrarComGraca(logger: Logger, tarefas: TarefaDeEncerramento[]): void {
+export function encerrarComGraca(
+  logger: Pick<Logger, 'info' | 'error'>,
+  tarefas: TarefaDeEncerramento[],
+): void {
   let encerrando = false
   const encerrar = async (sinal: string) => {
     if (encerrando) return

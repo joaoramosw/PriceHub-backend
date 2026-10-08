@@ -1,3 +1,4 @@
+export * from './ambiente.js'
 export * from './correlation-id.js'
 export * from './criar-app.js'
 export * from './encerramento.js'

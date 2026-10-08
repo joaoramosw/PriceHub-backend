@@ -2,8 +2,8 @@ import { ContratoInvalidoError, type Evento, type TipoDeEvento, validarEvento } 
 import type { ChannelModel, ConfirmChannel, ConsumeMessage } from 'amqplib'
 import type { Logger } from 'pino'
 import type { ConexaoRabbitMq } from './conexao.js'
+import { filaDeRetry } from './nomes.js'
 import { publicarComConfirmacao } from './publicar.js'
-import { filaDeRetry } from './topologia.js'
 
 export const cabecalhoDeTentativas = 'x-retry-count'
 
