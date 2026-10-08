@@ -1,3 +1,4 @@
+import { hostname } from 'node:os'
 import { type Logger, type LoggerOptions, pino } from 'pino'
 
 export type OpcoesDeLogger = {
@@ -8,7 +9,7 @@ export type OpcoesDeLogger = {
 export function opcoesDeLogger({ servico, nivel = 'info' }: OpcoesDeLogger): LoggerOptions {
   return {
     level: nivel,
-    base: { service: servico },
+    base: { service: servico, instancia: hostname() },
     timestamp: pino.stdTimeFunctions.isoTime,
     messageKey: 'msg',
     formatters: {
