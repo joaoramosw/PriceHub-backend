@@ -4,4 +4,6 @@
 **/src/generated
 **/.env
 **/*.log
-.git
+**/test
+tests
+scripts

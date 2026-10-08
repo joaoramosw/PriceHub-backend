@@ -47,6 +47,76 @@ services:
       retries: 20
       start_period: 20s
 
+  farmacia-biofarma:
+    <<: *node-service
+    image: pricehub/farmacia-sim:local
+    build:
+      context: ./backend
+      dockerfile: apps/farmacia-sim/Dockerfile
+    environment:
+      <<: *node-env
+      PHARMACY_ID: biofarma
+      PORT: 4001
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/farmacia_biofarma
+      INGESTION_URL: http://ingestion-service:3001
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET_BIOFARMA}
+    ports:
+      - "4001:4001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4001/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  farmacia-farmaazul:
+    <<: *node-service
+    image: pricehub/farmacia-sim:local
+    pull_policy: never
+    environment:
+      <<: *node-env
+      PHARMACY_ID: farmaazul
+      PORT: 4002
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/farmacia_farmaazul
+      INGESTION_URL: http://ingestion-service:3001
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET_FARMAAZUL}
+    ports:
+      - "4002:4002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4002/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  farmacia-drogapopular:
+    <<: *node-service
+    image: pricehub/farmacia-sim:local
+    pull_policy: never
+    environment:
+      <<: *node-env
+      PHARMACY_ID: drogapopular
+      PORT: 4003
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/farmacia_drogapopular
+      INGESTION_URL: http://ingestion-service:3001
+    ports:
+      - "4003:4003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4003/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
 volumes:
   postgres-data:
   rabbitmq-data:
