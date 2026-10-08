@@ -1,0 +1,156 @@
+{
+  "farmaciaId": "farmaazul",
+  "farmaciaNome": "FarmaAzul Confiança",
+  "produtos": [
+    {
+      "id": 1,
+      "codigo": "FA-MET-500",
+      "precoCentavos": 1190,
+      "dados": {
+        "codigo": "FA-MET-500",
+        "descricao": "Cloridrato de Metformina 500mg 30 comp lib prol",
+        "principio_ativo": "Cloridrato de Metformina",
+        "concentracao": "500mg",
+        "forma_farmaceutica": "comprimido de liberação prolongada",
+        "quantidade_embalagem": 30,
+        "fabricante": "Merck",
+        "registro_anvisa": "1008903450019"
+      }
+    },
+    {
+      "id": 2,
+      "codigo": "FA-LOS-50",
+      "precoCentavos": 890,
+      "dados": {
+        "codigo": "FA-LOS-50",
+        "descricao": "Losartana Potássica 50mg 30 comp rev",
+        "principio_ativo": "Losartana Potássica",
+        "concentracao": "50mg",
+        "forma_farmaceutica": "comprimido revestido",
+        "quantidade_embalagem": 30,
+        "fabricante": "Medley",
+        "registro_anvisa": "1018104210023"
+      }
+    },
+    {
+      "id": 3,
+      "codigo": "FA-DIP-500",
+      "precoCentavos": 690,
+      "dados": {
+        "codigo": "FA-DIP-500",
+        "descricao": "Dipirona Monoidratada 500mg/ml gts 20ml",
+        "principio_ativo": "Dipirona Monoidratada",
+        "concentracao": "500mg/ml",
+        "forma_farmaceutica": "solução oral em gotas",
+        "quantidade_embalagem": 20,
+        "fabricante": "Neo Química",
+        "registro_anvisa": "1558400920015"
+      }
+    },
+    {
+      "id": 4,
+      "codigo": "FA-OME-20",
+      "precoCentavos": 1650,
+      "dados": {
+        "codigo": "FA-OME-20",
+        "descricao": "Omeprazol Microgrânulos 20mg 28 caps",
+        "principio_ativo": "Omeprazol Microgrânulos",
+        "concentracao": "20mg",
+        "forma_farmaceutica": "cápsula dura",
+        "quantidade_embalagem": 28,
+        "fabricante": "Teuto",
+        "registro_anvisa": "1037002100038"
+      }
+    },
+    {
+      "id": 5,
+      "codigo": "FA-HID-25",
+      "precoCentavos": 490,
+      "dados": {
+        "codigo": "FA-HID-25",
+        "descricao": "Hidroclorotiazida 25mg 30 comp",
+        "principio_ativo": "Hidroclorotiazida",
+        "concentracao": "25mg",
+        "forma_farmaceutica": "comprimido",
+        "quantidade_embalagem": 30,
+        "fabricante": "EMS S/A",
+        "registro_anvisa": "1023505600012"
+      }
+    },
+    {
+      "id": 6,
+      "codigo": "FA-NIM-100",
+      "precoCentavos": 1290,
+      "dados": {
+        "codigo": "FA-NIM-100",
+        "descricao": "Nimesulida 100mg 12 comp",
+        "principio_ativo": "Nimesulida",
+        "concentracao": "100mg",
+        "forma_farmaceutica": "comprimido",
+        "quantidade_embalagem": 12,
+        "fabricante": "Aché",
+        "registro_anvisa": "1057301120021"
+      }
+    },
+    {
+      "id": 7,
+      "codigo": "FA-TAD-5",
+      "precoCentavos": 3690,
+      "dados": {
+        "codigo": "FA-TAD-5",
+        "descricao": "Tadalafila Micronizada 5mg 30 comp rev",
+        "principio_ativo": "Tadalafila Micronizada",
+        "concentracao": "5mg",
+        "forma_farmaceutica": "comprimido revestido",
+        "quantidade_embalagem": 30,
+        "fabricante": "Eurofarma",
+        "registro_anvisa": "1004308110049"
+      }
+    },
+    {
+      "id": 8,
+      "codigo": "FA-SIN-20",
+      "precoCentavos": 1450,
+      "dados": {
+        "codigo": "FA-SIN-20",
+        "descricao": "Sinvastatina 20mg 30 comp rev",
+        "principio_ativo": "Sinvastatina",
+        "concentracao": "20mg",
+        "forma_farmaceutica": "comprimido revestido",
+        "quantidade_embalagem": 30,
+        "fabricante": "Sandoz",
+        "registro_anvisa": "1004703190014"
+      }
+    },
+    {
+      "id": 9,
+      "codigo": "FA-IBU-600",
+      "precoCentavos": 1790,
+      "dados": {
+        "codigo": "FA-IBU-600",
+        "descricao": "Ibuprofeno 600mg 20 comp rev",
+        "principio_ativo": "Ibuprofeno",
+        "concentracao": "600mg",
+        "forma_farmaceutica": "comprimido revestido",
+        "quantidade_embalagem": 20,
+        "fabricante": "Neo Química",
+        "registro_anvisa": "1558402150037"
+      }
+    },
+    {
+      "id": 10,
+      "codigo": "FA-SIM-75",
+      "precoCentavos": 990,
+      "dados": {
+        "codigo": "FA-SIM-75",
+        "descricao": "Simeticona Emulsão 75mg/ml gts 15ml",
+        "principio_ativo": "Simeticona Emulsão",
+        "concentracao": "75mg/ml",
+        "forma_farmaceutica": "solução oral em gotas",
+        "quantidade_embalagem": 15,
+        "fabricante": "Cimed",
+        "registro_anvisa": "1438100280010"
+      }
+    }
+  ]
+}

@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">FarmaSim • Detalhes do Medicamento</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- AVISO COMPACTO INDEPENDENTE -->
+  <aside class="bg-slate-900 text-white text-xs py-2 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex items-center justify-between text-[11px]">
+      <div class="flex items-center gap-2">
+        <span class="bg-emerald-600 text-white px-1.5 py-0.5 rounded font-bold uppercase tracking-wider text-[10px]">BioFarma</span>
+        <span class="text-slate-300">Detalhes do Medicamento</span>
+      </div>
+      <a href="index.html" class="text-emerald-400 hover:text-emerald-300 font-semibold flex items-center gap-1 transition-colors">
+        ← Voltar à Vitrine
+      </a>
+    </div>
+  </aside>
+
+  <!-- HEADER -->
+  <header class="sticky top-0 z-30 glass-header border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20 gap-4">
+        
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-3 shrink-0 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 font-heading">Farma<span class="text-emerald-600">Sim</span></span>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">MKT</span>
+            </div>
+            <p class="text-[10px] text-slate-500 -mt-1 font-medium hidden sm:block">Vitrine Farmacêutica</p>
+          </div>
+        </a>
+
+        <!-- Botão Voltar + Carrinho -->
+        <div class="flex items-center gap-3">
+          <a 
+            href="index.html" 
+            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-slate-100 rounded-xl transition-colors"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            <span>Ver Catálogo</span>
+          </a>
+
+          <!-- Botão do Carrinho -->
+          <button 
+            type="button" 
+            onclick="toggleCart(true)"
+            class="relative flex items-center gap-2.5 px-4 py-2 bg-slate-900 hover:bg-emerald-700 text-white rounded-xl shadow-xs transition-all active:scale-95"
+          >
+            <div class="relative">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+              </svg>
+              <span 
+                id="cart-badge" 
+                class="hidden absolute -top-2 -right-2 bg-emerald-500 text-white font-extrabold text-[10px] w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-slate-900 shadow-xs"
+              >
+                0
+              </span>
+            </div>
+            <span id="cart-header-total" class="text-xs font-bold hidden sm:inline">R$ 0,00</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <!-- CORPO PRINCIPAL DO PRODUTO DEDICADO -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10">
+    
+    <!-- Breadcrumb e URL Sharing -->
+    <nav class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 text-xs text-slate-500">
+      <div class="flex items-center gap-2 flex-wrap">
+        <a href="index.html" class="hover:text-emerald-600 transition-colors">Vitrine</a>
+        <span>/</span>
+        <span id="breadcrumb-category" class="text-slate-600 font-medium">Categoria</span>
+        <span>/</span>
+        <span id="breadcrumb-product" class="text-slate-900 font-bold truncate max-w-xs">Produto</span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="text-[11px] font-mono text-slate-400 bg-slate-100 px-2.5 py-1 rounded-md hidden md:inline" id="current-url-display">URL Dedicada</span>
+        <button 
+          type="button" 
+          onclick="copyPageUrl()" 
+          class="inline-flex items-center gap-1.5 px-3 py-1 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg text-slate-700 text-xs font-medium transition-colors shadow-2xs"
+          title="Copiar link dedicado deste remédio"
+        >
+          <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+          <span id="copy-btn-text">Copiar Link</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- CONTAINER DO PRODUTO (Preenchido dinamicamente) -->
+    <div id="product-detail-container" class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+      <!-- Injetado via JS -->
+      <div class="p-12 text-center text-slate-400">
+        Carregando informações do medicamento...
+      </div>
+    </div>
+
+    <!-- SEÇÃO DE MEDICAMENTOS RELACIONADOS DA VITRINE -->
+    <section class="mt-14 pt-10 border-t border-slate-200">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-900 font-heading">Outros Medicamentos da Vitrine</h2>
+          <p class="text-xs text-slate-500">Continue explorando os 10 medicamentos disponíveis no catálogo</p>
+        </div>
+        <a href="index.html" class="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1">
+          Ver Todos (10) →
+        </a>
+      </div>
+
+      <div id="related-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <!-- Injetado via JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- GAVETA (DRAWER) DO CARRINHO (Mesmo padrão do index) -->
+  <div id="cart-backdrop" onclick="toggleCart(false)" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 hidden transition-opacity"></div>
+  
+  <div 
+    id="cart-drawer" 
+    class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out border-l border-slate-200"
+  >
+    <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900 font-heading">Carrinho de Compras</h3>
+          <p class="text-[11px] text-slate-500">Simulador de Pedido</p>
+        </div>
+      </div>
+      <button 
+        type="button" 
+        onclick="toggleCart(false)" 
+        class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 flex items-center justify-center transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-4 space-y-3" id="cart-items-container"></div>
+
+    <div id="cart-empty-state" class="flex-1 flex flex-col items-center justify-center p-8 text-center hidden">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      </div>
+      <h4 class="text-base font-bold text-slate-800 mb-1">Seu carrinho está vazio</h4>
+      <p class="text-xs text-slate-500 max-w-xs mb-6">Adicione este remédio ou navegue por outros produtos na vitrine.</p>
+      <a 
+        href="index.html" 
+        class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs"
+      >
+        Voltar à Vitrine
+      </a>
+    </div>
+
+    <div id="cart-summary-section" class="p-5 border-t border-slate-200 bg-slate-50 space-y-4">
+      <div class="space-y-1.5 text-xs text-slate-600 pt-1">
+        <div class="flex justify-between">
+          <span>Subtotal:</span>
+          <span id="cart-subtotal" class="font-semibold text-slate-800">R$ 0,00</span>
+        </div>
+        <div id="cart-discount-row" class="flex justify-between text-emerald-700 font-medium hidden">
+          <span>Desconto Cupom:</span>
+          <span id="cart-discount">- R$ 0,00</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Frete Simulado:</span>
+          <span id="cart-shipping" class="text-xs font-bold text-emerald-600">GRÁTIS</span>
+        </div>
+        <div class="flex justify-between text-base font-extrabold text-slate-900 pt-2 border-t border-slate-200">
+          <span>Total:</span>
+          <span id="cart-grand-total" class="text-emerald-700 text-lg">R$ 0,00</span>
+        </div>
+      </div>
+
+      <button 
+        type="button" 
+        onclick="openCheckoutModal()"
+        class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+      >
+        <span>Finalizar Simulação</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: CHECKOUT SIMULADO -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs hidden transition-all">
+    <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl p-6 sm:p-8 border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200 mb-5">
+        <div>
+          <h3 class="text-xl font-black text-slate-900 font-heading">Finalizar Simulação</h3>
+          <p class="text-xs text-slate-500">Revise os dados do seu pedido demonstrativo</p>
+        </div>
+        <button type="button" onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div id="checkout-prescription-warning" class="hidden mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800">
+        <strong class="font-bold flex items-center gap-1.5 mb-0.5">
+          <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          Medicamento Controlado no Pedido
+        </strong>
+        <span>Você incluiu medicamentos com Tarja Vermelha. Em um cenário real, a retenção de receita seria necessária.</span>
+      </div>
+
+      <div class="mb-5">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Itens Selecionados</h4>
+        <div id="checkout-summary-list" class="max-h-36 overflow-y-auto pr-1 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200"></div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-200 flex items-center justify-between mb-4">
+        <div>
+          <span class="text-xs text-slate-400 block font-medium">Total:</span>
+          <span id="checkout-final-total" class="text-2xl font-black text-emerald-700">R$ 0,00</span>
+        </div>
+        <span class="text-[11px] text-slate-400 font-mono">Simulador</span>
+      </div>
+
+      <button 
+        type="button" 
+        onclick="confirmOrder()"
+        class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm rounded-xl shadow-lg transition-all"
+      >
+        Confirmar Compra Simulada
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: SUCESSO -->
+  <div id="order-success-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-xs hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl p-6 sm:p-8 text-center border border-slate-200">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+
+      <h3 class="text-2xl font-black text-slate-900 font-heading mb-1">Pedido Simulado com Sucesso!</h3>
+      <p class="text-xs text-slate-500 mb-4">Sua simulação de compra foi processada no FarmaSim.</p>
+
+      <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-xs text-slate-700 mb-6 text-left space-y-2">
+        <div class="flex justify-between">
+          <span class="text-slate-500">Código do Pedido:</span>
+          <strong id="success-order-id" class="font-mono text-emerald-700 font-extrabold">#SIM-000000</strong>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Status:</span>
+          <span class="font-semibold text-emerald-700">✓ Aprovado (Simulado)</span>
+        </div>
+      </div>
+
+      <a 
+        href="index.html" 
+        class="block w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-colors text-center"
+      >
+        Voltar à Vitrine
+      </a>
+    </div>
+  </div>
+
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 mt-16 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+      <p class="text-slate-300 font-semibold">FarmaSim • Vitrine Farmacêutica Demonstrativa</p>
+      <p class="text-slate-500 text-[11px]">
+        Aviso: Todos os medicamentos e dados presentes nesta página têm fins exclusivamente ilustrativos.
+      </p>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="products.js"></script>
+  <script>
+    // Lógica específica da Página Dedicada
+    let currentProduct = null;
+    let currentQty = 1;
+
+    // Resgata o ID ou slug pela URL
+    function getProductFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const idParam = urlParams.get('id');
+      const slugParam = urlParams.get('slug');
+
+      if (idParam) {
+        const found = MEDICAMENTOS_DATA.find(p => p.id === parseInt(idParam, 10));
+        if (found) return found;
+      }
+      if (slugParam) {
+        const found = MEDICAMENTOS_DATA.find(p => p.slug === slugParam);
+        if (found) return found;
+      }
+      // Fallback para o primeiro produto
+      return MEDICAMENTOS_DATA[0];
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      currentProduct = getProductFromUrl();
+      renderProductPage(currentProduct);
+      renderRelatedProducts(currentProduct);
+      updateCartUI();
+
+      // Atualiza URL no indicador visual
+      const urlDisplay = document.getElementById('current-url-display');
+      if (urlDisplay) {
+        urlDisplay.textContent = `URL: produto.html?id=${currentProduct.id}`;
+      }
+    });
+
+    function formatCurrency(value) {
+      return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function renderProductPage(product) {
+      document.title = `${product.nome} ${product.dosagem} • FarmaSim`;
+      document.getElementById('breadcrumb-category').textContent = product.categoria;
+      document.getElementById('breadcrumb-product').textContent = `${product.nome} (${product.dosagem})`;
+
+      const container = document.getElementById('product-detail-container');
+      const isVermelha = product.tarjaTipo === 'vermelha';
+      const parcelas = (product.preco / 3).toFixed(2).replace('.', ',');
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 p-6 sm:p-10">
+          
+          <!-- Coluna 1: Imagem e Alertas (5 cols) -->
+          <div class="lg:col-span-5 flex flex-col items-center">
+            <div class="w-full aspect-square max-h-[380px] bg-white rounded-2xl overflow-hidden border border-slate-200/80 shadow-xs relative p-6 flex items-center justify-center">
+              <img 
+                src="${product.imagem}" 
+                alt="${product.nome}"
+                class="w-full h-full object-contain rounded-xl"
+                onerror="this.src='images/metformina.jpg'"
+              />
+
+              <!-- Badge Flutuante da Tarja -->
+              <div class="absolute top-5 left-5">
+                ${isVermelha 
+                  ? `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-600 text-white shadow-md">
+                       <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+                       Tarja Vermelha (Sob Prescrição)
+                     </span>`
+                  : `<span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300 shadow-sm">
+                       <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                       Venda Livre (MIP)
+                     </span>`
+                }
+              </div>
+            </div>
+
+            <!-- Box Informativo da Tarja -->
+            <div class="w-full mt-5">
+              ${isVermelha 
+                ? `<div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-900">
+                     <div class="font-bold flex items-center gap-2 mb-1 text-rose-700">
+                       <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                       Medicamento Sob Prescrição Médica
+                     </div>
+                     <p class="text-rose-700/90 leading-relaxed text-[11px]">
+                       Este produto necessita de receita médica válida. Em nosso simulador, a receita é considerada validada automaticamente.
+                     </p>
+                   </div>`
+                : `<div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-900">
+                     <div class="font-bold flex items-center gap-2 mb-1 text-emerald-800">
+                       <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                       Medicamento Isento de Prescrição (MIP)
+                     </div>
+                     <p class="text-emerald-700/90 leading-relaxed text-[11px]">
+                       Venda livre autorizada. Siga sempre as orientações da bula ilustrativa abaixo.
+                     </p>
+                   </div>`
+              }
+            </div>
+
+            <div class="mt-4 text-xs font-mono text-slate-400 text-center">
+              Registro Fictício: ${product.registroMS}
+            </div>
+          </div>
+
+          <!-- Coluna 2: Informações de Compra e Detalhes (7 cols) -->
+          <div class="lg:col-span-7 flex flex-col justify-between">
+            <div>
+              <!-- Meta topo -->
+              <div class="flex items-center justify-between gap-2 mb-2 text-xs">
+                <span class="inline-block bg-slate-100 text-slate-700 font-semibold px-3 py-1 rounded-full border border-slate-200">
+                  ${product.categoria}
+                </span>
+                <span class="text-amber-500 font-bold flex items-center gap-1">
+                  ★ ${product.avaliacao} <span class="text-slate-400 font-normal">(${product.avaliacoesTotal} avaliações)</span>
+                </span>
+              </div>
+
+              <!-- Título & Apresentação -->
+              <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-1 font-heading">
+                ${product.nome} <span class="text-xl sm:text-2xl font-medium text-slate-500 font-sans">(${product.dosagem})</span>
+              </h1>
+              
+              <div class="flex items-center gap-3 text-xs text-slate-500 mb-4">
+                <span>Laboratório: <strong class="text-slate-700">${product.laboratorio}</strong></span>
+                <span>•</span>
+                <span class="font-medium text-slate-600">${product.apresentacao}</span>
+              </div>
+
+              <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                ${product.descricao}
+              </p>
+
+              <!-- Box de Princípio Ativo -->
+              <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/90 mb-6">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Princípio Ativo</span>
+                <p class="text-xs sm:text-sm font-semibold text-slate-800">${product.principioAtivo}</p>
+              </div>
+
+              <!-- Preço & Ações -->
+              <div class="p-6 bg-emerald-50/50 rounded-2xl border border-emerald-100 mb-8">
+                <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 mb-4">
+                  <div>
+                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Preço na Vitrine</span>
+                    <div class="text-3xl sm:text-4xl font-black text-emerald-700">
+                      ${formatCurrency(product.preco)}
+                    </div>
+                  </div>
+                  <div class="text-xs text-slate-600 sm:text-right">
+                    <span>em até <strong>3x de R$ ${parcelas}</strong> sem juros</span><br/>
+                    <span class="text-emerald-700 font-semibold text-[11px]">⚡ 5% de desconto no PIX simulado</span>
+                  </div>
+                </div>
+
+                <!-- Seletor de Quantidade + Botão de Compra -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <div class="flex items-center border border-slate-300 rounded-xl bg-white overflow-hidden shadow-2xs self-start sm:self-auto">
+                    <button type="button" onclick="changeQty(-1)" class="w-11 h-11 flex items-center justify-center text-slate-600 hover:bg-slate-100 font-bold active:bg-slate-200 text-lg">−</button>
+                    <span id="page-qty-display" class="w-12 text-center font-bold text-base text-slate-800">1</span>
+                    <button type="button" onclick="changeQty(1)" class="w-11 h-11 flex items-center justify-center text-slate-600 hover:bg-slate-100 font-bold active:bg-slate-200 text-lg">+</button>
+                  </div>
+
+                  <button 
+                    type="button" 
+                    onclick="addProductToCart()"
+                    class="flex-1 py-3.5 px-6 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                  >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <span>Adicionar ao Carrinho</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ficha Técnica e Bula Resumida -->
+            <div class="space-y-4 pt-4 border-t border-slate-200">
+              <h3 class="text-base font-bold text-slate-900 font-heading">Informações e Bula Ilustrativa</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                  <h4 class="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Indicação Terapêutica
+                  </h4>
+                  <p class="text-slate-600 leading-relaxed">${product.indicacao}</p>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                  <h4 class="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Modo de Uso (Posologia)
+                  </h4>
+                  <p class="text-slate-600 leading-relaxed">${product.modoDeUso}</p>
+                </div>
+
+                <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-200/80 md:col-span-2">
+                  <h4 class="font-bold text-amber-800 mb-1 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span> Contraindicações & Advertências
+                  </h4>
+                  <p class="text-slate-700 leading-relaxed">${product.contraindicacao}</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      `;
+    }
+
+    // Renderizar outros produtos relacionados
+    function renderRelatedProducts(current) {
+      const relatedGrid = document.getElementById('related-products-grid');
+      if (!relatedGrid) return;
+
+      const others = MEDICAMENTOS_DATA.filter(p => p.id !== current.id).slice(0, 4);
+
+      relatedGrid.innerHTML = others.map(item => `
+        <article class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:border-emerald-300 transition-all flex flex-col">
+          <a href="produto.html?id=${item.id}" class="block relative w-full h-44 bg-slate-50 overflow-hidden group flex items-center justify-center p-3">
+            <img 
+              src="${item.imagem}" 
+              alt="${item.nome}"
+              class="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300"
+              onerror="this.src='images/metformina.jpg'"
+            />
+            <span class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded text-[10px] font-bold ${item.tarjaTipo === 'vermelha' ? 'bg-rose-600 text-white' : 'bg-emerald-100 text-emerald-800'}">
+              ${item.tarjaTipo === 'vermelha' ? 'Tarja Vermelha' : 'Venda Livre'}
+            </span>
+          </a>
+          <div class="p-4 flex-1 flex flex-col justify-between">
+            <div>
+              <span class="text-[10px] text-slate-400 font-medium block mb-0.5">${item.laboratorio}</span>
+              <a href="produto.html?id=${item.id}" class="text-sm font-bold text-slate-800 hover:text-emerald-700 block truncate mb-1">
+                ${item.nome} <span class="font-normal text-slate-500 text-xs">(${item.dosagem})</span>
+              </a>
+              <span class="text-xs text-slate-500 block mb-2">${item.apresentacao}</span>
+            </div>
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+              <span class="text-base font-extrabold text-emerald-700">${formatCurrency(item.preco)}</span>
+              <a href="produto.html?id=${item.id}" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800">
+                Ver Detalhes →
+              </a>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function changeQty(delta) {
+      currentQty = Math.max(1, currentQty + delta);
+      const display = document.getElementById('page-qty-display');
+      if (display) display.textContent = currentQty;
+    }
+
+    function addProductToCart() {
+      if (!currentProduct) return;
+      addToCartGlobal(currentProduct.id, currentQty);
+      showToast(`✓ ${currentProduct.nome} (${currentQty}x) adicionado ao carrinho!`);
+      toggleCart(true);
+    }
+
+    function copyPageUrl() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        const btnText = document.getElementById('copy-btn-text');
+        if (btnText) {
+          const old = btnText.textContent;
+          btnText.textContent = 'Link Copiado!';
+          setTimeout(() => { btnText.textContent = old; }, 2000);
+        }
+        showToast('Link dedicado copiado para a área de transferência!');
+      });
+    }
+
+    // Gerenciamento do Carrinho compartilhado via localStorage
+    function getCart() {
+      return JSON.parse(localStorage.getItem('farmasim_cart') || '[]');
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem('farmasim_cart', JSON.stringify(cart));
+      updateCartUI();
+    }
+
+    function addToCartGlobal(productId, qty = 1) {
+      const cart = getCart();
+      const product = MEDICAMENTOS_DATA.find(p => p.id === productId);
+      if (!product) return;
+
+      const idx = cart.findIndex(item => item.id === productId);
+      if (idx > -1) {
+        cart[idx].quantity += qty;
+      } else {
+        cart.push({
+          id: product.id,
+          nome: product.nome,
+          dosagem: product.dosagem,
+          preco: product.preco,
+          imagem: product.imagem,
+          tarjaTipo: product.tarjaTipo,
+          quantity: qty
+        });
+      }
+      saveCart(cart);
+    }
+
+    function updateCartUI() {
+      const cart = getCart();
+      const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+      const subtotal = cart.reduce((acc, item) => acc + (item.preco * item.quantity), 0);
+
+      const badge = document.getElementById('cart-badge');
+      const headerTotal = document.getElementById('cart-header-total');
+      if (badge) {
+        badge.textContent = totalItems;
+        badge.classList.toggle('hidden', totalItems === 0);
+      }
+      if (headerTotal) {
+        headerTotal.textContent = formatCurrency(subtotal);
+      }
+
+      const itemsContainer = document.getElementById('cart-items-container');
+      const emptyState = document.getElementById('cart-empty-state');
+      const summarySection = document.getElementById('cart-summary-section');
+
+      if (itemsContainer) {
+        if (cart.length === 0) {
+          itemsContainer.innerHTML = '';
+          if (emptyState) emptyState.classList.remove('hidden');
+          if (summarySection) summarySection.classList.add('hidden');
+        } else {
+          if (emptyState) emptyState.classList.add('hidden');
+          if (summarySection) summarySection.classList.remove('hidden');
+
+          itemsContainer.innerHTML = cart.map(item => `
+            <div class="flex items-center gap-3 p-3 bg-white rounded-xl border border-slate-200">
+              <img src="${item.imagem}" alt="${item.nome}" class="w-14 h-14 rounded-lg object-cover bg-slate-100" />
+              <div class="flex-1 min-w-0">
+                <h4 class="text-xs font-bold text-slate-800 truncate">${item.nome}</h4>
+                <div class="text-xs font-bold text-emerald-700">${formatCurrency(item.preco)}</div>
+                <div class="text-[11px] text-slate-500">Qtd: ${item.quantity}</div>
+              </div>
+              <div class="text-right">
+                <span class="text-xs font-extrabold text-slate-900">${formatCurrency(item.preco * item.quantity)}</span>
+              </div>
+            </div>
+          `).join('');
+        }
+      }
+
+      const subtotalEl = document.getElementById('cart-subtotal');
+      const grandTotalEl = document.getElementById('cart-grand-total');
+      if (subtotalEl) subtotalEl.textContent = formatCurrency(subtotal);
+      if (grandTotalEl) grandTotalEl.textContent = formatCurrency(subtotal);
+    }
+
+    function toggleCart(show) {
+      const drawer = document.getElementById('cart-drawer');
+      const backdrop = document.getElementById('cart-backdrop');
+      if (!drawer || !backdrop) return;
+      if (show) {
+        drawer.classList.add('cart-open');
+        backdrop.classList.remove('hidden');
+      } else {
+        drawer.classList.remove('cart-open');
+        backdrop.classList.add('hidden');
+      }
+    }
+
+    function openCheckoutModal() {
+      const cart = getCart();
+      if (cart.length === 0) return;
+      const modal = document.getElementById('checkout-modal');
+      const list = document.getElementById('checkout-summary-list');
+      const totalEl = document.getElementById('checkout-final-total');
+      const warning = document.getElementById('checkout-prescription-warning');
+
+      const hasPrescription = cart.some(i => i.tarjaTipo === 'vermelha');
+      if (warning) warning.classList.toggle('hidden', !hasPrescription);
+
+      const subtotal = cart.reduce((acc, item) => acc + (item.preco * item.quantity), 0);
+      if (list) {
+        list.innerHTML = cart.map(i => `
+          <div class="flex justify-between text-xs py-1">
+            <span>${i.quantity}x ${i.nome}</span>
+            <span class="font-bold">${formatCurrency(i.preco * i.quantity)}</span>
+          </div>
+        `).join('');
+      }
+      if (totalEl) totalEl.textContent = formatCurrency(subtotal);
+
+      toggleCart(false);
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeCheckoutModal() {
+      const modal = document.getElementById('checkout-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function confirmOrder() {
+      closeCheckoutModal();
+      const successModal = document.getElementById('order-success-modal');
+      const orderId = document.getElementById('success-order-id');
+      if (orderId) orderId.textContent = `#SIM-${Math.floor(100000 + Math.random() * 900000)}`;
+      localStorage.setItem('farmasim_cart', '[]');
+      updateCartUI();
+      if (successModal) successModal.classList.remove('hidden');
+    }
+
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = 'bg-emerald-600 text-white text-xs sm:text-sm font-semibold px-4 py-3 rounded-xl shadow-lg toast-animate-in border border-white/20';
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

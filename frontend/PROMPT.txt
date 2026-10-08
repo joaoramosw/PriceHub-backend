@@ -1,0 +1,122 @@
+Atue como um desenvolvedor Frontend Sênior e especialista em UI/UX. Crie 3 sites completos de vitrine farmacêutica ("Site 1", "Site 2" e "Site 3"), compartilhando o mesmo conceito técnico moderno, porém com identidades visuais distintas (cores) e tabelas de preços diferentes para simular redes concorrentes de farmácias.
+
+---
+
+### 🎯 Diretrizes Principais de UI/UX (Obrigatórias)
+
+1. **Sem Hero Pesado:** Não crie banners promocionais longos ou textos institucionais ocupando a tela. A página inicial (`index.html`) deve ir **direto ao ponto**: cabeçalho limpo com busca rápida, barra de filtros e a vitrine de remédios logo abaixo.
+2. **Página com URL Dedicada por Remédio:**
+   - Crie o arquivo `produto.html` que carrega dinamicamente as informações do medicamento via parâmetro de URL (`produto.html?id=X`).
+   - Deve conter breadcrumb (`Vitrine > Categoria > Remédio`), foto ampla, tarja regulatória, preço grande, bula ilustrativa completa (princípio ativo, indicação, posologia, contraindicações), botão "Copiar Link" e seção de outros medicamentos relacionados da vitrine.
+   - Clicar na imagem, no título ou no botão "Detalhes" de qualquer card do `index.html` deve abrir a página com a URL dedicada daquele remédio.
+3. **Geometria dos Cards 100% Corrigida e Alinhada:**
+   - As fotos dos cards **devem ter altura fixa idêntica** (`h-52` ou 208px) com `object-cover object-center` para que nenhuma imagem fique esticada ou empurre os outros cards da grade.
+   - Tipografia limpa e sem distorções (não use fontes monoespaçadas no texto de apresentação).
+   - Títulos limitados a 1 linha (`line-clamp-1`) e descrições a 2 linhas (`line-clamp-2 h-8`).
+   - Use `mt-auto` no rodapé dos cards para que todos os preços e botões fiquem rigorosamente alinhados na mesma linha horizontal.
+4. **Simulador de Carrinho e Checkout:**
+   - Drawer lateral interativo com persistência em `localStorage`.
+   - Adição com toast de confirmação, cálculo de frete por CEP e simulação de checkout com geração de recibo (`#SIM-XXXXXX`).
+
+---
+
+### 💊 Base de Dados: Os 10 Medicamentos Mais Vendidos
+
+Utilize exatamente estes 10 medicamentos nos 3 sites (com imagens reais de farmácia do Unsplash):
+
+1. **Metformina / Glifage XR 500mg**
+   - Apresentação: 30 comprimidos de liberação prolongada
+   - Categoria: Diabetes & Metabolismo | Tarja: Tarja Vermelha (Sob Prescrição)
+   - Indicação: Líder geral em unidades no Brasil. Tratamento do diabetes mellitus tipo 2 e resistência insulínica.
+   - Imagem: https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=600&auto=format&fit=crop&q=80
+
+2. **Losartana Potássica 50mg**
+   - Apresentação: 30 comprimidos revestidos
+   - Categoria: Hipertensão & Coração | Tarja: Tarja Vermelha (Sob Prescrição)
+   - Indicação: O anti-hipertensivo genérico mais vendido do país. Controle da pressão alta e proteção cardiovascular.
+   - Imagem: https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=600&auto=format&fit=crop&q=80
+
+3. **Dipirona Sódica 500mg/ml Gotas**
+   - Apresentação: Frasco conta-gotas 20ml
+   - Categoria: Dores & Febre | Tarja: Venda Livre (MIP)
+   - Indicação: O analgésico e antitérmico mais consumido pelos brasileiros para alívio rápido de dores e febre.
+   - Imagem: https://images.unsplash.com/photo-1585435557343-3b092031a831?w=600&auto=format&fit=crop&q=80
+
+4. **Omeprazol 20mg**
+   - Apresentação: 28 cápsulas gelatinosas duras
+   - Categoria: Estômago & Digestão | Tarja: Tarja Vermelha (Sob Prescrição)
+   - Indicação: Campeão nacional de vendas para tratamento de gastrite, úlceras gástricas e refluxo gastroesofágico.
+   - Imagem: https://images.unsplash.com/photo-1550572017-edd951aa8f72?w=600&auto=format&fit=crop&q=80
+
+5. **Hidroclorotiazida 25mg**
+   - Apresentação: 30 comprimidos
+   - Categoria: Hipertensão & Diuréticos | Tarja: Tarja Vermelha (Sob Prescrição)
+   - Indicação: Diurético tiazídico amplamente prescrito para hipertensão arterial e retenção de líquidos.
+   - Imagem: https://images.unsplash.com/photo-1471864190281-a93a3070b6de?w=600&auto=format&fit=crop&q=80
+
+6. **Nimesulida 100mg**
+   - Apresentação: 12 comprimidos
+   - Categoria: Anti-inflamatórios | Tarja: Tarja Vermelha (Sob Prescrição)
+   - Indicação: Anti-inflamatório não esteroide (AINE) consagrado para alívio de processos dolorosos e inflamatórios agudos.
+   - Imagem: https://images.unsplash.com/photo-1577401239170-897942555fb3?w=600&auto=format&fit=crop&q=80
+
+7. **Tadalafila 5mg Uso Diário**
+   - Apresentação: 30 comprimidos revestidos
+   - Categoria: Saúde Masculina | Tarja: Tarja Vermelha (Sob Prescrição)
+   - Indicação: Medicamento para disfunção erétil e hiperplasia prostática benigna, com grande expansão na procura.
+   - Imagem: https://images.unsplash.com/photo-1628771065518-0d82f1938462?w=600&auto=format&fit=crop&q=80
+
+8. **Sinvastatina 20mg**
+   - Apresentação: 30 comprimidos revestidos
+   - Categoria: Colesterol & Lipídios | Tarja: Tarja Vermelha (Sob Prescrição)
+   - Indicação: Tratamento contínuo para controle e redução de colesterol LDL alto e triglicerídeos.
+   - Imagem: https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&auto=format&fit=crop&q=80
+
+9. **Ibuprofeno 600mg**
+   - Apresentação: 20 comprimidos revestidos
+   - Categoria: Anti-inflamatórios & Gripes | Tarja: Venda Livre (MIP)
+   - Indicação: Anti-inflamatório e analgésico de alta eficácia com pico de vendas em períodos de inverno e resfriados.
+   - Imagem: https://images.unsplash.com/photo-1512069772995-ec65ed45afd6?w=600&auto=format&fit=crop&q=80
+
+10. **Simeticona 75mg/ml Gotas**
+    - Apresentação: Frasco de 15ml
+    - Categoria: Digestão & Gases | Tarja: Venda Livre (MIP)
+    - Indicação: Alívio rápido e seguro de gases intestinais, distensão abdominal e cólicas em adultos e bebês.
+    - Imagem: https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=600&auto=format&fit=crop&q=80
+
+---
+
+### 🎨 Especificação dos 3 Sites (Identidades e Preços Diferentes)
+
+Gere a estrutura dos 3 sites em diretórios separados (ex: `/site1-verde/`, `/site2-azul/` e `/site3-vermelho/`):
+
+#### 🏪 SITE 1: "BioFarma Verde" (Estilo Farmácia Natural / Clínica)
+- **Paleta de Cores:** Verde Esmeralda (`#059669`, `#064e3b`, `#ecfdf5`), detalhes em Teal.
+- **Tabela de Preços (Preço Médio de Farmácia Tradicional):**
+  - Metformina: R$ 14,90 | Losartana: R$ 11,50 | Dipirona Gotas: R$ 8,90
+  - Omeprazol: R$ 19,90 | Hidroclorotiazida: R$ 6,50 | Nimesulida: R$ 15,20
+  - Tadalafila: R$ 42,00 | Sinvastatina: R$ 18,90 | Ibuprofeno: R$ 21,50 | Simeticona: R$ 12,80
+
+#### 🏪 SITE 2: "FarmaAzul Confiança" (Estilo Grande Rede Nacional)
+- **Paleta de Cores:** Azul Marinho e Azul Royal (`#0284c7`, `#1e40af`, `#0f172a`, `#f0f9ff`), detalhes em Ciano.
+- **Tabela de Preços (Foco em Genéricos Populares com Desconto):**
+  - Metformina: R$ 11,90 | Losartana: R$ 8,90 | Dipirona Gotas: R$ 6,90
+  - Omeprazol: R$ 16,50 | Hidroclorotiazida: R$ 4,90 | Nimesulida: R$ 12,90
+  - Tadalafila: R$ 36,90 | Sinvastatina: R$ 14,50 | Ibuprofeno: R$ 17,90 | Simeticona: R$ 9,90
+
+#### 🏪 SITE 3: "DrogaPopular Express" (Estilo Drogaria Popular / Atacado)
+- **Paleta de Cores:** Vermelho Rubi e Coral Comercial (`#dc2626`, `#991b1b`, `#fef2f2`), detalhes em Âmbar/Dourado.
+- **Tabela de Preços (Preços Agressivos / Preço Baixo):**
+  - Metformina: R$ 9,99 | Losartana: R$ 7,49 | Dipirona Gotas: R$ 5,99
+  - Omeprazol: R$ 13,99 | Hidroclorotiazida: R$ 3,99 | Nimesulida: R$ 10,99
+  - Tadalafila: R$ 29,99 | Sinvastatina: R$ 12,99 | Ibuprofeno: R$ 14,99 | Simeticona: R$ 7,99
+
+---
+
+### 📦 Estrutura de Arquivos para Cada Site
+Em cada uma das 3 pastas (`site1/`, `site2/`, `site3/`), forneça:
+- `index.html`: Vitrine direta, responsiva, com busca instantânea, filtros e carrinho.
+- `produto.html`: Página com URL dedicada (`?id=X`) com ficha técnica completa do remédio.
+- `products.js`: Objeto contendo os 10 medicamentos com a respectiva tabela de preços daquele site.
+- `app.js`: Lógica de renderização de cards uniformes, busca, filtros e carrinho.
+- Gere um layout levemente diferente para cada um deles

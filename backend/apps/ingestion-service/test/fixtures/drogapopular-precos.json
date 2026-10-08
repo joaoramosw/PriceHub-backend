@@ -1,0 +1,66 @@
+{
+  "loja": "DROGAPOPULAR EXPRESS",
+  "gerado_em": "08/10/2026 11:17",
+  "produtos": [
+    {
+      "COD": "DP-0001",
+      "DESCRICAO": "METFORMINA 500MG C/30 COMP LIB PROL",
+      "LAB": "MERCK",
+      "PRECO": "9,99"
+    },
+    {
+      "COD": "DP-0002",
+      "DESCRICAO": "LOSARTANA POTASSICA 50MG C/30 COMP REV",
+      "LAB": "MEDLEY",
+      "PRECO": "7,49"
+    },
+    {
+      "COD": "DP-0003",
+      "DESCRICAO": "DIPIRONA SODICA 500MG/ML GTS FR 20ML",
+      "LAB": "NEO QUIMICA",
+      "PRECO": "5,99"
+    },
+    {
+      "COD": "DP-0004",
+      "DESCRICAO": "OMEPRAZOL 20MG C/28 CAPS",
+      "LAB": "TEUTO",
+      "PRECO": "13,99"
+    },
+    {
+      "COD": "DP-0005",
+      "DESCRICAO": "HIDROCLOROTIAZIDA 25MG C/30 COMP",
+      "LAB": "EMS S/A",
+      "PRECO": "3,99"
+    },
+    {
+      "COD": "DP-0006",
+      "DESCRICAO": "NIMESULIDA 100MG C/12 COMP",
+      "LAB": "ACHE",
+      "PRECO": "10,99"
+    },
+    {
+      "COD": "DP-0007",
+      "DESCRICAO": "TADALAFILA 5MG C/30 COMP REV",
+      "LAB": "EUROFARMA",
+      "PRECO": "29,99"
+    },
+    {
+      "COD": "DP-0008",
+      "DESCRICAO": "SINVASTATINA 20MG C/30 COMP REV",
+      "LAB": "SANDOZ",
+      "PRECO": "12,99"
+    },
+    {
+      "COD": "DP-0009",
+      "DESCRICAO": "IBUPROFENO 600MG C/20 COMP REV",
+      "LAB": "NEO QUIMICA",
+      "PRECO": "14,99"
+    },
+    {
+      "COD": "DP-0010",
+      "DESCRICAO": "SIMETICONA 75MG/ML GTS FR 15ML",
+      "LAB": "CIMED",
+      "PRECO": "7,99"
+    }
+  ]
+}

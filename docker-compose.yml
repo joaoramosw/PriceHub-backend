@@ -1,0 +1,254 @@
+name: pricehub
+
+x-node-service: &node-service
+  restart: unless-stopped
+  environment: &node-env
+    NODE_ENV: production
+    LOG_LEVEL: ${LOG_LEVEL:-info}
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: postgres
+    ports:
+      - "${POSTGRES_HOST_PORT:-5433}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "PGPASSWORD=$${POSTGRES_PASSWORD} psql -h 127.0.0.1 -U $${POSTGRES_USER} -d query -tAc 'SELECT 1' > /dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  rabbitmq:
+    image: rabbitmq:4.1-management-alpine
+    restart: unless-stopped
+    environment:
+      RABBITMQ_USER: ${RABBITMQ_USER}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+    entrypoint: ["/bin/sh", "/usr/local/bin/pricehub-entrypoint.sh"]
+    ports:
+      - "${RABBITMQ_UI_HOST_PORT:-15672}:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+      - ./infra/rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./infra/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./infra/rabbitmq/entrypoint.sh:/usr/local/bin/pricehub-entrypoint.sh:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 20
+      start_period: 20s
+
+  farmacia-biofarma:
+    <<: *node-service
+    image: pricehub/farmacia-sim:local
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: farmacia-sim
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/apps/farmacia-sim/src
+        - action: rebuild
+          path: ./backend/packages
+          ignore:
+            - "**/dist/**"
+            - "**/test/**"
+    environment:
+      <<: *node-env
+      PHARMACY_ID: biofarma
+      PORT: 4001
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/farmacia_biofarma
+      INGESTION_URL: http://ingestion-service:3001
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET_BIOFARMA}
+    ports:
+      - "4001:4001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4001/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  farmacia-farmaazul:
+    <<: *node-service
+    image: pricehub/farmacia-sim:local
+    pull_policy: never
+    environment:
+      <<: *node-env
+      PHARMACY_ID: farmaazul
+      PORT: 4002
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/farmacia_farmaazul
+      INGESTION_URL: http://ingestion-service:3001
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET_FARMAAZUL}
+    ports:
+      - "4002:4002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4002/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  farmacia-drogapopular:
+    <<: *node-service
+    image: pricehub/farmacia-sim:local
+    pull_policy: never
+    environment:
+      <<: *node-env
+      PHARMACY_ID: drogapopular
+      PORT: 4003
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/farmacia_drogapopular
+      INGESTION_URL: http://ingestion-service:3001
+    ports:
+      - "4003:4003"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:4003/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  catalog-service:
+    <<: *node-service
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: catalog-service
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/apps/catalog-service/src
+        - action: rebuild
+          path: ./backend/packages
+          ignore:
+            - "**/dist/**"
+            - "**/test/**"
+    image: pricehub/catalog-service:local
+    environment:
+      <<: *node-env
+      PORT: 3002
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/catalog
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      RABBITMQ_PREFETCH: ${RABBITMQ_PREFETCH:-10}
+      OUTBOX_POLL_INTERVAL_MS: ${OUTBOX_POLL_INTERVAL_MS:-500}
+    expose:
+      - "3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3002/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  ingestion-service:
+    <<: *node-service
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: ingestion-service
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/apps/ingestion-service/src
+        - action: rebuild
+          path: ./backend/packages
+          ignore:
+            - "**/dist/**"
+            - "**/test/**"
+    image: pricehub/ingestion-service:local
+    environment:
+      <<: *node-env
+      PORT: 3001
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/ingestion
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      BIOFARMA_URL: http://farmacia-biofarma:4001
+      FARMAAZUL_URL: http://farmacia-farmaazul:4002
+      DROGAPOPULAR_URL: http://farmacia-drogapopular:4003
+      WEBHOOK_SECRET_BIOFARMA: ${WEBHOOK_SECRET_BIOFARMA}
+      WEBHOOK_SECRET_FARMAAZUL: ${WEBHOOK_SECRET_FARMAAZUL}
+      SYNC_INTERVAL_MS: ${SYNC_INTERVAL_MS:-60000}
+      DROGAPOPULAR_POLL_INTERVAL_MS: ${DROGAPOPULAR_POLL_INTERVAL_MS:-15000}
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      farmacia-biofarma:
+        condition: service_healthy
+      farmacia-farmaazul:
+        condition: service_healthy
+      farmacia-drogapopular:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  query-service:
+    <<: *node-service
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: query-service
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/apps/query-service/src
+        - action: rebuild
+          path: ./backend/packages
+          ignore:
+            - "**/dist/**"
+            - "**/test/**"
+    image: pricehub/query-service:local
+    environment:
+      <<: *node-env
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/query
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      RABBITMQ_PREFETCH: ${RABBITMQ_PREFETCH:-10}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:*,http://127.0.0.1:*}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+volumes:
+  postgres-data:
+  rabbitmq-data:

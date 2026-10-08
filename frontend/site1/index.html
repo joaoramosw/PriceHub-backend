@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FarmaSim • Vitrine de Remédios</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-slate-50 text-slate-900 flex flex-col min-h-screen antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- TOPO INSTITUCIONAL INDEPENDENTE -->
+  <aside class="bg-slate-900 text-white text-xs py-2 px-4 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto flex items-center justify-between text-[11px]">
+      <div class="flex items-center gap-3">
+        <span class="text-emerald-400 font-semibold">🌿 BioFarma</span>
+        <span class="text-slate-500 hidden sm:inline">•</span>
+        <span class="text-slate-300 hidden sm:inline">Farmácia & Saúde Integrada</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-300">
+        <span>🚚 Entrega Rápida</span>
+        <span class="text-slate-600 hidden sm:inline">|</span>
+        <span class="hidden sm:inline">🔒 Farmácia Online Segura</span>
+        <span class="text-slate-600 hidden sm:inline">|</span>
+        <span class="hidden sm:inline">Atendimento: 0800 123 4567</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- HEADER NAVEGAÇÃO -->
+  <header class="sticky top-0 z-30 glass-header border-b border-slate-200/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20 gap-4">
+        
+        <!-- LOGO -->
+        <a href="index.html" class="flex items-center gap-3 shrink-0 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
+            </svg>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xl sm:text-2xl font-black tracking-tight text-slate-900 font-heading">Farma<span class="text-emerald-600">Sim</span></span>
+              <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">MKT</span>
+            </div>
+            <p class="text-[10px] text-slate-500 -mt-1 font-medium hidden sm:block">Vitrine Farmacêutica</p>
+          </div>
+        </a>
+
+        <!-- BARRA DE BUSCA EM TEMPO REAL -->
+        <div class="flex-1 max-w-xl mx-2 hidden sm:block">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              id="search-input"
+              placeholder="Buscar remédio, sintoma, princípio ativo ou categoria..." 
+              class="w-full pl-10 pr-4 py-2 bg-slate-100/80 hover:bg-slate-100 focus:bg-white text-slate-900 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-hidden"
+            />
+          </div>
+        </div>
+
+        <!-- AÇÕES / BOTÃO DO CARRINHO -->
+        <div class="flex items-center gap-3">
+          <button 
+            type="button" 
+            onclick="toggleCart(true)"
+            class="relative flex items-center gap-2.5 px-4 py-2 bg-slate-900 hover:bg-emerald-700 text-white rounded-xl shadow-xs transition-all active:scale-95 group"
+          >
+            <div class="relative">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+              </svg>
+              <!-- Contador do Carrinho -->
+              <span 
+                id="cart-badge" 
+                class="hidden absolute -top-2 -right-2 bg-emerald-500 text-white font-extrabold text-[10px] w-5 h-5 rounded-full flex items-center justify-center ring-2 ring-slate-900 shadow-xs"
+              >
+                0
+              </span>
+            </div>
+            <div class="text-left hidden sm:block">
+              <span class="text-[9px] text-slate-300 block uppercase font-bold tracking-wider leading-none">Carrinho</span>
+              <span id="cart-header-total" class="text-xs font-bold leading-tight">R$ 0,00</span>
+            </div>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- BUSCA MOBILE -->
+      <div class="pb-3 sm:hidden">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </div>
+          <input 
+            type="text" 
+            oninput="state.searchTerm = this.value; filterAndRenderProducts();"
+            placeholder="Buscar remédios ou sintomas..." 
+            class="w-full pl-10 pr-4 py-2 bg-slate-100 text-slate-900 text-xs rounded-xl border border-slate-200 focus:bg-white focus:border-emerald-500 outline-hidden"
+          />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- SEÇÃO PRINCIPAL: VITRINE DE REMÉDIOS (SEM HERO PESADO) -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    
+    <!-- BARRA DE CONTROLE: CABEÇALHO, TARJAS E ORDENAÇÃO -->
+    <div class="mb-6 space-y-4">
+      
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight font-heading">
+            Vitrine de Medicamentos
+          </h1>
+          <p id="results-count" class="text-xs text-slate-500 mt-0.5">Carregando medicamentos...</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <!-- Filtro de Tarja -->
+          <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-semibold">
+            <button type="button" class="tarja-filter-btn px-3 py-1.5 rounded-lg bg-slate-900 text-white transition-all" data-tarja="Todos">Todos</button>
+            <button type="button" class="tarja-filter-btn px-3 py-1.5 rounded-lg bg-white text-slate-600 transition-all" data-tarja="livre">Venda Livre</button>
+            <button type="button" class="tarja-filter-btn px-3 py-1.5 rounded-lg bg-white text-slate-600 transition-all" data-tarja="vermelha">Sob Receita</button>
+          </div>
+
+          <!-- Ordenação -->
+          <div class="flex items-center gap-2">
+            <label for="sort-select" class="text-xs text-slate-500 font-medium whitespace-nowrap">Ordenar:</label>
+            <select 
+              id="sort-select" 
+              class="bg-white border border-slate-200 text-slate-700 text-xs rounded-xl px-3 py-2 font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-hidden cursor-pointer"
+            >
+              <option value="populares">Mais Populares</option>
+              <option value="preco-asc">Menor Preço</option>
+              <option value="preco-desc">Maior Preço</option>
+              <option value="nome-asc">Nome (A - Z)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtros por Categoria -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" id="category-filters">
+        <!-- Renderizado dinamicamente pelo app.js -->
+      </div>
+    </div>
+
+    <!-- GRADE DE MEDICAMENTOS (CARDS COM ALTURA E ALINHAMENTO CORRIGIDOS) -->
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
+      <!-- Cards renderizados dinamicamente pelo app.js -->
+    </div>
+
+    <!-- ESTADO VAZIO -->
+    <div id="empty-state" class="hidden text-center py-16 px-4 bg-white rounded-3xl border border-dashed border-slate-300 my-8">
+      <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <h3 class="text-lg font-bold text-slate-800 mb-1">Nenhum medicamento encontrado</h3>
+      <p class="text-xs text-slate-500 max-w-sm mx-auto mb-6">Não localizamos produtos com os filtros ou termo pesquisado.</p>
+      <button 
+        type="button" 
+        onclick="document.getElementById('search-input').value=''; state.searchTerm=''; state.selectedCategory='Todos'; state.selectedTarja='Todos'; initCategories(); filterAndRenderProducts();" 
+        class="px-4 py-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-colors"
+      >
+        Limpar Filtros e Ver Todos
+      </button>
+    </div>
+
+  </main>
+
+  <!-- GAVETA (DRAWER) LATERAL: CARRINHO DE COMPRAS -->
+  <div id="cart-backdrop" onclick="toggleCart(false)" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 hidden transition-opacity"></div>
+  
+  <div 
+    id="cart-drawer" 
+    class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out border-l border-slate-200"
+  >
+    <!-- Topo do Carrinho -->
+    <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50/70">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900 font-heading">Carrinho de Compras</h3>
+          <p class="text-[11px] text-slate-500">Simulador de Pedido</p>
+        </div>
+      </div>
+      <button 
+        type="button" 
+        onclick="toggleCart(false)" 
+        class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 flex items-center justify-center transition-colors"
+      >
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Lista de Itens do Carrinho -->
+    <div class="flex-1 overflow-y-auto p-4 space-y-3" id="cart-items-container"></div>
+
+    <!-- Estado Carrinho Vazio -->
+    <div id="cart-empty-state" class="flex-1 flex flex-col items-center justify-center p-8 text-center hidden">
+      <div class="w-16 h-16 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+      </div>
+      <h4 class="text-base font-bold text-slate-800 mb-1">Seu carrinho está vazio</h4>
+      <p class="text-xs text-slate-500 max-w-xs mb-6">Explore os medicamentos da vitrine e clique em "Comprar".</p>
+      <button 
+        type="button" 
+        onclick="toggleCart(false)" 
+        class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs"
+      >
+        Voltar à Vitrine
+      </button>
+    </div>
+
+    <!-- Resumo e Checkout -->
+    <div id="cart-summary-section" class="p-5 border-t border-slate-200 bg-slate-50 space-y-4">
+      
+      <!-- Simulação de Frete -->
+      <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+        <label for="cart-cep" class="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
+          Simular Frete (CEP)
+        </label>
+        <div class="flex gap-2">
+          <input 
+            type="text" 
+            id="cart-cep" 
+            placeholder="Ex: 01001-000" 
+            maxlength="9"
+            class="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg outline-hidden focus:border-emerald-500"
+          />
+          <button 
+            type="button" 
+            onclick="calculateShipping()"
+            class="px-3 py-1.5 text-xs font-semibold bg-slate-800 hover:bg-slate-900 text-white rounded-lg transition-colors"
+          >
+            Calcular
+          </button>
+        </div>
+        <div id="shipping-result" class="hidden"></div>
+      </div>
+
+      <!-- Cupom de Desconto -->
+      <div class="bg-white p-3 rounded-xl border border-slate-200 space-y-2">
+        <label for="cart-coupon" class="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
+          Cupom de Desconto
+        </label>
+        <div class="flex gap-2">
+          <input 
+            type="text" 
+            id="cart-coupon" 
+            placeholder="Ex: FARMASIM10" 
+            class="flex-1 px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg uppercase outline-hidden focus:border-emerald-500"
+          />
+          <button 
+            type="button" 
+            onclick="applyCoupon()"
+            class="px-3 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors"
+          >
+            Aplicar
+          </button>
+        </div>
+      </div>
+
+      <!-- Discriminação de Valores -->
+      <div class="space-y-1.5 text-xs text-slate-600 pt-1">
+        <div class="flex justify-between">
+          <span>Subtotal:</span>
+          <span id="cart-subtotal" class="font-semibold text-slate-800">R$ 0,00</span>
+        </div>
+        <div id="cart-discount-row" class="flex justify-between text-emerald-700 font-medium hidden">
+          <span>Desconto Cupom:</span>
+          <span id="cart-discount">- R$ 0,00</span>
+        </div>
+        <div class="flex justify-between">
+          <span>Frete Simulado:</span>
+          <span id="cart-shipping" class="text-slate-400">Calcule acima</span>
+        </div>
+        <div class="flex justify-between text-base font-extrabold text-slate-900 pt-2 border-t border-slate-200">
+          <span>Total Simulado:</span>
+          <span id="cart-grand-total" class="text-emerald-700 text-lg">R$ 0,00</span>
+        </div>
+      </div>
+
+      <!-- Botão de Finalizar -->
+      <button 
+        type="button" 
+        onclick="openCheckoutModal()"
+        class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+      >
+        <span>Finalizar Simulação</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: CHECKOUT SIMULADO -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-xs hidden transition-all">
+    <div class="bg-white rounded-3xl max-w-lg w-full shadow-2xl p-6 sm:p-8 border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+      
+      <div class="flex items-center justify-between pb-4 border-b border-slate-200 mb-5">
+        <div>
+          <h3 class="text-xl font-black text-slate-900 font-heading">Finalizar Simulação</h3>
+          <p class="text-xs text-slate-500">Revise os dados do seu pedido demonstrativo</p>
+        </div>
+        <button type="button" onclick="closeCheckoutModal()" class="text-slate-400 hover:text-slate-600">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div id="checkout-prescription-warning" class="hidden mb-4 p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800">
+        <strong class="font-bold flex items-center gap-1.5 mb-0.5">
+          <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          Medicamento Controlado no Pedido
+        </strong>
+        <span>Você incluiu medicamentos com Tarja Vermelha. Em um cenário real, a retenção de receita seria necessária.</span>
+      </div>
+
+      <div class="mb-5">
+        <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Itens Selecionados</h4>
+        <div id="checkout-summary-list" class="max-h-36 overflow-y-auto pr-1 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200"></div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-200 flex items-center justify-between mb-4">
+        <div>
+          <span class="text-xs text-slate-400 block font-medium">Total:</span>
+          <span id="checkout-final-total" class="text-2xl font-black text-emerald-700">R$ 0,00</span>
+        </div>
+        <span class="text-[11px] text-slate-400 font-mono">Simulador</span>
+      </div>
+
+      <button 
+        type="button" 
+        onclick="confirmOrder()"
+        class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.99] text-white font-extrabold text-sm rounded-xl shadow-lg transition-all"
+      >
+        Confirmar Compra Simulada
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: SUCESSO -->
+  <div id="order-success-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/75 backdrop-blur-xs hidden">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl p-6 sm:p-8 text-center border border-slate-200">
+      <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+
+      <h3 class="text-2xl font-black text-slate-900 font-heading mb-1">Pedido Simulado com Sucesso!</h3>
+      <p class="text-xs text-slate-500 mb-4">Sua simulação de compra foi processada no FarmaSim.</p>
+
+      <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200 text-xs text-slate-700 mb-6 text-left space-y-2">
+        <div class="flex justify-between">
+          <span class="text-slate-500">Código do Pedido:</span>
+          <strong id="success-order-id" class="font-mono text-emerald-700 font-extrabold">#SIM-000000</strong>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-500">Status:</span>
+          <span class="font-semibold text-emerald-700">✓ Aprovado (Simulado)</span>
+        </div>
+      </div>
+
+      <button 
+        type="button" 
+        onclick="closeSuccessModal()"
+        class="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition-colors"
+      >
+        Voltar à Vitrine
+      </button>
+    </div>
+  </div>
+
+  <!-- CONTAINER DE NOTIFICAÇÕES (TOASTS) -->
+  <div id="toast-container" class="fixed top-20 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <!-- FOOTER SIMPLES E LIMPO -->
+  <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 mt-16 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+      <p class="text-slate-300 font-semibold">FarmaSim • Vitrine Farmacêutica Demonstrativa</p>
+      <p class="text-slate-500 text-[11px]">
+        Aviso: Todos os 10 medicamentos e detalhes apresentados nesta vitrine são puramente fictícios.
+      </p>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="products.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

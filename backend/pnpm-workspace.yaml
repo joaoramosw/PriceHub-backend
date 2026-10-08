@@ -1,0 +1,13 @@
+packages:
+  - apps/*
+  - packages/*
+  - tests/*
+
+onlyBuiltDependencies:
+  - "@prisma/engines"
+  - prisma
+  - esbuild
+  - "@biomejs/biome"
+  - cpu-features
+  - ssh2
+  - protobufjs

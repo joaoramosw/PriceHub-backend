@@ -1,0 +1,111 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+  runtime             = "nodejs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Farmacia {
+  id       String   @id
+  nome     String
+  criadoEm DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+  ofertas  Oferta[]
+
+  @@map("farmacias")
+}
+
+model Medicamento {
+  id                   String   @id @db.Uuid
+  chaveCanonica        String   @unique @map("chave_canonica")
+  registroMs           String?  @unique @map("registro_ms")
+  ean                  String?  @unique
+  nome                 String
+  principioAtivo       String   @map("principio_ativo")
+  principioNormalizado String   @map("principio_normalizado")
+  concentracaoValor    Float    @map("concentracao_valor")
+  concentracaoUnidade  String   @map("concentracao_unidade")
+  forma                String
+  quantidadeValor      Float    @map("quantidade_valor")
+  quantidadeUnidade    String   @map("quantidade_unidade")
+  fabricante           String?
+  categoria            String?
+  fonteDosDados        String   @map("fonte_dos_dados")
+  criadoEm             DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm         DateTime @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+  ofertas              Oferta[]
+
+  @@map("medicamentos")
+}
+
+model Oferta {
+  id            String           @id @db.Uuid
+  farmaciaId    String           @map("farmacia_id")
+  externalId    String           @map("external_id")
+  medicamentoId String           @map("medicamento_id") @db.Uuid
+  nomeNaOrigem  String           @map("nome_na_origem")
+  precoCentavos Int              @map("preco_centavos")
+  atualizadoEm  DateTime         @map("atualizado_em") @db.Timestamptz(3)
+  versao        Int              @default(1)
+  criadoEm      DateTime         @default(now()) @map("criado_em") @db.Timestamptz(3)
+  farmacia      Farmacia         @relation(fields: [farmaciaId], references: [id])
+  medicamento   Medicamento      @relation(fields: [medicamentoId], references: [id])
+  historico     HistoricoPreco[]
+
+  @@unique([farmaciaId, externalId])
+  @@index([medicamentoId])
+  @@map("ofertas")
+}
+
+model HistoricoPreco {
+  id                    String   @id @db.Uuid
+  ofertaId              String   @map("oferta_id") @db.Uuid
+  precoAnteriorCentavos Int?     @map("preco_anterior_centavos")
+  precoCentavos         Int      @map("preco_centavos")
+  origem                String
+  correlationId         String   @map("correlation_id")
+  registradoEm          DateTime @default(now()) @map("registrado_em") @db.Timestamptz(3)
+  oferta                Oferta   @relation(fields: [ofertaId], references: [id])
+
+  @@index([ofertaId, registradoEm])
+  @@map("historico_precos")
+}
+
+model OfertaNaoCorrespondida {
+  id            String   @id @db.Uuid
+  farmaciaId    String   @map("farmacia_id")
+  externalId    String   @map("external_id")
+  motivo        String
+  payload       Json
+  correlationId String   @map("correlation_id")
+  tentativas    Int      @default(1)
+  criadoEm      DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
+  atualizadoEm  DateTime @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+
+  @@unique([farmaciaId, externalId])
+  @@map("ofertas_nao_correspondidas")
+}
+
+model Outbox {
+  id          String    @id @db.Uuid
+  tipo        String
+  payload     Json
+  criadoEm    DateTime  @default(now()) @map("criado_em") @db.Timestamptz(3)
+  publicadoEm DateTime? @map("publicado_em") @db.Timestamptz(3)
+  tentativas  Int       @default(0)
+
+  @@index([publicadoEm, criadoEm])
+  @@map("outbox")
+}
+
+model EventoProcessado {
+  eventId      String   @id @map("event_id") @db.Uuid
+  tipo         String
+  processadoEm DateTime @map("processado_em") @db.Timestamptz(3)
+
+  @@map("eventos_processados")
+}

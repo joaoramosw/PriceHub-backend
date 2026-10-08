@@ -1,0 +1,692 @@
+[
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0001",
+    "nome": "Metformina / Glifage XR 500mg",
+    "principioAtivo": "Cloridrato de Metformina",
+    "concentracao": {
+      "valor": 500,
+      "unidade": "mg"
+    },
+    "forma": "comprimido liberacao prolongada",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "Merck / EMS Genéricos",
+    "registroMs": "1008903450019",
+    "ean": null,
+    "categoria": "Diabetes & Metabolismo",
+    "precoCentavos": 1490,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0002",
+    "nome": "Losartana Potássica 50mg",
+    "principioAtivo": "Losartana Potássica",
+    "concentracao": {
+      "valor": 50,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "Medley / Eurofarma",
+    "registroMs": "1018104210023",
+    "ean": null,
+    "categoria": "Hipertensão & Coração",
+    "precoCentavos": 1150,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0003",
+    "nome": "Dipirona Sódica Gotas 500mg/ml",
+    "principioAtivo": "Dipirona Monoidratada",
+    "concentracao": {
+      "valor": 500,
+      "unidade": "mg/ml"
+    },
+    "forma": "gotas",
+    "quantidade": {
+      "valor": 20,
+      "unidade": "ml"
+    },
+    "fabricante": "Neo Química / Sanofi",
+    "registroMs": "1558400920015",
+    "ean": null,
+    "categoria": "Dores & Febre",
+    "precoCentavos": 890,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0004",
+    "nome": "Omeprazol 20mg",
+    "principioAtivo": "Omeprazol Microgrânulos",
+    "concentracao": {
+      "valor": 20,
+      "unidade": "mg"
+    },
+    "forma": "capsula",
+    "quantidade": {
+      "valor": 28,
+      "unidade": "unidade"
+    },
+    "fabricante": "Teuto / Cimed",
+    "registroMs": "1037002100038",
+    "ean": null,
+    "categoria": "Estômago & Digestão",
+    "precoCentavos": 1990,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0005",
+    "nome": "Hidroclorotiazida 25mg",
+    "principioAtivo": "Hidroclorotiazida",
+    "concentracao": {
+      "valor": 25,
+      "unidade": "mg"
+    },
+    "forma": "comprimido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "EMS S/A",
+    "registroMs": "1023505600012",
+    "ean": null,
+    "categoria": "Hipertensão & Diuréticos",
+    "precoCentavos": 650,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0006",
+    "nome": "Nimesulida 100mg",
+    "principioAtivo": "Nimesulida",
+    "concentracao": {
+      "valor": 100,
+      "unidade": "mg"
+    },
+    "forma": "comprimido",
+    "quantidade": {
+      "valor": 12,
+      "unidade": "unidade"
+    },
+    "fabricante": "Aché / Medley",
+    "registroMs": "1057301120021",
+    "ean": null,
+    "categoria": "Anti-inflamatórios",
+    "precoCentavos": 1520,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0007",
+    "nome": "Tadalafila Diário 5mg",
+    "principioAtivo": "Tadalafila Micronizada",
+    "concentracao": {
+      "valor": 5,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "Eurofarma / Eli Lilly",
+    "registroMs": "1004308110049",
+    "ean": null,
+    "categoria": "Saúde Masculina",
+    "precoCentavos": 4200,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0008",
+    "nome": "Sinvastatina 20mg",
+    "principioAtivo": "Sinvastatina",
+    "concentracao": {
+      "valor": 20,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "Sandoz / EMS",
+    "registroMs": "1004703190014",
+    "ean": null,
+    "categoria": "Colesterol & Lipídios",
+    "precoCentavos": 1890,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0009",
+    "nome": "Ibuprofeno 600mg",
+    "principioAtivo": "Ibuprofeno",
+    "concentracao": {
+      "valor": 600,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 20,
+      "unidade": "unidade"
+    },
+    "fabricante": "Neo Química / Abbott",
+    "registroMs": "1558402150037",
+    "ean": null,
+    "categoria": "Dores & Febre",
+    "precoCentavos": 2150,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "externalId": "BIO-0010",
+    "nome": "Simeticona Gotas 75mg/ml",
+    "principioAtivo": "Simeticona Emulsão",
+    "concentracao": {
+      "valor": 75,
+      "unidade": "mg/ml"
+    },
+    "forma": "gotas",
+    "quantidade": {
+      "valor": 15,
+      "unidade": "ml"
+    },
+    "fabricante": "Cimed / Takeda (Luftal)",
+    "registroMs": "1438100280010",
+    "ean": null,
+    "categoria": "Estômago & Digestão",
+    "precoCentavos": 1280,
+    "atualizadoNaOrigemEm": "2026-10-08T14:15:58.935Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-MET-500",
+    "nome": "Cloridrato de Metformina 500mg 30 comp lib prol",
+    "principioAtivo": "Cloridrato de Metformina",
+    "concentracao": {
+      "valor": 500,
+      "unidade": "mg"
+    },
+    "forma": "comprimido liberacao prolongada",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "Merck",
+    "registroMs": "1008903450019",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 1190,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-LOS-50",
+    "nome": "Losartana Potássica 50mg 30 comp rev",
+    "principioAtivo": "Losartana Potássica",
+    "concentracao": {
+      "valor": 50,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "Medley",
+    "registroMs": "1018104210023",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 890,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-DIP-500",
+    "nome": "Dipirona Monoidratada 500mg/ml gts 20ml",
+    "principioAtivo": "Dipirona Monoidratada",
+    "concentracao": {
+      "valor": 500,
+      "unidade": "mg/ml"
+    },
+    "forma": "gotas",
+    "quantidade": {
+      "valor": 20,
+      "unidade": "ml"
+    },
+    "fabricante": "Neo Química",
+    "registroMs": "1558400920015",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 690,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-OME-20",
+    "nome": "Omeprazol Microgrânulos 20mg 28 caps",
+    "principioAtivo": "Omeprazol Microgrânulos",
+    "concentracao": {
+      "valor": 20,
+      "unidade": "mg"
+    },
+    "forma": "capsula",
+    "quantidade": {
+      "valor": 28,
+      "unidade": "unidade"
+    },
+    "fabricante": "Teuto",
+    "registroMs": "1037002100038",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 1650,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-HID-25",
+    "nome": "Hidroclorotiazida 25mg 30 comp",
+    "principioAtivo": "Hidroclorotiazida",
+    "concentracao": {
+      "valor": 25,
+      "unidade": "mg"
+    },
+    "forma": "comprimido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "EMS S/A",
+    "registroMs": "1023505600012",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 490,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-NIM-100",
+    "nome": "Nimesulida 100mg 12 comp",
+    "principioAtivo": "Nimesulida",
+    "concentracao": {
+      "valor": 100,
+      "unidade": "mg"
+    },
+    "forma": "comprimido",
+    "quantidade": {
+      "valor": 12,
+      "unidade": "unidade"
+    },
+    "fabricante": "Aché",
+    "registroMs": "1057301120021",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 1290,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-TAD-5",
+    "nome": "Tadalafila Micronizada 5mg 30 comp rev",
+    "principioAtivo": "Tadalafila Micronizada",
+    "concentracao": {
+      "valor": 5,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "Eurofarma",
+    "registroMs": "1004308110049",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 3690,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-SIN-20",
+    "nome": "Sinvastatina 20mg 30 comp rev",
+    "principioAtivo": "Sinvastatina",
+    "concentracao": {
+      "valor": 20,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "Sandoz",
+    "registroMs": "1004703190014",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 1450,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-IBU-600",
+    "nome": "Ibuprofeno 600mg 20 comp rev",
+    "principioAtivo": "Ibuprofeno",
+    "concentracao": {
+      "valor": 600,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 20,
+      "unidade": "unidade"
+    },
+    "fabricante": "Neo Química",
+    "registroMs": "1558402150037",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 1790,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "externalId": "FA-SIM-75",
+    "nome": "Simeticona Emulsão 75mg/ml gts 15ml",
+    "principioAtivo": "Simeticona Emulsão",
+    "concentracao": {
+      "valor": 75,
+      "unidade": "mg/ml"
+    },
+    "forma": "gotas",
+    "quantidade": {
+      "valor": 15,
+      "unidade": "ml"
+    },
+    "fabricante": "Cimed",
+    "registroMs": "1438100280010",
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 990,
+    "atualizadoNaOrigemEm": "2026-10-08T14:16:12.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0001",
+    "nome": "METFORMINA 500MG C/30 COMP LIB PROL",
+    "principioAtivo": "METFORMINA",
+    "concentracao": {
+      "valor": 500,
+      "unidade": "mg"
+    },
+    "forma": "comprimido liberacao prolongada",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "MERCK",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 999,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0002",
+    "nome": "LOSARTANA POTASSICA 50MG C/30 COMP REV",
+    "principioAtivo": "LOSARTANA POTASSICA",
+    "concentracao": {
+      "valor": 50,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "MEDLEY",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 749,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0003",
+    "nome": "DIPIRONA SODICA 500MG/ML GTS FR 20ML",
+    "principioAtivo": "DIPIRONA SODICA",
+    "concentracao": {
+      "valor": 500,
+      "unidade": "mg/ml"
+    },
+    "forma": "gotas",
+    "quantidade": {
+      "valor": 20,
+      "unidade": "ml"
+    },
+    "fabricante": "NEO QUIMICA",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 599,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0004",
+    "nome": "OMEPRAZOL 20MG C/28 CAPS",
+    "principioAtivo": "OMEPRAZOL",
+    "concentracao": {
+      "valor": 20,
+      "unidade": "mg"
+    },
+    "forma": "capsula",
+    "quantidade": {
+      "valor": 28,
+      "unidade": "unidade"
+    },
+    "fabricante": "TEUTO",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 1399,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0005",
+    "nome": "HIDROCLOROTIAZIDA 25MG C/30 COMP",
+    "principioAtivo": "HIDROCLOROTIAZIDA",
+    "concentracao": {
+      "valor": 25,
+      "unidade": "mg"
+    },
+    "forma": "comprimido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "EMS S/A",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 399,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0006",
+    "nome": "NIMESULIDA 100MG C/12 COMP",
+    "principioAtivo": "NIMESULIDA",
+    "concentracao": {
+      "valor": 100,
+      "unidade": "mg"
+    },
+    "forma": "comprimido",
+    "quantidade": {
+      "valor": 12,
+      "unidade": "unidade"
+    },
+    "fabricante": "ACHE",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 1099,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0007",
+    "nome": "TADALAFILA 5MG C/30 COMP REV",
+    "principioAtivo": "TADALAFILA",
+    "concentracao": {
+      "valor": 5,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "EUROFARMA",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 2999,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0008",
+    "nome": "SINVASTATINA 20MG C/30 COMP REV",
+    "principioAtivo": "SINVASTATINA",
+    "concentracao": {
+      "valor": 20,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 30,
+      "unidade": "unidade"
+    },
+    "fabricante": "SANDOZ",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 1299,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0009",
+    "nome": "IBUPROFENO 600MG C/20 COMP REV",
+    "principioAtivo": "IBUPROFENO",
+    "concentracao": {
+      "valor": 600,
+      "unidade": "mg"
+    },
+    "forma": "comprimido revestido",
+    "quantidade": {
+      "valor": 20,
+      "unidade": "unidade"
+    },
+    "fabricante": "NEO QUIMICA",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 1499,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "externalId": "DP-0010",
+    "nome": "SIMETICONA 75MG/ML GTS FR 15ML",
+    "principioAtivo": "SIMETICONA",
+    "concentracao": {
+      "valor": 75,
+      "unidade": "mg/ml"
+    },
+    "forma": "gotas",
+    "quantidade": {
+      "valor": 15,
+      "unidade": "ml"
+    },
+    "fabricante": "CIMED",
+    "registroMs": null,
+    "ean": null,
+    "categoria": null,
+    "precoCentavos": 799,
+    "atualizadoNaOrigemEm": "2026-10-08T14:17:00.000Z",
+    "coletadoEm": "2026-10-08T13:00:00.000Z"
+  }
+]

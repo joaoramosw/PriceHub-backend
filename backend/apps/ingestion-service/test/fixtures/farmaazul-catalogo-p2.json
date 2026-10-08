@@ -1,0 +1,66 @@
+{
+  "items": [
+    {
+      "codigo": "FA-NIM-100",
+      "descricao": "Nimesulida 100mg 12 comp",
+      "principio_ativo": "Nimesulida",
+      "concentracao": "100mg",
+      "forma_farmaceutica": "comprimido",
+      "quantidade_embalagem": 12,
+      "fabricante": "Aché",
+      "registro_anvisa": "1057301120021",
+      "preco_centavos": 1290,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    },
+    {
+      "codigo": "FA-TAD-5",
+      "descricao": "Tadalafila Micronizada 5mg 30 comp rev",
+      "principio_ativo": "Tadalafila Micronizada",
+      "concentracao": "5mg",
+      "forma_farmaceutica": "comprimido revestido",
+      "quantidade_embalagem": 30,
+      "fabricante": "Eurofarma",
+      "registro_anvisa": "1004308110049",
+      "preco_centavos": 3690,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    },
+    {
+      "codigo": "FA-SIN-20",
+      "descricao": "Sinvastatina 20mg 30 comp rev",
+      "principio_ativo": "Sinvastatina",
+      "concentracao": "20mg",
+      "forma_farmaceutica": "comprimido revestido",
+      "quantidade_embalagem": 30,
+      "fabricante": "Sandoz",
+      "registro_anvisa": "1004703190014",
+      "preco_centavos": 1450,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    },
+    {
+      "codigo": "FA-IBU-600",
+      "descricao": "Ibuprofeno 600mg 20 comp rev",
+      "principio_ativo": "Ibuprofeno",
+      "concentracao": "600mg",
+      "forma_farmaceutica": "comprimido revestido",
+      "quantidade_embalagem": 20,
+      "fabricante": "Neo Química",
+      "registro_anvisa": "1558402150037",
+      "preco_centavos": 1790,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    },
+    {
+      "codigo": "FA-SIM-75",
+      "descricao": "Simeticona Emulsão 75mg/ml gts 15ml",
+      "principio_ativo": "Simeticona Emulsão",
+      "concentracao": "75mg/ml",
+      "forma_farmaceutica": "solução oral em gotas",
+      "quantidade_embalagem": 15,
+      "fabricante": "Cimed",
+      "registro_anvisa": "1438100280010",
+      "preco_centavos": 990,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    }
+  ],
+  "page": 2,
+  "total_pages": 2
+}

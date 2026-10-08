@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/coverage
+**/src/generated
+**/.env
+**/*.log
+**/test
+tests/**
+!tests/*/package.json
+scripts

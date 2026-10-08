@@ -1,0 +1,118 @@
+/* FarmaSim - Custom Styles & Micro-Interactions */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+:root {
+  --font-brand: 'Outfit', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --primary-emerald: #059669;
+  --primary-dark: #064e3b;
+  --accent-teal: #0d9488;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-brand);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Tarja Vermelha Pattern */
+.tarja-vermelha-stripe {
+  background: repeating-linear-gradient(
+    -45deg,
+    #dc2626,
+    #dc2626 10px,
+    #b91c1c 10px,
+    #b91c1c 20px
+  );
+}
+
+/* Modal Animations */
+.modal-enter {
+  opacity: 0;
+  transform: scale(0.96) translateY(8px);
+}
+.modal-enter-active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  transition: opacity 250ms ease-out, transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+.modal-exit-active {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 150ms ease-in, transform 150ms ease-in;
+}
+
+/* Drawer / Cart Slide */
+.cart-open {
+  transform: translateX(0) !important;
+}
+
+/* Toast Animation */
+@keyframes slideDownIn {
+  from {
+    transform: translateY(-20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.toast-animate-in {
+  animation: slideDownIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Badge Pulse */
+@keyframes softPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+.badge-bump {
+  animation: softPulse 0.35s ease-in-out;
+}
+
+/* Card hover glow */
+.card-hover-effect {
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card-hover-effect:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -8px rgba(5, 150, 105, 0.12), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
+}
+
+/* Glassmorphism subtle */
+.glass-header {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.92);
+}

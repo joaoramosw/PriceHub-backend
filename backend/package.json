@@ -1,0 +1,36 @@
+{
+  "name": "pricehub-backend",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.20.0",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "postinstall": "pnpm --filter \"./apps/**\" exec prisma generate",
+    "build": "pnpm -r --filter ./packages/** --filter ./apps/** run build",
+    "typecheck": "pnpm -r run typecheck",
+    "dev:up": "docker compose -f ../docker-compose.yml up -d --build --wait",
+    "dev:down": "docker compose -f ../docker-compose.yml down",
+    "dev:reset": "docker compose -f ../docker-compose.yml down -v && pnpm dev:up",
+    "dev:logs": "docker compose -f ../docker-compose.yml logs -f --tail 100",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "test": "vitest run --project unit --project integration",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
+    "test:e2e": "vitest run --project e2e",
+    "demo:preco": "tsx --conditions=@pricehub/source scripts/demo-preco.ts",
+    "demo:resiliencia": "tsx --conditions=@pricehub/source scripts/demo-resiliencia.ts",
+    "demo:escala": "tsx --conditions=@pricehub/source scripts/demo-escala.ts",
+    "gerar-seed": "tsx --conditions=@pricehub/source scripts/gerar-seed.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "@pricehub/testing": "workspace:*",
+    "@types/node": "^24.19.1",
+    "tsx": "^4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  }
+}

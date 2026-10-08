@@ -1,0 +1,66 @@
+{
+  "items": [
+    {
+      "codigo": "FA-MET-500",
+      "descricao": "Cloridrato de Metformina 500mg 30 comp lib prol",
+      "principio_ativo": "Cloridrato de Metformina",
+      "concentracao": "500mg",
+      "forma_farmaceutica": "comprimido de liberação prolongada",
+      "quantidade_embalagem": 30,
+      "fabricante": "Merck",
+      "registro_anvisa": "1008903450019",
+      "preco_centavos": 1190,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    },
+    {
+      "codigo": "FA-LOS-50",
+      "descricao": "Losartana Potássica 50mg 30 comp rev",
+      "principio_ativo": "Losartana Potássica",
+      "concentracao": "50mg",
+      "forma_farmaceutica": "comprimido revestido",
+      "quantidade_embalagem": 30,
+      "fabricante": "Medley",
+      "registro_anvisa": "1018104210023",
+      "preco_centavos": 890,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    },
+    {
+      "codigo": "FA-DIP-500",
+      "descricao": "Dipirona Monoidratada 500mg/ml gts 20ml",
+      "principio_ativo": "Dipirona Monoidratada",
+      "concentracao": "500mg/ml",
+      "forma_farmaceutica": "solução oral em gotas",
+      "quantidade_embalagem": 20,
+      "fabricante": "Neo Química",
+      "registro_anvisa": "1558400920015",
+      "preco_centavos": 690,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    },
+    {
+      "codigo": "FA-OME-20",
+      "descricao": "Omeprazol Microgrânulos 20mg 28 caps",
+      "principio_ativo": "Omeprazol Microgrânulos",
+      "concentracao": "20mg",
+      "forma_farmaceutica": "cápsula dura",
+      "quantidade_embalagem": 28,
+      "fabricante": "Teuto",
+      "registro_anvisa": "1037002100038",
+      "preco_centavos": 1650,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    },
+    {
+      "codigo": "FA-HID-25",
+      "descricao": "Hidroclorotiazida 25mg 30 comp",
+      "principio_ativo": "Hidroclorotiazida",
+      "concentracao": "25mg",
+      "forma_farmaceutica": "comprimido",
+      "quantidade_embalagem": 30,
+      "fabricante": "EMS S/A",
+      "registro_anvisa": "1023505600012",
+      "preco_centavos": 490,
+      "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+    }
+  ],
+  "page": 1,
+  "total_pages": 2
+}

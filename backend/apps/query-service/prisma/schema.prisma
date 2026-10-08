@@ -1,0 +1,53 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+  runtime             = "nodejs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ComparacaoMedicamento {
+  medicamentoId      String             @id @map("medicamento_id") @db.Uuid
+  nome               String
+  principioAtivo     String             @map("principio_ativo")
+  concentracao       String
+  forma              String
+  quantidade         String
+  apresentacao       String
+  categoria          String?
+  termosDeBusca      String             @map("termos_de_busca")
+  menorPrecoCentavos Int?               @map("menor_preco_centavos")
+  maiorPrecoCentavos Int?               @map("maior_preco_centavos")
+  qtdFarmacias       Int                @default(0) @map("qtd_farmacias")
+  atualizadoEm       DateTime           @default(now()) @updatedAt @map("atualizado_em") @db.Timestamptz(3)
+  ofertas            ComparacaoOferta[]
+
+  @@index([categoria])
+  @@map("comparacao_medicamentos")
+}
+
+model ComparacaoOferta {
+  medicamentoId String                @map("medicamento_id") @db.Uuid
+  farmaciaId    String                @map("farmacia_id")
+  farmaciaNome  String                @map("farmacia_nome")
+  ofertaId      String                @map("oferta_id") @db.Uuid
+  precoCentavos Int                   @map("preco_centavos")
+  atualizadoEm  DateTime              @map("atualizado_em") @db.Timestamptz(3)
+  medicamento   ComparacaoMedicamento @relation(fields: [medicamentoId], references: [medicamentoId])
+
+  @@id([medicamentoId, farmaciaId])
+  @@index([farmaciaId])
+  @@map("comparacao_ofertas")
+}
+
+model EventoProcessado {
+  eventId      String   @id @map("event_id") @db.Uuid
+  tipo         String
+  processadoEm DateTime @map("processado_em") @db.Timestamptz(3)
+
+  @@map("eventos_processados")
+}
