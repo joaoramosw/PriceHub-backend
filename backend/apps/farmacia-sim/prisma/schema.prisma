@@ -1,0 +1,21 @@
+generator client {
+  provider               = "prisma-client"
+  output                 = "../src/generated/prisma"
+  moduleFormat           = "esm"
+  importFileExtension    = "js"
+  runtime                = "nodejs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Produto {
+  id            Int      @id
+  codigo        String   @unique
+  dados         Json
+  precoCentavos Int      @map("preco_centavos")
+  atualizadoEm  DateTime @map("atualizado_em") @db.Timestamptz(3)
+
+  @@map("produtos")
+}
