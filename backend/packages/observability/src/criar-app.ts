@@ -62,3 +62,4 @@ export async function criarApp(opcoes: OpcoesDeApp): Promise<AppPriceHub> {
 
   return app
 }
+export type { SwaggerOptions } from '@fastify/swagger'
