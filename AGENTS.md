@@ -20,8 +20,9 @@ Cenário-chave: preço muda numa farmácia → evento → PriceHub processa → 
 | `backend/packages/messaging` | conexão, publish com confirm, consume, retry, DLQ, idempotência |
 | `backend/packages/observability` | logger, correlationId, problem+json, plugin `/health` |
 | `backend/packages/testing` | helpers de Testcontainers e fixtures |
-| `backend/tests/e2e` | cenários ponta a ponta contra o compose |
+| `backend/tests/e2e` | cenários de avaliação (`cenarios/`) reutilizados pelos testes e2e e pelos `demo:*` |
 | `backend/scripts` | `gerar-seed`, `demo-preco`, `demo-resiliencia`, `demo-escala` |
+| `backend/Dockerfile` | Dockerfile único multi-stage, um target por app |
 | `infra/` | `init.sql` do Postgres, topologia e config do RabbitMQ |
 | `docs/` | arquitetura, ADRs, padrões, guia de IA, runbook, material do TCC |
 
@@ -36,7 +37,10 @@ pnpm -C backend test                 # unit + integração (Testcontainers)
 pnpm -C backend test:e2e             # exige o compose de pé
 pnpm -C backend demo:preco           # cenário de avaliação
 docker compose logs <servico> --tail 100
+docker compose logs --no-log-prefix | grep <correlationId>   # rastreia um fluxo
 ```
+
+Use `127.0.0.1` (não `localhost`) em scripts e `curl`; o catalog não tem porta no host (`docker compose exec catalog-service wget -qO- http://127.0.0.1:3002/health`).
 
 ## Regras de ouro
 

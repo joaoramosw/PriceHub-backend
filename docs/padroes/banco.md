@@ -1,9 +1,10 @@
 # Padrões de banco de dados
 
 - **PostgreSQL 16**, um banco lógico por serviço (ver ADR 0006). Bancos criados em `infra/postgres/init.sql`.
-- **Prisma 7** com `prisma.config.ts`, gerador `prisma-client` (ESM, saída em `src/generated/prisma`) e `@prisma/adapter-pg`.
+- **Prisma 7** com `prisma.config.ts`, gerador `prisma-client` (ESM, saída em `src/generated/prisma`, fora do git) e `@prisma/adapter-pg`. O client é gerado no `build` de cada app.
 - **Migrações** versionadas em `apps/<servico>/prisma/migrations/`, aplicadas no start do container com `prisma migrate deploy`.
-  - Para criar: `pnpm -C backend/apps/<servico> exec prisma migrate dev --name <descricao>` com o compose de pé.
+  - Para criar: com o compose de pé, `DATABASE_URL=postgresql://<usuario>:<senha>@127.0.0.1:5433/<banco> npx prisma migrate dev --create-only --name <descricao>` dentro de `backend/apps/<servico>` (ver [runbook](../runbook.md#operações-comuns)).
+  - A migração inicial de cada serviço foi gerada com `prisma migrate diff --from-empty --to-schema`.
   - Nunca edite uma migração já commitada; crie outra.
 - **Convenções de tabela:**
   - Tabelas e colunas em `snake_case` no banco (`@@map`/`@map`), modelos e campos em `camelCase`/`PascalCase` no Prisma.

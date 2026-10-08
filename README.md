@@ -28,8 +28,12 @@ pnpm -C backend install && pnpm -C backend demo:preco
 | BioFarma Verde (simulada) | http://localhost:4001 · [/docs](http://localhost:4001/docs) | REST camelCase, webhook |
 | FarmaAzul Confiança (simulada) | http://localhost:4002 · [/docs](http://localhost:4002/docs) | snake_case paginado, webhook |
 | DrogaPopular Express (simulada) | http://localhost:4003 · [/docs](http://localhost:4003/docs) | legado, só polling |
-| RabbitMQ UI | http://localhost:15672 | usuário e senha do `.env` |
+| RabbitMQ UI | http://localhost:15672 | usuário e senha do `.env` (porta configurável em `RABBITMQ_UI_HOST_PORT`) |
 | PostgreSQL | localhost:5433 | um banco lógico por serviço |
+
+## Resultados
+
+Alteração de preço numa farmácia → evento → catálogo → read model → SSE: **mediana de 81 ms** (critério: < 2 s). O sistema também foi validado com o catalog fora do ar (sem perda) e com 2 instâncias (sem duplicidade). Detalhes em [`docs/tcc/resultados-testes.md`](docs/tcc/resultados-testes.md).
 
 ## Estrutura
 

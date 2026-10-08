@@ -31,7 +31,7 @@ Todos os serviços Node expõem `GET /health` (checa banco e, quando houver, bro
 | `GET /coletas` | últimas coletas brutas (auditoria) |
 
 - **Adapters** (`src/connectors/<farmacia>/`), todos implementando `PharmacyConnector` (`buscarCatalogo`, `converterWebhook`).
-- **Agendamento:** sync completo no boot e a cada `SYNC_INTERVAL_MS` (padrão 60 s) para todas as farmácias; polling da DrogaPopular a cada `DROGAPOPULAR_POLL_INTERVAL_MS` (padrão 15 s). Execuções sobrepostas da mesma tarefa são puladas.
+- **Agendamento:** sync completo no boot e a cada `SYNC_INTERVAL_MS` (padrão 60 s) para todas as farmácias; polling da DrogaPopular a cada `DROGAPOPULAR_POLL_INTERVAL_MS` (padrão 15 s). Execuções sobrepostas da mesma tarefa são puladas. O agendador é próprio ([`agendador.ts`](../../backend/apps/ingestion-service/src/modules/agendamento/agendador.ts), `setInterval` com proteção contra sobreposição) em vez de `node-cron`, porque os intervalos são configurados em milissegundos no `.env` e o polling precisa de períodos menores que um minuto.
 - **Auditoria:** cada webhook ou download é gravado em `coletas_brutas` (`farmacia_id`, `origem`, `payload jsonb`, `correlation_id`, `ofertas`, `recebido_em`) antes da conversão.
 - **Falhas:** payload fora do contrato → 400; broker indisponível → 503 (a farmácia registra a falha e o sync seguinte reconcilia); farmácia fora do ar no sync → registrado em log, nova tentativa no próximo ciclo.
 
