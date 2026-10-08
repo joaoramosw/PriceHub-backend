@@ -1,0 +1,27 @@
+{
+  "name": "@pricehub/testing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "@pricehub/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@pricehub/messaging": "workspace:*",
+    "@testcontainers/postgresql": "^12.2.0",
+    "@testcontainers/rabbitmq": "^12.2.0",
+    "amqplib": "0.10.9",
+    "testcontainers": "^12.2.0"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.8"
+  }
+}
