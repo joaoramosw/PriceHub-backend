@@ -62,6 +62,8 @@ pnpm -C backend test:e2e    # exige o compose de pé
 | `docker compose up` falha com "port is already allocated" | outro projeto usa a porta (ex.: 5432, 15672) | troque `POSTGRES_HOST_PORT` / `RABBITMQ_UI_HOST_PORT` no `.env` |
 | Docker Desktop não sobe; build cai com `EOF` / `unexpected end of JSON input` | **disco do Windows cheio**: o `docker_data.vhdx` não consegue crescer (no WSL: `dmesg` mostra `I/O error ... EXT4-fs error loading journal`) | libere espaço no C:; depois feche o Docker Desktop, rode `wsl --shutdown` e abra de novo; `docker builder prune` reduz o cache de build |
 | `curl localhost:3001` dá "connection reset" mas o container está healthy | outro processo (ex.: `wslrelay` de uma distro WSL) escuta em `[::1]:3001` | use `127.0.0.1` em vez de `localhost` |
+| `vitest` falha com `ERR_PACKAGE_IMPORT_NOT_DEFINED "#module-evaluator"` | repositório clonado num caminho com acento ou nome curto 8.3 do Windows (ex.: `C:UsersJoão...`) | clone num caminho só com ASCII (ex.: `C:devpricehub`) |
+| Testes reclamam de `src/generated/prisma` ausente | `pnpm install` não rodou o `postinstall` | `pnpm -C backend install` (gera os clients do Prisma) |
 | Serviço não fica healthy | banco ou broker indisponível, migração falhou | `docker compose logs <servico> --tail 100`; o `/health` mostra qual check falhou |
 | Preço não muda no comparador | webhook falhou, evento em retry ou DLQ | `docker compose logs --no-log-prefix \| grep <correlationId>`; RabbitMQ UI → filas `.retry` / `.dlq` |
 | Mensagens na `catalog.ingestao-oferta-recebida.dlq` | contrato inválido ou erro persistente | inspecione na UI (header `x-ultimo-erro`); corrija e reenvie com shovel ou republique |
