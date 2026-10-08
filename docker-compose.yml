@@ -52,7 +52,8 @@ services:
     image: pricehub/farmacia-sim:local
     build:
       context: ./backend
-      dockerfile: apps/farmacia-sim/Dockerfile
+      dockerfile: Dockerfile
+      target: farmacia-sim
     environment:
       <<: *node-env
       PHARMACY_ID: biofarma
@@ -121,7 +122,8 @@ services:
     <<: *node-service
     build:
       context: ./backend
-      dockerfile: apps/catalog-service/Dockerfile
+      dockerfile: Dockerfile
+      target: catalog-service
     image: pricehub/catalog-service:local
     environment:
       <<: *node-env
@@ -148,7 +150,8 @@ services:
     <<: *node-service
     build:
       context: ./backend
-      dockerfile: apps/ingestion-service/Dockerfile
+      dockerfile: Dockerfile
+      target: ingestion-service
     image: pricehub/ingestion-service:local
     environment:
       <<: *node-env
@@ -177,6 +180,34 @@ services:
         condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3001/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  query-service:
+    <<: *node-service
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: query-service
+    image: pricehub/query-service:local
+    environment:
+      <<: *node-env
+      PORT: 3000
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/query
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      RABBITMQ_PREFETCH: ${RABBITMQ_PREFETCH:-10}
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:*,http://127.0.0.1:*}
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/health > /dev/null || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 6
