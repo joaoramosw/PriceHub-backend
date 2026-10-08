@@ -106,8 +106,6 @@ export async function consumir<Tipo extends TipoDeEvento>(
       const inicio = performance.now()
       try {
         await opcoes.tratar(evento, { logger: loggerDoEvento, tentativa, fila: opcoes.fila })
-        canal.ack(mensagem)
-        loggerDoEvento.debug({ duracaoMs: Math.round(performance.now() - inicio) }, 'evento processado')
       } catch (erro) {
         if (erro instanceof MensagemDescartavel || tentativa >= maximoDeTentativas) {
           loggerDoEvento.error({ err: erro }, 'evento esgotou tentativas → DLQ')
@@ -126,16 +124,32 @@ export async function consumir<Tipo extends TipoDeEvento>(
           loggerDoEvento.error({ err: erroDeRetry }, 'falha ao agendar retry; devolvendo à fila')
           canal.nack(mensagem, false, true)
         }
+        return
       }
+      canal.ack(mensagem)
+      loggerDoEvento.debug({ duracaoMs: Math.round(performance.now() - inicio) }, 'evento processado')
     }
 
     const emAndamento = new Set<Promise<void>>()
+    let drenando = false
+    canal.on('close', () => {
+      if (drenando || !conexao.conectada) return
+      logger.warn('canal de consumo fechado com a conexão ativa; recriando o consumidor')
+      setTimeout(() => {
+        iniciar(modelo).catch((erro) => logger.error({ err: erro }, 'falha ao recriar o consumidor'))
+      }, 1000)
+    })
     const { consumerTag } = await canal.consume(opcoes.fila, (mensagem) => {
       if (!mensagem) return
-      const tarefa = processar(mensagem).finally(() => emAndamento.delete(tarefa))
+      const tarefa = processar(mensagem)
+        .catch((erro) =>
+          logger.error({ err: erro }, 'falha ao confirmar a mensagem; o broker fará a reentrega'),
+        )
+        .finally(() => emAndamento.delete(tarefa))
       emAndamento.add(tarefa)
     })
     conexao.registrarDreno(async () => {
+      drenando = true
       await canal.cancel(consumerTag).catch(() => undefined)
       await Promise.allSettled([...emAndamento])
       await canal.close().catch(() => undefined)
