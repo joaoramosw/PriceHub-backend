@@ -54,6 +54,15 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: farmacia-sim
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/apps/farmacia-sim/src
+        - action: rebuild
+          path: ./backend/packages
+          ignore:
+            - "**/dist/**"
+            - "**/test/**"
     environment:
       <<: *node-env
       PHARMACY_ID: biofarma
@@ -124,6 +133,15 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: catalog-service
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/apps/catalog-service/src
+        - action: rebuild
+          path: ./backend/packages
+          ignore:
+            - "**/dist/**"
+            - "**/test/**"
     image: pricehub/catalog-service:local
     environment:
       <<: *node-env
@@ -152,6 +170,15 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: ingestion-service
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/apps/ingestion-service/src
+        - action: rebuild
+          path: ./backend/packages
+          ignore:
+            - "**/dist/**"
+            - "**/test/**"
     image: pricehub/ingestion-service:local
     environment:
       <<: *node-env
@@ -191,6 +218,15 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: query-service
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/apps/query-service/src
+        - action: rebuild
+          path: ./backend/packages
+          ignore:
+            - "**/dist/**"
+            - "**/test/**"
     image: pricehub/query-service:local
     environment:
       <<: *node-env
