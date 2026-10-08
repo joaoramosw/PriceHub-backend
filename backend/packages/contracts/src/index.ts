@@ -1,6 +1,7 @@
 export * from './criar-envelope.js'
 export * from './envelope.js'
 export * from './eventos/catalogo-de-eventos.js'
+export * from './eventos/catalogo-medicamento-atualizado.js'
 export * from './eventos/catalogo-medicamento-cadastrado.js'
 export * from './eventos/catalogo-oferta-atualizada.js'
 export * from './eventos/catalogo-oferta-nao-correspondida.js'
