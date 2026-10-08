@@ -1,0 +1,181 @@
+{
+  "rabbit_version": "4.1.0",
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "pricehub.events",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "pricehub.dlx",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "catalog.ingestao-oferta-recebida",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic",
+        "x-dead-letter-exchange": "pricehub.dlx",
+        "x-dead-letter-routing-key": "catalog.ingestao-oferta-recebida"
+      }
+    },
+    {
+      "name": "catalog.ingestao-oferta-recebida.retry",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic",
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "catalog.ingestao-oferta-recebida"
+      }
+    },
+    {
+      "name": "catalog.ingestao-oferta-recebida.dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "query.catalogo-eventos",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic",
+        "x-dead-letter-exchange": "pricehub.dlx",
+        "x-dead-letter-routing-key": "query.catalogo-eventos"
+      }
+    },
+    {
+      "name": "query.catalogo-eventos.retry",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic",
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "query.catalogo-eventos"
+      }
+    },
+    {
+      "name": "query.catalogo-eventos.dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    },
+    {
+      "name": "revisao.ofertas-nao-correspondidas",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic",
+        "x-dead-letter-exchange": "pricehub.dlx",
+        "x-dead-letter-routing-key": "revisao.ofertas-nao-correspondidas"
+      }
+    },
+    {
+      "name": "revisao.ofertas-nao-correspondidas.retry",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic",
+        "x-dead-letter-exchange": "",
+        "x-dead-letter-routing-key": "revisao.ofertas-nao-correspondidas"
+      }
+    },
+    {
+      "name": "revisao.ofertas-nao-correspondidas.dlq",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {
+        "x-queue-type": "classic"
+      }
+    }
+  ],
+  "bindings": [
+    {
+      "source": "pricehub.events",
+      "vhost": "/",
+      "destination": "catalog.ingestao-oferta-recebida",
+      "destination_type": "queue",
+      "routing_key": "ingestao.oferta.recebida",
+      "arguments": {}
+    },
+    {
+      "source": "pricehub.dlx",
+      "vhost": "/",
+      "destination": "catalog.ingestao-oferta-recebida.dlq",
+      "destination_type": "queue",
+      "routing_key": "catalog.ingestao-oferta-recebida",
+      "arguments": {}
+    },
+    {
+      "source": "pricehub.events",
+      "vhost": "/",
+      "destination": "query.catalogo-eventos",
+      "destination_type": "queue",
+      "routing_key": "catalogo.medicamento.cadastrado",
+      "arguments": {}
+    },
+    {
+      "source": "pricehub.events",
+      "vhost": "/",
+      "destination": "query.catalogo-eventos",
+      "destination_type": "queue",
+      "routing_key": "catalogo.oferta.atualizada",
+      "arguments": {}
+    },
+    {
+      "source": "pricehub.dlx",
+      "vhost": "/",
+      "destination": "query.catalogo-eventos.dlq",
+      "destination_type": "queue",
+      "routing_key": "query.catalogo-eventos",
+      "arguments": {}
+    },
+    {
+      "source": "pricehub.events",
+      "vhost": "/",
+      "destination": "revisao.ofertas-nao-correspondidas",
+      "destination_type": "queue",
+      "routing_key": "catalogo.oferta.nao-correspondida",
+      "arguments": {}
+    },
+    {
+      "source": "pricehub.dlx",
+      "vhost": "/",
+      "destination": "revisao.ofertas-nao-correspondidas.dlq",
+      "destination_type": "queue",
+      "routing_key": "revisao.ofertas-nao-correspondidas",
+      "arguments": {}
+    }
+  ]
+}
