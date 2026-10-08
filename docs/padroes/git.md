@@ -13,7 +13,6 @@
 - Escopos: `infra`, `contracts`, `messaging`, `observability`, `testing`, `farmacia-sim`, `ingestion`, `catalog`, `query`, `e2e`, `docs`, `claude`.
 - Exemplos: `feat(catalog): adiciona matching por registro MS`, `fix(ingestion): corrige parser de preço com vírgula`.
 - **Um commit por unidade lógica**; código e testes juntos; mudança de contrato junto com `docs/arquitetura/eventos.md`.
-- Commits feitos com ajuda de IA levam o trailer `Co-Authored-By` do agente.
 
 ## Pull Requests
 - Título no formato de commit. Descrição: o quê, por quê, como validar (comandos), riscos.
