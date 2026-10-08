@@ -1,0 +1,25 @@
+generator client {
+  provider            = "prisma-client"
+  output              = "../src/generated/prisma"
+  moduleFormat        = "esm"
+  importFileExtension = "js"
+  runtime             = "nodejs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ColetaBruta {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  farmaciaId    String   @map("farmacia_id")
+  origem        String
+  payload       Json
+  correlationId String   @map("correlation_id")
+  ofertas       Int      @default(0)
+  recebidoEm    DateTime @default(now()) @map("recebido_em") @db.Timestamptz(3)
+
+  @@index([farmaciaId, recebidoEm])
+  @@index([correlationId])
+  @@map("coletas_brutas")
+}
