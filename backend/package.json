@@ -19,13 +19,14 @@
     "test:unit": "vitest run --project unit",
     "test:integration": "vitest run --project integration",
     "test:e2e": "vitest run --project e2e",
-    "demo:preco": "tsx scripts/demo-preco.ts",
-    "demo:resiliencia": "tsx scripts/demo-resiliencia.ts",
-    "demo:escala": "tsx scripts/demo-escala.ts",
-    "gerar-seed": "tsx scripts/gerar-seed.ts"
+    "demo:preco": "tsx --conditions=@pricehub/source scripts/demo-preco.ts",
+    "demo:resiliencia": "tsx --conditions=@pricehub/source scripts/demo-resiliencia.ts",
+    "demo:escala": "tsx --conditions=@pricehub/source scripts/demo-escala.ts",
+    "gerar-seed": "tsx --conditions=@pricehub/source scripts/gerar-seed.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
+    "@pricehub/testing": "workspace:*",
     "@types/node": "^24.19.1",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",

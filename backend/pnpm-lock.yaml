@@ -11,6 +11,9 @@ importers:
       '@biomejs/biome':
         specifier: 2.5.15
         version: 2.5.15
+      '@pricehub/testing':
+        specifier: workspace:*
+        version: link:packages/testing
       '@types/node':
         specifier: ^24.19.1
         version: 24.19.1
@@ -254,6 +257,12 @@ importers:
       '@types/pg':
         specifier: ^8.23.1
         version: 8.23.1
+
+  tests/e2e:
+    dependencies:
+      '@pricehub/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
 
 packages:
 
