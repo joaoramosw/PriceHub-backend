@@ -117,6 +117,33 @@ services:
       retries: 6
       start_period: 30s
 
+  catalog-service:
+    <<: *node-service
+    build:
+      context: ./backend
+      dockerfile: apps/catalog-service/Dockerfile
+    image: pricehub/catalog-service:local
+    environment:
+      <<: *node-env
+      PORT: 3002
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/catalog
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      RABBITMQ_PREFETCH: ${RABBITMQ_PREFETCH:-10}
+      OUTBOX_POLL_INTERVAL_MS: ${OUTBOX_POLL_INTERVAL_MS:-500}
+    expose:
+      - "3002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3002/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
   ingestion-service:
     <<: *node-service
     build:
