@@ -52,7 +52,9 @@ export class ProcessadorDeOfertas {
   ): Promise<ResultadoDoProcessamento> {
     for (let tentativa = 1; ; tentativa += 1) {
       try {
-        const resultado = await executarUmaVez(this.executarTransacao, evento, (tx) => this.aplicar(evento, tx))
+        const resultado = await executarUmaVez(this.executarTransacao, evento, (tx) =>
+          this.aplicar(evento, tx),
+        )
         return resultado.duplicado ? { duplicado: true } : { duplicado: false, ...resultado.resultado }
       } catch (erro) {
         if (!ehConflitoTransitorio(erro) || tentativa >= this.tentativasEmConflito) throw erro
