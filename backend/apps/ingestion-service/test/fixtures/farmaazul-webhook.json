@@ -1,0 +1,15 @@
+{
+  "type": "price.updated",
+  "data": {
+    "codigo": "FA-LOS-50",
+    "descricao": "Losartana Potássica 50mg 30 comp rev",
+    "principio_ativo": "Losartana Potássica",
+    "concentracao": "50mg",
+    "forma_farmaceutica": "comprimido revestido",
+    "quantidade_embalagem": 30,
+    "fabricante": "Medley",
+    "registro_anvisa": "1018104210023",
+    "preco_centavos": 720,
+    "ultima_atualizacao": "2026-10-08T11:16:12-03:00"
+  }
+}
