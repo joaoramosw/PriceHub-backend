@@ -20,7 +20,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
       - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "PGPASSWORD=${POSTGRES_PASSWORD} psql -h 127.0.0.1 -U ${POSTGRES_USER} -d query -tAc 'SELECT 1' > /dev/null"]
+      test: ["CMD-SHELL", "PGPASSWORD=$${POSTGRES_PASSWORD} psql -h 127.0.0.1 -U $${POSTGRES_USER} -d query -tAc 'SELECT 1' > /dev/null"]
       interval: 5s
       timeout: 5s
       retries: 20
