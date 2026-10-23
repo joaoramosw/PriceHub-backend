@@ -1,6 +1,8 @@
 node_modules/
 dist/
 coverage/
+*.tsbuildinfo
+comparador-web/public/medicamentos/
 .env
 *.log
 .DS_Store

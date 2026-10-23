@@ -18,6 +18,7 @@ flowchart TB
         ing[ingestion-service :3001<br/>adapters, HMAC, sync, polling]
         cat[catalog-service :3002 interno<br/>matching, ofertas, histórico, outbox]
         qry[query-service :3000<br/>read model, REST, SSE]
+        web[comparador-web :5173<br/>SPA React]
         mq{{RabbitMQ<br/>exchange topic pricehub.events}}
         dbi[(ingestion)]
         dbc[(catalog)]
@@ -34,7 +35,8 @@ flowchart TB
     ing --- dbi
     cat --- dbc
     qry --- dbq
-    usuario -- "REST + SSE" --> qry
+    usuario --> web
+    web -- "REST + SSE" --> qry
 ```
 
 ## Decisão de fronteira

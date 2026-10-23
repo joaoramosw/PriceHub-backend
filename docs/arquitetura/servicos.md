@@ -6,6 +6,7 @@
 | `ingestion-service` | 3001 | `ingestion` | `ingestao.oferta.recebida` | — (HTTP: webhooks, sync, polling) | Integração e padronização |
 | `catalog-service` | 3002 (só rede interna) | `catalog` | `catalogo.medicamento.cadastrado`, `catalogo.medicamento.atualizado`, `catalogo.oferta.atualizada`, `catalogo.oferta.nao-correspondida` | `ingestao.oferta.recebida` | Fonte da verdade |
 | `query-service` | 3000 | `query` | — (SSE para o usuário) | `catalogo.medicamento.*`, `catalogo.oferta.atualizada` | Read model e API pública |
+| `comparador-web` | 5173 | — | — | REST + SSE do `query-service` | SPA React para busca, comparação e preços ao vivo |
 
 Todos os serviços Node expõem `GET /health` (checa banco e, quando houver, broker) e `GET /docs` (OpenAPI gerado dos schemas TypeBox).
 
@@ -16,7 +17,7 @@ Todos os serviços Node expõem `GET /health` (checa banco e, quando houver, bro
 **Código:** [`backend/apps/farmacia-sim`](../../backend/apps/farmacia-sim) · **Detalhes:** [farmácias simuladas](farmacias-simuladas.md)
 
 - Uma imagem, três instâncias (`PHARMACY_ID=biofarma|farmaazul|drogapopular`).
-- Tabela `produtos` (`id`, `codigo`, `dados jsonb` no formato nativo, `preco_centavos`, `atualizado_em`); seed aplicado no boot se vazia.
+- Tabela `produtos` (`id`, `codigo`, `dados jsonb` no formato nativo, `preco_centavos`, `atualizado_em`); seed inicial no boot e atualização dos metadados de exibição sem alterar preços já registrados.
 - `PATCH /admin/produtos/:id/preco` grava o preço e agenda o webhook assinado (exceto DrogaPopular). `POST /admin/reset` volta ao seed.
 
 ## ingestion-service
@@ -54,7 +55,7 @@ Tabelas: `farmacias`, `medicamentos`, `ofertas`, `historico_precos`, `ofertas_na
 
 | Endpoint | Descrição |
 |---|---|
-| `GET /medicamentos?busca=&categoria=&page=&pageSize=` | itens com `menorPrecoCentavos`, `maiorPrecoCentavos`, `qtdFarmacias`, `economiaMaximaCentavos`; busca sem acento |
+| `GET /medicamentos?busca=&categoria=&page=&pageSize=` | itens com nome, dosagem, apresentação, categoria, tarja, laboratório, princípio ativo, registro MS, imagem e textos de exibição; inclui `menorPrecoCentavos`, `farmaciaMaisBarata`, `qtdFarmacias` e busca sem acento |
 | `GET /medicamentos/:id/comparacao` | medicamento + ofertas ordenadas por preço (`farmacia`, `precoCentavos`, `atualizadoEm`, `ehMenorPreco`, `diferencaParaMenorCentavos`) |
 | `GET /farmacias` · `GET /categorias` | apoio aos filtros |
 | `GET /eventos/stream` | SSE: `oferta-atualizada`, `medicamento-cadastrado`, `medicamento-atualizado` (todos com `correlationId`); heartbeat a cada 15 s |
@@ -63,3 +64,11 @@ Tabelas: `farmacias`, `medicamentos`, `ofertas`, `historico_precos`, `ofertas_na
 - A cada `oferta.atualizada`: bloqueia a linha do medicamento, aplica last-write-wins, faz upsert da oferta, recalcula os agregados e, **depois do commit**, emite o SSE.
 - Oferta que chega antes do `medicamento.cadastrado` → erro transitório → retry (100 ms × 2ⁿ no compose) até o medicamento existir.
 - CORS liberado para `CORS_ORIGINS` (padrão `http://localhost:*,http://127.0.0.1:*`).
+
+## comparador-web
+
+**Código:** [`comparador-web/`](../../comparador-web) · **Detalhes:** [comparador web](comparador-web.md)
+
+- SPA servida por nginx no Compose em `http://127.0.0.1:5173`, com fallback para rotas diretas de medicamento.
+- Lê apenas a API REST do `query-service` e compartilha uma conexão SSE para `oferta-atualizada`.
+- Imagens copiadas no build/dev de `frontend/site1/images/`; o conteúdo original em `frontend/` não é alterado.

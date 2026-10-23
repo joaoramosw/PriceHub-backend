@@ -8,6 +8,7 @@
 - [Modelo canônico](arquitetura/modelo-canonico.md) — `OfertaColetada` e regras de normalização
 - [Matching](arquitetura/matching.md) — como identificar o mesmo medicamento em fontes diferentes
 - [Farmácias simuladas](arquitetura/farmacias-simuladas.md) — os 3 contratos lado a lado
+- [Comparador web](arquitetura/comparador-web.md) — SPA React, API, SSE e execução
 
 ## Decisões (ADR)
 - [0000 — Template](adr/0000-template.md)
@@ -18,6 +19,7 @@
 - [0005 — Transactional Outbox](adr/0005-transactional-outbox.md)
 - [0006 — Banco por serviço](adr/0006-banco-por-servico.md)
 - [0007 — CQRS: read model de comparação](adr/0007-cqrs-read-model-de-comparacao.md)
+- [0008 — Interface web do comparador](adr/0008-comparador-web-spa.md)
 
 ## Padrões de desenvolvimento
 - [Código](padroes/codigo.md) · [API](padroes/api.md) · [Eventos](padroes/eventos.md) · [Banco](padroes/banco.md)
