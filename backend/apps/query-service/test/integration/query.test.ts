@@ -62,6 +62,15 @@ function medicamentoCadastrado(
       forma: 'comprimido revestido',
       quantidade: { valor: 30, unidade: 'unidade' },
       categoria: 'Hipertensão & Coração',
+      slug: medicamentoId === losartana ? 'losartana-potassica-50mg' : 'dipirona-sodica-gotas-500mg',
+      nomeExibicao: nome.replace(' 50mg', ''),
+      ...(medicamentoId === losartana
+        ? {
+            principioAtivoExibicao: 'Losartana Potássica 50mg',
+            dosagem: '50mg',
+            apresentacaoExibicao: '30 comprimidos revestidos',
+          }
+        : {}),
     },
     correlationId: 'corr-cadastro',
     source: 'teste',
@@ -238,7 +247,12 @@ describe('query-service', () => {
       `${urlBase}/medicamentos?busca=potassica`,
     )
     expect(lista).toMatchObject({ total: 1, page: 1, totalPages: 1 })
-    expect(lista.itens[0]).toMatchObject({ id: losartana, economiaMaximaCentavos: 430 })
+    expect(lista.itens[0]).toMatchObject({
+      id: losartana,
+      economiaMaximaCentavos: 430,
+      slug: 'losartana-potassica-50mg',
+      dosagem: '50mg',
+    })
     const porCategoria = await obterJson<Static<typeof PaginaDeMedicamentos>>(
       `${urlBase}/medicamentos?categoria=${encodeURIComponent('Hipertensão & Coração')}`,
     )

@@ -50,8 +50,8 @@ export class MatchingService {
       chaveCanonica: oferta.chaveCanonica!,
       registroMs: oferta.registroMs,
       ean: oferta.ean,
-      nome: exibicao.nome,
-      principioAtivo: exibicao.principioAtivo,
+      nome: oferta.nomeExibicao ?? exibicao.nome,
+      principioAtivo: oferta.principioAtivoExibicao ?? exibicao.principioAtivo,
       principioNormalizado: oferta.principioNormalizado,
       concentracaoValor: oferta.concentracao.valor,
       concentracaoUnidade: oferta.concentracao.unidade,
@@ -60,6 +60,21 @@ export class MatchingService {
       quantidadeUnidade: oferta.quantidade.unidade,
       fabricante: oferta.fabricante,
       categoria: oferta.categoria,
+      slug: oferta.slug ?? null,
+      nomeExibicao: oferta.nomeExibicao ?? null,
+      dosagem: oferta.dosagem ?? null,
+      principioAtivoExibicao: oferta.principioAtivoExibicao ?? null,
+      apresentacaoExibicao: oferta.apresentacaoExibicao ?? null,
+      laboratorio: oferta.laboratorio ?? oferta.fabricante,
+      tarja: oferta.tarja ?? null,
+      tarjaTipo: oferta.tarjaTipo ?? null,
+      imagem: oferta.imagem ?? null,
+      descricao: oferta.descricao ?? null,
+      indicacao: oferta.indicacao ?? null,
+      modoDeUso: oferta.modoDeUso ?? null,
+      contraindicacao: oferta.contraindicacao ?? null,
+      avaliacao: oferta.avaliacao ?? null,
+      avaliacoesTotal: oferta.avaliacoesTotal ?? null,
       fonteDosDados: oferta.registroMs ? fonteComRegistro : fonteSomenteDescricao,
     }
   }
@@ -81,6 +96,31 @@ export class MatchingService {
       alteracao.ean = oferta.ean
     }
     if (!medicamento.categoria && oferta.categoria) alteracao.categoria = oferta.categoria
+    if (!medicamento.slug && oferta.slug) alteracao.slug = oferta.slug
+    if (!medicamento.nomeExibicao && oferta.nomeExibicao) alteracao.nomeExibicao = oferta.nomeExibicao
+    if (!medicamento.dosagem && oferta.dosagem) alteracao.dosagem = oferta.dosagem
+    if (!medicamento.principioAtivoExibicao && oferta.principioAtivoExibicao) {
+      alteracao.principioAtivoExibicao = oferta.principioAtivoExibicao
+    }
+    if (!medicamento.apresentacaoExibicao && oferta.apresentacaoExibicao) {
+      alteracao.apresentacaoExibicao = oferta.apresentacaoExibicao
+    }
+    if (!medicamento.laboratorio && (oferta.laboratorio || oferta.fabricante)) {
+      alteracao.laboratorio = oferta.laboratorio ?? oferta.fabricante
+    }
+    if (!medicamento.tarja && oferta.tarja) alteracao.tarja = oferta.tarja
+    if (!medicamento.tarjaTipo && oferta.tarjaTipo) alteracao.tarjaTipo = oferta.tarjaTipo
+    if (!medicamento.imagem && oferta.imagem) alteracao.imagem = oferta.imagem
+    if (!medicamento.descricao && oferta.descricao) alteracao.descricao = oferta.descricao
+    if (!medicamento.indicacao && oferta.indicacao) alteracao.indicacao = oferta.indicacao
+    if (!medicamento.modoDeUso && oferta.modoDeUso) alteracao.modoDeUso = oferta.modoDeUso
+    if (!medicamento.contraindicacao && oferta.contraindicacao)
+      alteracao.contraindicacao = oferta.contraindicacao
+    if (medicamento.avaliacao === null && oferta.avaliacao !== undefined)
+      alteracao.avaliacao = oferta.avaliacao
+    if (medicamento.avaliacoesTotal === null && oferta.avaliacoesTotal !== undefined) {
+      alteracao.avaliacoesTotal = oferta.avaliacoesTotal
+    }
     if (!medicamento.fabricante && oferta.fabricante) alteracao.fabricante = oferta.fabricante
     if (medicamento.fonteDosDados === fonteSomenteDescricao && oferta.registroMs) {
       const exibicao = nomeDeExibicao(oferta)

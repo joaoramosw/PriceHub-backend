@@ -32,7 +32,7 @@ describe('seeds', () => {
 
 describe('BioFarma (camelCase, preço em reais)', () => {
   it('serializa a Losartana no formato especificado', () => {
-    expect(serializarBioFarma(produtoDoSeed('biofarma', 2))).toEqual({
+    expect(serializarBioFarma(produtoDoSeed('biofarma', 2))).toMatchObject({
       id: 2,
       sku: 'BIO-0002',
       nome: 'Losartana Potássica',
@@ -57,7 +57,7 @@ describe('BioFarma (camelCase, preço em reais)', () => {
 
 describe('FarmaAzul (snake_case, centavos, registro sem máscara)', () => {
   it('serializa a Losartana no formato especificado', () => {
-    expect(serializarFarmaAzul(produtoDoSeed('farmaazul', 2))).toEqual({
+    expect(serializarFarmaAzul(produtoDoSeed('farmaazul', 2))).toMatchObject({
       codigo: 'FA-LOS-50',
       descricao: 'Losartana Potássica 50mg 30 comp rev',
       principio_ativo: 'Losartana Potássica',
@@ -81,7 +81,7 @@ describe('FarmaAzul (snake_case, centavos, registro sem máscara)', () => {
 
 describe('DrogaPopular (legado, sem registro MS, preço com vírgula)', () => {
   it('serializa a Losartana com dosagem e quantidade dentro da descrição', () => {
-    expect(serializarDrogaPopular(produtoDoSeed('drogapopular', 2))).toEqual({
+    expect(serializarDrogaPopular(produtoDoSeed('drogapopular', 2))).toMatchObject({
       COD: 'DP-0002',
       DESCRICAO: 'LOSARTANA POTASSICA 50MG C/30 COMP REV',
       LAB: 'MEDLEY',
@@ -91,7 +91,7 @@ describe('DrogaPopular (legado, sem registro MS, preço com vírgula)', () => {
 
   it('gera o arquivo com loja e data no formato brasileiro', () => {
     const arquivo = gerarArquivoDePrecos([produtoDoSeed('drogapopular', 3)], new Date('2026-10-08T13:30:00Z'))
-    expect(arquivo).toEqual({
+    expect(arquivo).toMatchObject({
       loja: 'DROGAPOPULAR EXPRESS',
       gerado_em: '08/10/2026 10:30',
       produtos: [

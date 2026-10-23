@@ -9,6 +9,20 @@ type LinhaDeMedicamento = {
   concentracao: string
   apresentacao: string
   categoria: string | null
+  slug?: string | null
+  dosagem?: string | null
+  laboratorio?: string | null
+  registroMs?: string | null
+  tarja?: string | null
+  tarjaTipo?: string | null
+  imagem?: string | null
+  descricao?: string | null
+  indicacao?: string | null
+  modoDeUso?: string | null
+  contraindicacao?: string | null
+  avaliacao?: number | null
+  avaliacoesTotal?: number | null
+  farmaciaMaisBarata?: string | null
   menorPrecoCentavos: number | null
   maiorPrecoCentavos: number | null
   qtdFarmacias: number
@@ -22,6 +36,20 @@ export function paraItem(linha: LinhaDeMedicamento): ItemDeMedicamento {
     principioAtivo: linha.principioAtivo,
     concentracao: linha.concentracao,
     apresentacao: linha.apresentacao,
+    slug: linha.slug ?? null,
+    dosagem: linha.dosagem ?? null,
+    laboratorio: linha.laboratorio ?? null,
+    registroMS: linha.registroMs ?? null,
+    tarja: linha.tarja ?? null,
+    tarjaTipo: linha.tarjaTipo ?? null,
+    imagem: linha.imagem ?? null,
+    descricao: linha.descricao ?? null,
+    indicacao: linha.indicacao ?? null,
+    modoDeUso: linha.modoDeUso ?? null,
+    contraindicacao: linha.contraindicacao ?? null,
+    avaliacao: linha.avaliacao ?? null,
+    avaliacoesTotal: linha.avaliacoesTotal ?? null,
+    farmaciaMaisBarata: linha.farmaciaMaisBarata ?? null,
     categoria: linha.categoria,
     menorPrecoCentavos: linha.menorPrecoCentavos,
     maiorPrecoCentavos: linha.maiorPrecoCentavos,
@@ -48,10 +76,16 @@ export class ComparacaoRepository {
         orderBy: { nome: 'asc' },
         skip: (filtro.page - 1) * filtro.pageSize,
         take: filtro.pageSize,
+        include: { ofertas: { orderBy: [{ precoCentavos: 'asc' }, { farmaciaNome: 'asc' }], take: 1 } },
       }),
       this.prisma.comparacaoMedicamento.count({ where }),
     ])
-    return { itens: linhas.map(paraItem), total }
+    return {
+      itens: linhas.map((linha) =>
+        paraItem({ ...linha, farmaciaMaisBarata: linha.ofertas[0]?.farmaciaNome ?? null }),
+      ),
+      total,
+    }
   }
 
   buscarComOfertas(medicamentoId: string) {

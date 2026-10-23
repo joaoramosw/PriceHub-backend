@@ -14,6 +14,15 @@ type MedicamentoDoSite = {
   laboratorio: string
   principioAtivo: string
   registroMS: string
+  tarja: string
+  tarjaTipo: string
+  imagem: string
+  descricao: string
+  indicacao: string
+  modoDeUso: string
+  contraindicacao: string
+  avaliacao: number
+  avaliacoesTotal: number
 }
 
 type Embalagem = {
@@ -138,12 +147,25 @@ function paraBioFarma(medicamento: MedicamentoDoSite): ProdutoDoSeed {
       id: medicamento.id,
       sku,
       nome: medicamento.nome,
-      dosagem: medicamento.dosagem,
+      slug: medicamento.slug,
       apresentacao: medicamento.apresentacao,
       principioAtivo: medicamento.principioAtivo,
-      laboratorio: medicamento.laboratorio,
       registroMS: medicamento.registroMS,
       categoria: medicamento.categoria,
+      nomeExibicao: medicamento.nome,
+      dosagem: medicamento.dosagem,
+      principioAtivoExibicao: medicamento.principioAtivo,
+      apresentacaoExibicao: medicamento.apresentacao,
+      laboratorio: medicamento.laboratorio,
+      tarja: medicamento.tarja,
+      tarjaTipo: medicamento.tarjaTipo,
+      imagem: medicamento.imagem,
+      descricao: medicamento.descricao,
+      indicacao: medicamento.indicacao,
+      modoDeUso: medicamento.modoDeUso,
+      contraindicacao: medicamento.contraindicacao,
+      avaliacao: medicamento.avaliacao,
+      avaliacoesTotal: medicamento.avaliacoesTotal,
     },
   }
 }
@@ -169,6 +191,22 @@ function paraFarmaAzul(medicamento: MedicamentoDoSite): ProdutoDoSeed {
       quantidade_embalagem: embalagem.quantidade,
       fabricante: primeiroLaboratorio(medicamento.laboratorio),
       registro_anvisa: medicamento.registroMS.replace(/\D/g, ''),
+      slug: medicamento.slug,
+      nome_exibicao: medicamento.nome,
+      dosagem: medicamento.dosagem,
+      principio_ativo_exibicao: medicamento.principioAtivo,
+      apresentacao_exibicao: medicamento.apresentacao,
+      laboratorio_completo: medicamento.laboratorio,
+      registro_ms_pricehub: medicamento.registroMS,
+      tarja: medicamento.tarja,
+      tarja_tipo: medicamento.tarjaTipo,
+      imagem: medicamento.imagem,
+      descricao_comercial: medicamento.descricao,
+      indicacao: medicamento.indicacao,
+      modo_de_uso: medicamento.modoDeUso,
+      contraindicacao: medicamento.contraindicacao,
+      avaliacao: medicamento.avaliacao,
+      avaliacoes_total: medicamento.avaliacoesTotal,
     },
   }
 }
@@ -190,6 +228,22 @@ function paraDrogaPopular(medicamento: MedicamentoDoSite): ProdutoDoSeed {
       COD: cod,
       DESCRICAO: descricao,
       LAB: semAcentos(primeiroLaboratorio(medicamento.laboratorio)).toUpperCase(),
+      REGISTRO_MS: medicamento.registroMS,
+      SLUG: medicamento.slug,
+      NOME_EXIBICAO: medicamento.nome,
+      DOSAGEM: medicamento.dosagem,
+      PRINCIPIO_ATIVO_EXIBICAO: medicamento.principioAtivo,
+      APRESENTACAO_EXIBICAO: medicamento.apresentacao,
+      LABORATORIO: medicamento.laboratorio,
+      TARJA: medicamento.tarja,
+      TARJA_TIPO: medicamento.tarjaTipo,
+      IMAGEM: medicamento.imagem,
+      DESCRICAO_COMERCIAL: medicamento.descricao,
+      INDICACAO: medicamento.indicacao,
+      MODO_DE_USO: medicamento.modoDeUso,
+      CONTRAINDICACAO: medicamento.contraindicacao,
+      AVALIACAO: medicamento.avaliacao,
+      AVALIACOES_TOTAL: medicamento.avaliacoesTotal,
     },
   }
 }

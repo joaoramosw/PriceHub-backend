@@ -19,6 +19,19 @@ model ComparacaoMedicamento {
   quantidade         String
   apresentacao       String
   categoria          String?
+  slug               String?
+  dosagem            String?
+  laboratorio        String?
+  registroMs         String?            @map("registro_ms")
+  tarja              String?
+  tarjaTipo          String?            @map("tarja_tipo")
+  imagem             String?
+  descricao          String?
+  indicacao          String?
+  modoDeUso          String?            @map("modo_de_uso")
+  contraindicacao    String?
+  avaliacao          Float?
+  avaliacoesTotal    Int?               @map("avaliacoes_total")
   termosDeBusca      String             @map("termos_de_busca")
   menorPrecoCentavos Int?               @map("menor_preco_centavos")
   maiorPrecoCentavos Int?               @map("maior_preco_centavos")

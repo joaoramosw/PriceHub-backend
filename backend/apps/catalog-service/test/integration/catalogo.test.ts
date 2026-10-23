@@ -177,6 +177,7 @@ describe('catalog-service', () => {
     const estranha: OfertaColetada = {
       ...base!,
       externalId: 'DP-9999',
+      registroMs: null,
       nome: 'XAROPE DE GUACO 35MG/ML FR 120ML',
       principioAtivo: 'XAROPE DE GUACO',
       forma: 'outro',

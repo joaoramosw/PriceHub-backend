@@ -74,7 +74,7 @@ describe('matching dos seeds', () => {
 
   it.each([
     ['BioFarma → FarmaAzul → DrogaPopular', ['biofarma', 'farmaazul', 'drogapopular']],
-    ['DrogaPopular primeiro (sem registro MS)', ['drogapopular', 'farmaazul', 'biofarma']],
+    ['DrogaPopular primeiro com Registro MS', ['drogapopular', 'farmaazul', 'biofarma']],
     ['FarmaAzul primeiro (sem categoria)', ['farmaazul', 'drogapopular', 'biofarma']],
   ])('casa 100%% em qualquer ordem de chegada: %s', async (_ordem, farmacias) => {
     const repositorio = new MedicamentosEmMemoria()
@@ -94,13 +94,14 @@ describe('matching dos seeds', () => {
     }
     expect(repositorio.itens).toHaveLength(10)
     expect(estrategias.novo).toBe(10)
+    expect(estrategias['registro-ms']).toBe(20)
     for (const medicamento of repositorio.itens) {
       expect(medicamento.registroMs).toMatch(/^\d{13}$/)
       expect(medicamento.categoria).not.toBeNull()
       expect(medicamento.fonteDosDados).toBe('registro')
     }
     const losartana = repositorio.itens.find((item) => item.principioNormalizado === 'losartana')!
-    expect(losartana.nome).toBe('Losartana Potássica 50mg')
+    expect(losartana.nome).toBe('Losartana Potássica')
   })
 
   it('manda para não correspondidas uma oferta sem forma identificável e sem registro', async () => {

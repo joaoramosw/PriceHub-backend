@@ -48,7 +48,10 @@ export function registrarRotasDeComparacao(app: AppPriceHub, repository: Compara
       if (!medicamento) throw new RecursoNaoEncontrado(`medicamento ${request.params.id} não encontrado`)
       const menor = medicamento.menorPrecoCentavos
       return {
-        medicamento: paraItem(medicamento),
+        medicamento: paraItem({
+          ...medicamento,
+          farmaciaMaisBarata: medicamento.ofertas[0]?.farmaciaNome ?? null,
+        }),
         ofertas: medicamento.ofertas.map((oferta) => ({
           farmaciaId: oferta.farmaciaId,
           farmacia: oferta.farmaciaNome,

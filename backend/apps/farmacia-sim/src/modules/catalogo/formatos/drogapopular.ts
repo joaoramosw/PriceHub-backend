@@ -8,6 +8,22 @@ export const ProdutoDrogaPopular = Type.Object({
   DESCRICAO: Type.String(),
   LAB: Type.String(),
   PRECO: Type.String({ description: 'Preço em reais com vírgula decimal' }),
+  REGISTRO_MS: Type.Optional(Type.String()),
+  SLUG: Type.Optional(Type.String()),
+  NOME_EXIBICAO: Type.Optional(Type.String()),
+  DOSAGEM: Type.Optional(Type.String()),
+  PRINCIPIO_ATIVO_EXIBICAO: Type.Optional(Type.String()),
+  APRESENTACAO_EXIBICAO: Type.Optional(Type.String()),
+  LABORATORIO: Type.Optional(Type.String()),
+  TARJA: Type.Optional(Type.String()),
+  TARJA_TIPO: Type.Optional(Type.String()),
+  IMAGEM: Type.Optional(Type.String()),
+  DESCRICAO_COMERCIAL: Type.Optional(Type.String()),
+  INDICACAO: Type.Optional(Type.String()),
+  MODO_DE_USO: Type.Optional(Type.String()),
+  CONTRAINDICACAO: Type.Optional(Type.String()),
+  AVALIACAO: Type.Optional(Type.Number()),
+  AVALIACOES_TOTAL: Type.Optional(Type.Integer()),
 })
 export type ProdutoDrogaPopular = Static<typeof ProdutoDrogaPopular>
 

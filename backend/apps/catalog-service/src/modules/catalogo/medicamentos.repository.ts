@@ -16,6 +16,21 @@ export type Medicamento = {
   quantidadeUnidade: string
   fabricante: string | null
   categoria: string | null
+  slug: string | null
+  nomeExibicao: string | null
+  dosagem: string | null
+  principioAtivoExibicao: string | null
+  apresentacaoExibicao: string | null
+  laboratorio: string | null
+  tarja: string | null
+  tarjaTipo: string | null
+  imagem: string | null
+  descricao: string | null
+  indicacao: string | null
+  modoDeUso: string | null
+  contraindicacao: string | null
+  avaliacao: number | null
+  avaliacoesTotal: number | null
   fonteDosDados: string
 }
 
@@ -24,7 +39,28 @@ export type NovoMedicamento = Medicamento
 export type AlteracaoDeMedicamento = Partial<
   Pick<
     Medicamento,
-    'registroMs' | 'ean' | 'nome' | 'principioAtivo' | 'fabricante' | 'categoria' | 'fonteDosDados'
+    | 'registroMs'
+    | 'ean'
+    | 'nome'
+    | 'principioAtivo'
+    | 'fabricante'
+    | 'categoria'
+    | 'fonteDosDados'
+    | 'slug'
+    | 'nomeExibicao'
+    | 'dosagem'
+    | 'principioAtivoExibicao'
+    | 'apresentacaoExibicao'
+    | 'laboratorio'
+    | 'tarja'
+    | 'tarjaTipo'
+    | 'imagem'
+    | 'descricao'
+    | 'indicacao'
+    | 'modoDeUso'
+    | 'contraindicacao'
+    | 'avaliacao'
+    | 'avaliacoesTotal'
   >
 >
 
@@ -67,5 +103,21 @@ export function dadosDoEventoDeMedicamento(medicamento: Medicamento) {
       unidade: medicamento.quantidadeUnidade as Quantidade['unidade'],
     },
     categoria: medicamento.categoria,
+    slug: medicamento.slug,
+    nomeExibicao: medicamento.nomeExibicao,
+    dosagem: medicamento.dosagem,
+    principioAtivoExibicao: medicamento.principioAtivoExibicao,
+    apresentacaoExibicao: medicamento.apresentacaoExibicao,
+    laboratorio: medicamento.laboratorio,
+    registroMs: medicamento.registroMs,
+    tarja: medicamento.tarja,
+    tarjaTipo: medicamento.tarjaTipo,
+    imagem: medicamento.imagem,
+    descricao: medicamento.descricao,
+    indicacao: medicamento.indicacao,
+    modoDeUso: medicamento.modoDeUso,
+    contraindicacao: medicamento.contraindicacao,
+    avaliacao: medicamento.avaliacao,
+    avaliacoesTotal: medicamento.avaliacoesTotal,
   }
 }

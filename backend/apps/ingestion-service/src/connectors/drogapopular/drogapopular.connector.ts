@@ -1,7 +1,7 @@
 import { ehValido, listarErros, type OfertaColetada } from '@pricehub/contracts'
 import Type, { type Static } from 'typebox'
 import type { BuscarJson } from '../http.js'
-import { dataBrasileiraParaIso, textoDeReaisParaCentavos } from '../normalizacao.js'
+import { dataBrasileiraParaIso, normalizarRegistroMs, textoDeReaisParaCentavos } from '../normalizacao.js'
 import { ConnectorBase, PayloadInvalidoError } from '../pharmacy-connector.js'
 import { interpretarDescricaoDrogaPopular } from './descricao-parser.js'
 
@@ -10,6 +10,22 @@ const ProdutoDrogaPopular = Type.Object({
   DESCRICAO: Type.String({ minLength: 1 }),
   LAB: Type.Optional(Type.String()),
   PRECO: Type.String({ minLength: 1 }),
+  REGISTRO_MS: Type.Optional(Type.String()),
+  SLUG: Type.Optional(Type.String()),
+  NOME_EXIBICAO: Type.Optional(Type.String()),
+  DOSAGEM: Type.Optional(Type.String()),
+  PRINCIPIO_ATIVO_EXIBICAO: Type.Optional(Type.String()),
+  APRESENTACAO_EXIBICAO: Type.Optional(Type.String()),
+  LABORATORIO: Type.Optional(Type.String()),
+  TARJA: Type.Optional(Type.String()),
+  TARJA_TIPO: Type.Optional(Type.String()),
+  IMAGEM: Type.Optional(Type.String()),
+  DESCRICAO_COMERCIAL: Type.Optional(Type.String()),
+  INDICACAO: Type.Optional(Type.String()),
+  MODO_DE_USO: Type.Optional(Type.String()),
+  CONTRAINDICACAO: Type.Optional(Type.String()),
+  AVALIACAO: Type.Optional(Type.Number()),
+  AVALIACOES_TOTAL: Type.Optional(Type.Integer({ minimum: 0 })),
 })
 
 const ArquivoDrogaPopular = Type.Object({
@@ -67,9 +83,24 @@ export class DrogaPopularConnector extends ConnectorBase<ItemDrogaPopular> {
       forma: descricao.forma,
       quantidade: descricao.quantidade,
       fabricante: item.LAB ?? null,
-      registroMs: null,
+      registroMs: normalizarRegistroMs(item.REGISTRO_MS),
       ean: null,
       categoria: null,
+      slug: item.SLUG ?? null,
+      nomeExibicao: item.NOME_EXIBICAO ?? null,
+      dosagem: item.DOSAGEM ?? null,
+      principioAtivoExibicao: item.PRINCIPIO_ATIVO_EXIBICAO ?? null,
+      apresentacaoExibicao: item.APRESENTACAO_EXIBICAO ?? null,
+      laboratorio: item.LABORATORIO ?? null,
+      tarja: item.TARJA ?? null,
+      tarjaTipo: item.TARJA_TIPO ?? null,
+      imagem: item.IMAGEM ?? null,
+      descricao: item.DESCRICAO_COMERCIAL ?? null,
+      indicacao: item.INDICACAO ?? null,
+      modoDeUso: item.MODO_DE_USO ?? null,
+      contraindicacao: item.CONTRAINDICACAO ?? null,
+      avaliacao: item.AVALIACAO ?? null,
+      avaliacoesTotal: item.AVALIACOES_TOTAL ?? null,
       precoCentavos: textoDeReaisParaCentavos(item.PRECO),
       atualizadoNaOrigemEm: item.geradoEm,
       coletadoEm: coletadoEm.toISOString(),
