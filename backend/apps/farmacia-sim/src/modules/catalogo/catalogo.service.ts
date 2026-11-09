@@ -21,8 +21,19 @@ export class CatalogoService {
   ) {}
 
   async aplicarSeedSeVazio(logger: FastifyBaseLogger): Promise<void> {
-    if ((await this.repository.contar()) > 0) return
     const seed = carregarSeed(this.ambiente.PHARMACY_ID)
+    if ((await this.repository.contar()) > 0) {
+      const atuais = await this.repository.listar()
+      const porId = new Map(seed.produtos.map((produto) => [produto.id, produto]))
+      for (const atual of atuais) {
+        const produtoDoSeed = porId.get(atual.id)
+        if (produtoDoSeed) {
+          await this.repository.atualizarDados(atual.id, { ...atual.dados, ...produtoDoSeed.dados })
+        }
+      }
+      logger.info({ produtos: atuais.length }, 'dados do catálogo sincronizados com o seed')
+      return
+    }
     await this.repository.substituirPorSeed(seed.produtos, new Date())
     logger.info({ produtos: seed.produtos.length }, 'seed aplicado')
   }

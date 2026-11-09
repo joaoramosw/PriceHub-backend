@@ -6,7 +6,7 @@ MVP do TCC *"PriceHub: Uma Arquitetura eficiente Orientada a Eventos e Microsser
 
 | Repositório | Conteúdo |
 |---|---|
-| **Este repositório** — [joaoramosw/PriceHub-backend](https://github.com/joaoramosw/PriceHub-backend) | backend, infraestrutura, testes e documentação (branch `feat/backend-microsservicos`) |
+| **Este repositório** — [joaoramosw/PriceHub-backend](https://github.com/joaoramosw/PriceHub-backend) | backend, SPA comparadora, infraestrutura, testes e documentação (branch `feat/backend-microsservicos`) |
 | **Sites das farmácias** — [DaviLuquini/PriceHub-SitesGenericos](https://github.com/DaviLuquini/PriceHub-SitesGenericos) | os 3 sites estáticos originais (BioFarma, FarmaAzul, DrogaPopular), de onde vêm os dados dos medicamentos. Uma cópia está em `frontend/` |
 
 ---
@@ -47,7 +47,7 @@ Tudo isso leva cerca de **80 ms** (mediana medida). Detalhes em [`docs/arquitetu
 | Disco livre | **15 GB ou mais** (imagens + cache de build) | disco cheio derruba o Docker Desktop |
 | Caminho do clone | **sem acentos ou espaços** (ex.: `C:\dev\pricehub`) | o Vitest falha em caminhos como `C:\Users\João\...` |
 
-Portas usadas no host: `3000`, `3001`, `4001`–`4003`, `5433` (Postgres) e `15672` (RabbitMQ UI). Todas podem ser trocadas no `.env`.
+Portas usadas no host: `3000`, `3001`, `4001`–`4003`, `5173` (comparador web), `5433` (Postgres) e `15672` (RabbitMQ UI). Todas podem ser trocadas no `.env`.
 
 ---
 
@@ -75,7 +75,7 @@ docker compose up -d --build --wait
 docker compose ps
 ```
 
-A primeira build leva alguns minutos; as seguintes usam cache. No final, os 8 containers devem aparecer como `healthy`: `postgres`, `rabbitmq`, `farmacia-biofarma`, `farmacia-farmaazul`, `farmacia-drogapopular`, `ingestion-service`, `catalog-service` e `query-service`.
+A primeira build leva alguns minutos; as seguintes usam cache. No final, os 9 containers devem aparecer como `healthy`: `postgres`, `rabbitmq`, `farmacia-biofarma`, `farmacia-farmaazul`, `farmacia-drogapopular`, `ingestion-service`, `catalog-service`, `query-service` e `comparador-web`.
 
 ### 3.4 Conferir que está funcionando
 
@@ -112,6 +112,15 @@ pnpm -C backend test       # unitários + integração (sobe Postgres/RabbitMQ d
 pnpm -C backend test:e2e   # 4 cenários contra o ambiente do passo 3.3
 ```
 
+### 3.8 Desenvolver a interface
+
+```bash
+pnpm -C comparador-web install
+pnpm -C comparador-web dev
+```
+
+O Vite serve a interface em http://127.0.0.1:5173 e copia as imagens de `frontend/site1/images/` para a pasta pública da SPA. Em modo Compose, a mesma interface fica em http://127.0.0.1:5173. Para demonstrar uma mudança de preço, use `pnpm -C backend demo:preco`; a interface recebe a atualização por SSE.
+
 ---
 
 ## 4. Endereços úteis
@@ -120,6 +129,7 @@ pnpm -C backend test:e2e   # 4 cenários contra o ambiente do passo 3.3
 |---|---|
 | API pública (comparador) | http://127.0.0.1:3000 · documentação em [/docs](http://127.0.0.1:3000/docs) |
 | Eventos em tempo real (SSE) | http://127.0.0.1:3000/eventos/stream |
+| Comparador web | http://127.0.0.1:5173 |
 | ingestion (webhooks, sync) | http://127.0.0.1:3001/docs |
 | BioFarma / FarmaAzul / DrogaPopular | http://127.0.0.1:4001/docs · :4002/docs · :4003/docs |
 | RabbitMQ (filas, mensagens) | http://127.0.0.1:15672 (usuário e senha do `.env`) |
@@ -165,6 +175,7 @@ Outras demonstrações: `pnpm -C backend demo:resiliencia` (catalog fora do ar, 
 │   ├── tests/e2e/              # cenários de avaliação
 │   ├── scripts/                # gerar-seed e demos
 │   └── Dockerfile              # um target por serviço
+├── comparador-web/           # SPA React + Vite, consumidora REST/SSE do query-service
 ├── infra/                    # init do Postgres, topologia e config do RabbitMQ
 ├── docs/                     # arquitetura, ADRs, padrões, guia de IA, material do TCC
 ├── docker-compose.yml
@@ -189,6 +200,7 @@ Stack: Node.js 24, TypeScript strict, Fastify 5, TypeBox, Prisma 7, PostgreSQL 1
 | Material para o TCC (capítulos 4 e 5) | [`docs/tcc/mapeamento-orientacao.md`](docs/tcc/mapeamento-orientacao.md) e [`resultados-testes.md`](docs/tcc/resultados-testes.md) |
 | Resolver um problema | [`docs/runbook.md`](docs/runbook.md) |
 | Índice completo | [`docs/README.md`](docs/README.md) |
+| Arquitetura e execução da SPA | [`docs/arquitetura/comparador-web.md`](docs/arquitetura/comparador-web.md) |
 
 ---
 
@@ -229,7 +241,6 @@ Usando agentes de IA (Claude Code, Cursor, Codex, OpenCode): siga [`docs/ia/guia
 
 ### 7.4 Próximos passos (fora do escopo atual)
 
-- **Tela do comparador PriceHub**, consumindo `GET /medicamentos`, `GET /medicamentos/:id/comparacao` e o SSE em `/eventos/stream`. O CORS já está liberado para `http://localhost:*`.
 - Trocar o `products.js` fixo dos 3 sites por chamadas às APIs das farmácias simuladas.
 - Equivalência entre laboratórios (genérico × referência) no matching.
 - Autenticação, deploy em nuvem e observabilidade com Prometheus/Grafana.

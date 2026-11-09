@@ -16,6 +16,16 @@ export const ProdutoBioFarma = Type.Object({
   categoria: Type.String(),
   preco: Type.Number({ description: 'Preço em reais' }),
   atualizadoEm: Type.String({ format: 'date-time' }),
+  slug: Type.Optional(Type.String()),
+  tarja: Type.Optional(Type.String()),
+  tarjaTipo: Type.Optional(Type.String()),
+  imagem: Type.Optional(Type.String()),
+  descricao: Type.Optional(Type.String()),
+  indicacao: Type.Optional(Type.String()),
+  modoDeUso: Type.Optional(Type.String()),
+  contraindicacao: Type.Optional(Type.String()),
+  avaliacao: Type.Optional(Type.Number()),
+  avaliacoesTotal: Type.Optional(Type.Integer()),
 })
 export type ProdutoBioFarma = Static<typeof ProdutoBioFarma>
 

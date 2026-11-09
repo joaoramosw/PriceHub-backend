@@ -9,7 +9,23 @@
       "dados": {
         "COD": "DP-0001",
         "DESCRICAO": "METFORMINA 500MG C/30 COMP LIB PROL",
-        "LAB": "MERCK"
+        "LAB": "MERCK",
+        "REGISTRO_MS": "MS 1.0089.0345.001-9",
+        "SLUG": "metformina-glifage-xr-500mg",
+        "NOME_EXIBICAO": "Metformina / Glifage XR",
+        "DOSAGEM": "500mg",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Cloridrato de Metformina 500mg",
+        "APRESENTACAO_EXIBICAO": "30 comprimidos de liberação prolongada",
+        "LABORATORIO": "Merck / EMS Genéricos",
+        "TARJA": "Tarja Vermelha (Sob Prescrição)",
+        "TARJA_TIPO": "vermelha",
+        "IMAGEM": "images/metformina.jpg",
+        "DESCRICAO_COMERCIAL": "Líder geral em unidades vendidas no Brasil. Indicado para o tratamento de diabetes mellitus tipo 2 e prevenção de complicações vasculares.",
+        "INDICACAO": "Tratamento de diabetes tipo 2 em adultos e crianças a partir de 10 anos, como monoterapia ou associado a outros antidiabéticos orais ou insulina.",
+        "MODO_DE_USO": "Tomar 1 a 2 comprimidos ao dia durante ou após o jantar, com água, sem mastigar.",
+        "CONTRAINDICACAO": "Insuficiência renal grave, cetoacidose diabética, disfunção hepática grave ou consumo excessivo de álcool.",
+        "AVALIACAO": 4.9,
+        "AVALIACOES_TOTAL": 580
       }
     },
     {
@@ -19,7 +35,23 @@
       "dados": {
         "COD": "DP-0002",
         "DESCRICAO": "LOSARTANA POTASSICA 50MG C/30 COMP REV",
-        "LAB": "MEDLEY"
+        "LAB": "MEDLEY",
+        "REGISTRO_MS": "MS 1.0181.0421.002-3",
+        "SLUG": "losartana-potassica-50mg",
+        "NOME_EXIBICAO": "Losartana Potássica",
+        "DOSAGEM": "50mg",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Losartana Potássica 50mg",
+        "APRESENTACAO_EXIBICAO": "30 comprimidos revestidos",
+        "LABORATORIO": "Medley / Eurofarma",
+        "TARJA": "Tarja Vermelha (Sob Prescrição)",
+        "TARJA_TIPO": "vermelha",
+        "IMAGEM": "images/losartana.jpg",
+        "DESCRICAO_COMERCIAL": "O anti-hipertensivo genérico mais vendido do país. Atua dilatando os vasos sanguíneos e controlando a pressão arterial.",
+        "INDICACAO": "Tratamento da hipertensão arterial, insuficiência cardíaca crônica e proteção renal em pacientes diabéticos tipo 2.",
+        "MODO_DE_USO": "A dose habitual inicial é de 50mg (1 comprimido) uma vez ao dia, pela manhã ou à noite, com ou sem alimentos.",
+        "CONTRAINDICACAO": "Hipersensibilidade à losartana, segundo e terceiro trimestres de gravidez e uso concomitante com alisquireno em pacientes diabéticos.",
+        "AVALIACAO": 4.8,
+        "AVALIACOES_TOTAL": 640
       }
     },
     {
@@ -29,7 +61,23 @@
       "dados": {
         "COD": "DP-0003",
         "DESCRICAO": "DIPIRONA SODICA 500MG/ML GTS FR 20ML",
-        "LAB": "NEO QUIMICA"
+        "LAB": "NEO QUIMICA",
+        "REGISTRO_MS": "MS 1.5584.0092.001-5",
+        "SLUG": "dipirona-sodica-gotas-500mg",
+        "NOME_EXIBICAO": "Dipirona Sódica Gotas",
+        "DOSAGEM": "500mg/ml",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Dipirona Monoidratada 500mg/ml",
+        "APRESENTACAO_EXIBICAO": "Frasco conta-gotas 20ml",
+        "LABORATORIO": "Neo Química / Sanofi",
+        "TARJA": "Venda Livre",
+        "TARJA_TIPO": "livre",
+        "IMAGEM": "images/dipirona.jpg",
+        "DESCRICAO_COMERCIAL": "O analgésico e antitérmico mais tradicional e consumido pelos brasileiros para alívio rápido de dores de cabeça e estados febris.",
+        "INDICACAO": "Analgésico e antipirético indicado para dores intensas, cefaleias, dores pós-traumáticas e controle térmico de febre.",
+        "MODO_DE_USO": "Adultos: 20 a 40 gotas em um pouco de água até 4 vezes ao dia. Não exceder a dose recomendada.",
+        "CONTRAINDICACAO": "Hipersensibilidade aos derivados pirazolônicos, asma analgésica e porfiria hepática aguda intermitente.",
+        "AVALIACAO": 4.9,
+        "AVALIACOES_TOTAL": 820
       }
     },
     {
@@ -39,7 +87,23 @@
       "dados": {
         "COD": "DP-0004",
         "DESCRICAO": "OMEPRAZOL 20MG C/28 CAPS",
-        "LAB": "TEUTO"
+        "LAB": "TEUTO",
+        "REGISTRO_MS": "MS 1.0370.0210.003-8",
+        "SLUG": "omeprazol-20mg",
+        "NOME_EXIBICAO": "Omeprazol",
+        "DOSAGEM": "20mg",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Omeprazol Microgrânulos 20mg",
+        "APRESENTACAO_EXIBICAO": "28 cápsulas duras gastro-resistentes",
+        "LABORATORIO": "Teuto / Cimed",
+        "TARJA": "Tarja Vermelha (Sob Prescrição)",
+        "TARJA_TIPO": "vermelha",
+        "IMAGEM": "images/omeprazol.jpg",
+        "DESCRICAO_COMERCIAL": "Campeão nacional de vendas para o tratamento e prevenção de gastrite, esofagite de refluxo e úlceras pépticas.",
+        "INDICACAO": "Tratamento de úlceras gástricas e duodenais, refluxo gastroesofágico, azia recorrente e erradicação de H. pylori.",
+        "MODO_DE_USO": "Tomar 1 cápsula de 20mg pela manhã, em jejum, deglutida inteira com meio copo de água.",
+        "CONTRAINDICACAO": "Hipersensibilidade ao omeprazol ou a outros benzimidazóis substituídos.",
+        "AVALIACAO": 4.8,
+        "AVALIACOES_TOTAL": 510
       }
     },
     {
@@ -49,7 +113,23 @@
       "dados": {
         "COD": "DP-0005",
         "DESCRICAO": "HIDROCLOROTIAZIDA 25MG C/30 COMP",
-        "LAB": "EMS S/A"
+        "LAB": "EMS S/A",
+        "REGISTRO_MS": "MS 1.0235.0560.001-2",
+        "SLUG": "hidroclorotiazida-25mg",
+        "NOME_EXIBICAO": "Hidroclorotiazida",
+        "DOSAGEM": "25mg",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Hidroclorotiazida 25mg",
+        "APRESENTACAO_EXIBICAO": "30 comprimidos",
+        "LABORATORIO": "EMS S/A",
+        "TARJA": "Tarja Vermelha (Sob Prescrição)",
+        "TARJA_TIPO": "vermelha",
+        "IMAGEM": "images/hidroclorotiazida.jpg",
+        "DESCRICAO_COMERCIAL": "Diurético tiazídico muito prescrito no controle contínuo da pressão arterial e combate à retenção de líquidos corporais.",
+        "INDICACAO": "Tratamento da hipertensão arterial essencial (isolada ou em associação) e de edemas associados a insuficiência cardíaca leve a moderada.",
+        "MODO_DE_USO": "1 comprimido (25mg) uma vez ao dia pela manhã para evitar micção noturna frequente.",
+        "CONTRAINDICACAO": "Anúria, insuficiência renal severa com depuração de creatinina baixa ou hipopotassemia refratária.",
+        "AVALIACAO": 4.7,
+        "AVALIACOES_TOTAL": 390
       }
     },
     {
@@ -59,7 +139,23 @@
       "dados": {
         "COD": "DP-0006",
         "DESCRICAO": "NIMESULIDA 100MG C/12 COMP",
-        "LAB": "ACHE"
+        "LAB": "ACHE",
+        "REGISTRO_MS": "MS 1.0573.0112.002-1",
+        "SLUG": "nimesulida-100mg",
+        "NOME_EXIBICAO": "Nimesulida",
+        "DOSAGEM": "100mg",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Nimesulida 100mg",
+        "APRESENTACAO_EXIBICAO": "12 comprimidos",
+        "LABORATORIO": "Aché / Medley",
+        "TARJA": "Tarja Vermelha (Sob Prescrição)",
+        "TARJA_TIPO": "vermelha",
+        "IMAGEM": "images/nimesulida.jpg",
+        "DESCRICAO_COMERCIAL": "Anti-inflamatório não esteroide (AINE) consagrado para alívio rápido de dores inflamatórias agudas, dentárias e de garganta.",
+        "INDICACAO": "Tratamento sintomático da dor aguda, dismenorreia primária e estados inflamatórios agudos do trato respiratório superior ou osteoarticular.",
+        "MODO_DE_USO": "Tomar 1 comprimido (100mg) duas vezes ao dia após as refeições, pelo menor tempo clínico necessário.",
+        "CONTRAINDICACAO": "Histórico de reações hepáticas graves, úlcera péptica ativa ou insuficiência cardíaca severa.",
+        "AVALIACAO": 4.8,
+        "AVALIACOES_TOTAL": 460
       }
     },
     {
@@ -69,7 +165,23 @@
       "dados": {
         "COD": "DP-0007",
         "DESCRICAO": "TADALAFILA 5MG C/30 COMP REV",
-        "LAB": "EUROFARMA"
+        "LAB": "EUROFARMA",
+        "REGISTRO_MS": "MS 1.0043.0811.004-9",
+        "SLUG": "tadalafila-5mg-diario",
+        "NOME_EXIBICAO": "Tadalafila Diário",
+        "DOSAGEM": "5mg",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Tadalafila Micronizada 5mg",
+        "APRESENTACAO_EXIBICAO": "30 comprimidos revestidos",
+        "LABORATORIO": "Eurofarma / Eli Lilly",
+        "TARJA": "Tarja Vermelha (Sob Prescrição)",
+        "TARJA_TIPO": "vermelha",
+        "IMAGEM": "images/tadalafila.jpg",
+        "DESCRICAO_COMERCIAL": "Medicamento com enorme alta na procura nos últimos anos. Indicado para disfunção erétil e hiperplasia prostática benigna em dosagem diária contínua.",
+        "INDICACAO": "Tratamento contínuo da disfunção erétil e dos sinais e sintomas urinários da hiperplasia prostática benigna (HPB).",
+        "MODO_DE_USO": "Tomar 1 comprimido de 5mg uma vez ao dia, preferencialmente sempre no mesmo horário, com ou sem alimentos.",
+        "CONTRAINDICACAO": "Uso concomitante com qualquer forma de nitrato orgânico ou doadores de óxido nítrico, e cardiopatas graves.",
+        "AVALIACAO": 4.9,
+        "AVALIACOES_TOTAL": 710
       }
     },
     {
@@ -79,7 +191,23 @@
       "dados": {
         "COD": "DP-0008",
         "DESCRICAO": "SINVASTATINA 20MG C/30 COMP REV",
-        "LAB": "SANDOZ"
+        "LAB": "SANDOZ",
+        "REGISTRO_MS": "MS 1.0047.0319.001-4",
+        "SLUG": "sinvastatina-20mg",
+        "NOME_EXIBICAO": "Sinvastatina",
+        "DOSAGEM": "20mg",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Sinvastatina 20mg",
+        "APRESENTACAO_EXIBICAO": "30 comprimidos revestidos",
+        "LABORATORIO": "Sandoz / EMS",
+        "TARJA": "Tarja Vermelha (Sob Prescrição)",
+        "TARJA_TIPO": "vermelha",
+        "IMAGEM": "images/sinvastatina.jpg",
+        "DESCRICAO_COMERCIAL": "Utilizada de forma contínua para o controle e redução do colesterol alto (LDL) e prevenção de eventos cardiovasculares.",
+        "INDICACAO": "Hipercolesterolemia primária, dislipidemia mista e redução do risco de infarto do miocárdio em pacientes coronarianos.",
+        "MODO_DE_USO": "Tomar 1 comprimido (20mg) uma vez ao dia, à noite, com água.",
+        "CONTRAINDICACAO": "Doença hepática ativa ou elevações persistentes e inexplicadas das transaminases séricas, gravidez e lactação.",
+        "AVALIACAO": 4.7,
+        "AVALIACOES_TOTAL": 340
       }
     },
     {
@@ -89,7 +217,23 @@
       "dados": {
         "COD": "DP-0009",
         "DESCRICAO": "IBUPROFENO 600MG C/20 COMP REV",
-        "LAB": "NEO QUIMICA"
+        "LAB": "NEO QUIMICA",
+        "REGISTRO_MS": "MS 1.5584.0215.003-7",
+        "SLUG": "ibuprofeno-600mg",
+        "NOME_EXIBICAO": "Ibuprofeno",
+        "DOSAGEM": "600mg",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Ibuprofeno 600mg",
+        "APRESENTACAO_EXIBICAO": "20 comprimidos revestidos",
+        "LABORATORIO": "Neo Química / Abbott",
+        "TARJA": "Venda Livre",
+        "TARJA_TIPO": "livre",
+        "IMAGEM": "images/ibuprofeno.jpg",
+        "DESCRICAO_COMERCIAL": "Anti-inflamatório, analgésico e antitérmico com grande pico de vendas no inverno contra dores musculares, sinusites e febre.",
+        "INDICACAO": "Tratamento de febre, dores musculares, artrite, bursite, dor de dente e desconfortos associados a resfriados comuns.",
+        "MODO_DE_USO": "1 comprimido de 600mg a cada 8 a 12 horas conforme prescrição ou bula, de preferência após as refeições.",
+        "CONTRAINDICACAO": "Hipersensibilidade prévia ao ácido acetilsalicílico ou outros AINEs, sangramento digestivo e úlcera ativa.",
+        "AVALIACAO": 4.8,
+        "AVALIACOES_TOTAL": 490
       }
     },
     {
@@ -99,7 +243,23 @@
       "dados": {
         "COD": "DP-0010",
         "DESCRICAO": "SIMETICONA 75MG/ML GTS FR 15ML",
-        "LAB": "CIMED"
+        "LAB": "CIMED",
+        "REGISTRO_MS": "MS 1.4381.0028.001-0",
+        "SLUG": "simeticona-gotas-75mg",
+        "NOME_EXIBICAO": "Simeticona Gotas",
+        "DOSAGEM": "75mg/ml",
+        "PRINCIPIO_ATIVO_EXIBICAO": "Simeticona Emulsão 75mg/ml",
+        "APRESENTACAO_EXIBICAO": "Frasco conta-gotas com 15ml",
+        "LABORATORIO": "Cimed / Takeda (Luftal)",
+        "TARJA": "Venda Livre",
+        "TARJA_TIPO": "livre",
+        "IMAGEM": "images/simeticona.jpg",
+        "DESCRICAO_COMERCIAL": "Medicamento amplamente vendido para alívio rápido de gases intestinais, distensão e cólicas abdominais.",
+        "INDICACAO": "Alívio de flatulência, sensação de estufamento abdominal e preparo intestinal para exames de ultrassonografia ou endoscopia.",
+        "MODO_DE_USO": "Adultos: 40 a 50 gotas até 3 vezes ao dia após as refeições ou ao deitar. Crianças: conforme orientação pediátrica.",
+        "CONTRAINDICACAO": "Distensão abdominal grave sem diagnóstico prévio, suspeita de perfuração ou obstrução intestinal.",
+        "AVALIACAO": 4.9,
+        "AVALIACOES_TOTAL": 610
       }
     }
   ]

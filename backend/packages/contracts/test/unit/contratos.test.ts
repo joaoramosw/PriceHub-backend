@@ -31,6 +31,18 @@ describe('OfertaColetada', () => {
     expect(ehValido(OfertaColetada, ofertaValida)).toBe(true)
   })
 
+  it('aceita os metadados opcionais de exibição sem alterar a oferta antiga', () => {
+    expect(
+      ehValido(OfertaColetada, {
+        ...ofertaValida,
+        imagem: 'images/losartana.jpg',
+        tarjaTipo: 'vermelha',
+        avaliacao: 4.8,
+        avaliacoesTotal: 640,
+      }),
+    ).toBe(true)
+  })
+
   it('rejeita preço fracionado, unidade desconhecida e campo extra', () => {
     expect(ehValido(OfertaColetada, { ...ofertaValida, precoCentavos: 8.9 })).toBe(false)
     expect(ehValido(OfertaColetada, { ...ofertaValida, concentracao: { valor: 50, unidade: 'kg' } })).toBe(

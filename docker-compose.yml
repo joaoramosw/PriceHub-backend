@@ -249,6 +249,26 @@ services:
       retries: 6
       start_period: 30s
 
+  comparador-web:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: comparador-web/Dockerfile
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://127.0.0.1:3000}
+        VITE_ENABLE_DEMO: ${VITE_ENABLE_DEMO:-false}
+    ports:
+      - "${WEB_HOST_PORT:-5173}:8080"
+    depends_on:
+      query-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health > /dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
 volumes:
   postgres-data:
   rabbitmq-data:

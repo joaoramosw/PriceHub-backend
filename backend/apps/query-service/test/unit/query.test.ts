@@ -30,12 +30,29 @@ describe('agregados', () => {
       concentracao: '50mg',
       apresentacao: '30 comprimidos revestidos',
       categoria: null,
+      slug: 'losartana-potassica-50mg',
+      dosagem: '50mg',
+      laboratorio: 'Medley / Eurofarma',
+      registroMs: '1018104210023',
+      tarja: 'Tarja Vermelha (Sob Prescrição)',
+      tarjaTipo: 'vermelha',
+      imagem: 'images/losartana.jpg',
+      descricao: 'Anti-hipertensivo',
+      indicacao: 'Hipertensão',
+      modoDeUso: 'Uma vez ao dia',
+      contraindicacao: 'Hipersensibilidade',
+      avaliacao: 4.8,
+      avaliacoesTotal: 640,
+      farmaciaMaisBarata: 'DrogaPopular Express',
       menorPrecoCentavos: 749,
       maiorPrecoCentavos: 1150,
       qtdFarmacias: 3,
       atualizadoEm: new Date('2026-10-08T00:00:00Z'),
     })
     expect(item.economiaMaximaCentavos).toBe(401)
+    expect(item.farmaciaMaisBarata).toBe('DrogaPopular Express')
+    expect(item.dosagem).toBe('50mg')
+    expect(item.imagem).toBe('images/losartana.jpg')
   })
 })
 

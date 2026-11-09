@@ -34,6 +34,21 @@ model Medicamento {
   quantidadeUnidade    String   @map("quantidade_unidade")
   fabricante           String?
   categoria            String?
+  slug                 String?
+  nomeExibicao         String?  @map("nome_exibicao")
+  dosagem              String?
+  principioAtivoExibicao String? @map("principio_ativo_exibicao")
+  apresentacaoExibicao String?  @map("apresentacao_exibicao")
+  laboratorio          String?
+  tarja                String?
+  tarjaTipo            String?  @map("tarja_tipo")
+  imagem               String?
+  descricao            String?
+  indicacao            String?
+  modoDeUso            String?  @map("modo_de_uso")
+  contraindicacao      String?
+  avaliacao            Float?
+  avaliacoesTotal      Int?     @map("avaliacoes_total")
   fonteDosDados        String   @map("fonte_dos_dados")
   criadoEm             DateTime @default(now()) @map("criado_em") @db.Timestamptz(3)
   atualizadoEm         DateTime @updatedAt @map("atualizado_em") @db.Timestamptz(3)

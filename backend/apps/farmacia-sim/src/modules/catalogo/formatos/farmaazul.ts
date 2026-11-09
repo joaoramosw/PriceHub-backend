@@ -14,6 +14,22 @@ export const ItemFarmaAzul = Type.Object({
   registro_anvisa: Type.String({ description: 'Registro na Anvisa, somente dígitos' }),
   preco_centavos: Type.Integer(),
   ultima_atualizacao: Type.String({ description: 'ISO 8601 com fuso -03:00' }),
+  slug: Type.Optional(Type.String()),
+  nome_exibicao: Type.Optional(Type.String()),
+  dosagem: Type.Optional(Type.String()),
+  principio_ativo_exibicao: Type.Optional(Type.String()),
+  apresentacao_exibicao: Type.Optional(Type.String()),
+  laboratorio_completo: Type.Optional(Type.String()),
+  registro_ms_pricehub: Type.Optional(Type.String()),
+  tarja: Type.Optional(Type.String()),
+  tarja_tipo: Type.Optional(Type.String()),
+  imagem: Type.Optional(Type.String()),
+  descricao_comercial: Type.Optional(Type.String()),
+  indicacao: Type.Optional(Type.String()),
+  modo_de_uso: Type.Optional(Type.String()),
+  contraindicacao: Type.Optional(Type.String()),
+  avaliacao: Type.Optional(Type.Number()),
+  avaliacoes_total: Type.Optional(Type.Integer()),
 })
 export type ItemFarmaAzul = Static<typeof ItemFarmaAzul>
 

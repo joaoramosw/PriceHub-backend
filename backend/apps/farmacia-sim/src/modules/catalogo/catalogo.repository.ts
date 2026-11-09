@@ -1,3 +1,4 @@
+import type { Prisma } from '../../generated/prisma/client.js'
 import type { PrismaClient } from '../../plugins/prisma.js'
 import type { Produto, ProdutoDoSeed } from './produto.js'
 
@@ -36,6 +37,13 @@ export class CatalogoRepository {
     return paraProduto(
       await this.prisma.produto.update({ where: { id }, data: { precoCentavos, atualizadoEm } }),
     )
+  }
+
+  async atualizarDados(id: number, dados: Record<string, unknown>): Promise<void> {
+    await this.prisma.produto.update({
+      where: { id },
+      data: { dados: dados as Prisma.InputJsonValue },
+    })
   }
 
   async contar(): Promise<number> {

@@ -51,14 +51,33 @@ export class ProjecaoDeComparacao {
   ): Promise<ResultadoDaProjecao> {
     const { data } = evento
     const dados = {
-      nome: data.nome,
-      principioAtivo: data.principioAtivo,
-      concentracao: descreverConcentracao(data.concentracao),
+      nome: data.nomeExibicao ?? data.nome,
+      principioAtivo: data.principioAtivoExibicao ?? data.principioAtivo,
+      concentracao: data.dosagem ?? descreverConcentracao(data.concentracao),
       forma: data.forma,
       quantidade: descreverQuantidade(data.quantidade),
-      apresentacao: descreverApresentacao(data.forma, data.quantidade),
+      apresentacao: data.apresentacaoExibicao ?? descreverApresentacao(data.forma, data.quantidade),
       categoria: data.categoria,
-      termosDeBusca: termosDeBusca(data.nome, data.principioAtivo, data.categoria),
+      slug: data.slug ?? null,
+      dosagem: data.dosagem ?? null,
+      laboratorio: data.laboratorio ?? null,
+      registroMs: data.registroMs ?? null,
+      tarja: data.tarja ?? null,
+      tarjaTipo: data.tarjaTipo ?? null,
+      imagem: data.imagem ?? null,
+      descricao: data.descricao ?? null,
+      indicacao: data.indicacao ?? null,
+      modoDeUso: data.modoDeUso ?? null,
+      contraindicacao: data.contraindicacao ?? null,
+      avaliacao: data.avaliacao ?? null,
+      avaliacoesTotal: data.avaliacoesTotal ?? null,
+      termosDeBusca: termosDeBusca(
+        data.nome,
+        data.nomeExibicao,
+        data.principioAtivo,
+        data.principioAtivoExibicao,
+        data.categoria,
+      ),
     }
     await tx.comparacaoMedicamento.upsert({
       where: { medicamentoId: data.medicamentoId },
@@ -114,10 +133,45 @@ export class ProjecaoDeComparacao {
     const medicamento = await tx.comparacaoMedicamento.update({
       where: { medicamentoId: data.medicamentoId },
       data: {
+        nome: data.nomeExibicao ?? undefined,
+        principioAtivo: data.principioAtivoExibicao ?? undefined,
+        concentracao: data.dosagem ?? undefined,
+        dosagem: data.dosagem ?? undefined,
+        apresentacao: data.apresentacaoExibicao ?? undefined,
+        ...(data.nomeExibicao || data.principioAtivoExibicao || data.dosagem || data.apresentacaoExibicao
+          ? {
+              termosDeBusca: termosDeBusca(
+                data.nomeExibicao,
+                data.principioAtivoExibicao,
+                data.dosagem,
+                data.apresentacaoExibicao,
+              ),
+            }
+          : {}),
         menorPrecoCentavos: agregados._min.precoCentavos,
         maiorPrecoCentavos: agregados._max.precoCentavos,
         qtdFarmacias: agregados._count._all,
+        slug: data.slug ?? undefined,
+        laboratorio: data.laboratorio ?? undefined,
+        registroMs: data.registroMs ?? undefined,
+        tarja: data.tarja ?? undefined,
+        tarjaTipo: data.tarjaTipo ?? undefined,
+        imagem: data.imagem ?? undefined,
+        descricao: data.descricao ?? undefined,
+        indicacao: data.indicacao ?? undefined,
+        modoDeUso: data.modoDeUso ?? undefined,
+        contraindicacao: data.contraindicacao ?? undefined,
+        avaliacao: data.avaliacao ?? undefined,
+        avaliacoesTotal: data.avaliacoesTotal ?? undefined,
       },
+    })
+    const menorOferta = await tx.comparacaoOferta.findFirst({
+      where: { medicamentoId: data.medicamentoId, precoCentavos: agregados._min.precoCentavos ?? undefined },
+      orderBy: { farmaciaNome: 'asc' },
+    })
+    const ofertasAtualizadas = await tx.comparacaoOferta.findMany({
+      where: { medicamentoId: data.medicamentoId },
+      orderBy: [{ precoCentavos: 'asc' }, { farmaciaNome: 'asc' }],
     })
     return {
       situacao: 'aplicado',
@@ -134,6 +188,29 @@ export class ProjecaoDeComparacao {
           menorPrecoCentavos: medicamento.menorPrecoCentavos,
           maiorPrecoCentavos: medicamento.maiorPrecoCentavos,
           qtdFarmacias: medicamento.qtdFarmacias,
+          slug: medicamento.slug,
+          dosagem: medicamento.dosagem,
+          laboratorio: medicamento.laboratorio,
+          registroMS: medicamento.registroMs,
+          tarja: medicamento.tarja,
+          tarjaTipo: medicamento.tarjaTipo,
+          imagem: medicamento.imagem,
+          descricao: medicamento.descricao,
+          indicacao: medicamento.indicacao,
+          modoDeUso: medicamento.modoDeUso,
+          contraindicacao: medicamento.contraindicacao,
+          avaliacao: medicamento.avaliacao,
+          avaliacoesTotal: medicamento.avaliacoesTotal,
+          farmaciaMaisBarata: menorOferta?.farmaciaNome ?? null,
+          ofertas: ofertasAtualizadas.map((oferta) => ({
+            farmaciaId: oferta.farmaciaId,
+            farmacia: oferta.farmaciaNome,
+            precoCentavos: oferta.precoCentavos,
+            atualizadoEm: oferta.atualizadoEm.toISOString(),
+            ehMenorPreco: oferta.precoCentavos === medicamento.menorPrecoCentavos,
+            diferencaParaMenorCentavos:
+              oferta.precoCentavos - (medicamento.menorPrecoCentavos ?? oferta.precoCentavos),
+          })),
           atualizadoEm: data.atualizadoEm,
           correlationId: evento.correlationId,
           eventId: evento.eventId,
