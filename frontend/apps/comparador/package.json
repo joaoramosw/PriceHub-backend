@@ -1,0 +1,16 @@
+{
+  "name": "@pricehub/comparador",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5173 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --port 5173",
+    "verificar-tipos": "tsc -p ."
+  },
+  "dependencies": {
+    "@pricehub/api": "*",
+    "@pricehub/ui": "*"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "name": "@pricehub/lojas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5174 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --port 5174",
+    "verificar-tipos": "tsc -p ."
+  },
+  "dependencies": {
+    "@pricehub/api": "*",
+    "@pricehub/ui": "*"
+  }
+}
