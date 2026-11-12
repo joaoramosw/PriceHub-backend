@@ -1,260 +1,455 @@
-# PriceHub — Backend
+# PriceHub
 
-Plataforma de **comparação de preços de medicamentos** que recebe, padroniza e centraliza ofertas de diferentes farmácias e mostra ao usuário o menor preço, atualizado em tempo real.
+**Comparador de preços de medicamentos construído com microsserviços e comunicação assíncrona orientada a eventos.**
 
-MVP do TCC *"PriceHub: Uma Arquitetura eficiente Orientada a Eventos e Microsserviços"* (Engenharia de Software — UCSal). O foco avaliado é a **arquitetura**: microsserviços que se comunicam por **eventos** (RabbitMQ), com Transactional Outbox, consumidores idempotentes e um read model de comparação (CQRS).
+Objeto de estudo do TCC *"PriceHub: uma arquitetura eficiente orientada a eventos e microsserviços"* (UCSal, 2026).
 
-| Repositório | Conteúdo |
-|---|---|
-| **Este repositório** — [joaoramosw/PriceHub-backend](https://github.com/joaoramosw/PriceHub-backend) | backend, SPA comparadora, infraestrutura, testes e documentação (branch `feat/backend-microsservicos`) |
-| **Sites das farmácias** — [DaviLuquini/PriceHub-SitesGenericos](https://github.com/DaviLuquini/PriceHub-SitesGenericos) | os 3 sites estáticos originais (BioFarma, FarmaAzul, DrogaPopular), de onde vêm os dados dos medicamentos. Uma cópia está em `frontend/` |
+![Comparador do PriceHub com as três farmácias integradas](docs/passo-a-passo/04-comparador-completo.png)
 
 ---
 
-## 1. Como funciona, em uma figura
+## Sumário
 
-```
- BioFarma :4001 ──webhook──┐
- FarmaAzul :4002 ─webhook──┤                                   ┌─────────────┐
- DrogaPopular :4003 ◄─polling┤   ingestion-service :3001        │  RabbitMQ   │
-                           └──► adapters + HMAC + sync ──────►│ pricehub.   │
-                                                               │   events    │
-                                catalog-service :3002 ◄────────┤             │
-                                matching, histórico, outbox ──►│             │
-                                                               │             │
-                                query-service :3000 ◄──────────┤             │
-                                REST + SSE ──► usuário         └─────────────┘
-```
-
-1. A farmácia muda um preço e avisa o PriceHub por **webhook** assinado, ou o PriceHub busca o catálogo por **polling**.
-2. O **ingestion** converte o formato da farmácia para o modelo canônico e publica `ingestao.oferta.recebida`.
-3. O **catalog** descobre qual medicamento é, grava o preço e o histórico e publica `catalogo.oferta.atualizada`.
-4. O **query** atualiza a tabela de comparação e avisa o navegador via **SSE**.
-
-Tudo isso leva cerca de **80 ms** (mediana medida). Detalhes em [`docs/arquitetura/visao-geral.md`](docs/arquitetura/visao-geral.md).
+1. [Objetivo](#1-objetivo)
+2. [O que a aplicação faz](#2-o-que-a-aplicação-faz)
+3. [Tecnologias](#3-tecnologias)
+4. [Arquitetura](#4-arquitetura)
+5. [Como rodar (Docker)](#5-como-rodar-docker)
+6. [Tour pela aplicação, com prints](#6-tour-pela-aplicação-com-prints)
+7. [Roteiro da demonstração e validação ponta a ponta](#7-roteiro-da-demonstração-e-validação-ponta-a-ponta)
+8. [Eventos e filas](#8-eventos-e-filas)
+9. [Onde cada conceito está no código](#9-onde-cada-conceito-está-no-código)
+10. [Desenvolvimento sem Docker](#10-desenvolvimento-sem-docker)
+11. [Testes](#11-testes)
+12. [Estrutura de pastas](#12-estrutura-de-pastas)
+13. [Problemas comuns](#13-problemas-comuns)
+14. [Decisões de arquitetura](#14-decisões-de-arquitetura)
 
 ---
 
-## 2. Requisitos
+## 1. Objetivo
 
-| Requisito | Versão / detalhe | Como verificar |
+Medicamentos idênticos costumam ter preços bem diferentes de uma farmácia para outra, e cada farmácia expõe seus dados de
+um jeito: uma avisa por webhook, outra entrega uma API paginada com preço em centavos, outra só tem um arquivo legado que
+precisa ser consultado periodicamente.
+
+O PriceHub reúne essas fontes em um único catálogo e mostra, para cada medicamento, a oferta mais barata e quanto o
+visitante economiza. **O produto é a porta de entrada; o foco do trabalho é a arquitetura**:
+
+* **Orientação a serviços e microsserviços:** cada responsabilidade em um serviço independente, com banco próprio.
+* **Comunicação assíncrona por eventos:** os serviços conversam pelo RabbitMQ, sem chamadas HTTP em cadeia.
+* **Orientação a objetos e padrões de projeto:** Observer, Adapter, Template Method, Strategy e Transactional Outbox.
+* **Observabilidade:** um serviço de log assina todos os eventos, rastreia cada operação por `correlationId` e mede o
+  ganho da comunicação assíncrona (tempo de aceite x janela de convergência).
+
+A pergunta que o projeto responde na prática: *quanto a farmácia deixa de esperar quando o PriceHub aceita a alteração e
+processa o resto de forma assíncrona, e o que acontece quando um serviço sai do ar?* O monitor de eventos mostra as duas
+respostas com números reais.
+
+## 2. O que a aplicação faz
+
+| Tela | Para quem | O que mostra |
 |---|---|---|
-| Git | qualquer recente | `git --version` |
-| Docker Desktop (ou Docker Engine + Compose v2) | Compose 2.20+ | `docker compose version` |
-| Node.js | **24 LTS** | `node --version` |
-| pnpm | 10 (via `corepack`) | `corepack enable` e depois `pnpm --version` |
-| RAM | 8 GB no host (a VM do Docker usa ~4 GB) | — |
-| Disco livre | **15 GB ou mais** (imagens + cache de build) | disco cheio derruba o Docker Desktop |
-| Caminho do clone | **sem acentos ou espaços** (ex.: `C:\dev\pricehub`) | o Vitest falha em caminhos como `C:\Users\João\...` |
+| **Comparador** (`:5173`) | Visitante | Busca por nome, princípio ativo ou fabricante; filtros por categoria; menor preço, número de ofertas e economia; atualização em tempo real (SSE) |
+| **Gestão das lojas** (`:5174`) | Quem opera a demonstração | Cadastro, edição, remoção e preço dos produtos de cada farmácia simulada; cada alteração mostra, ao vivo, os eventos que ela gerou |
+| **Monitor de eventos** (`:5175`) | Banca / desenvolvedores | Eventos ao vivo, linha do tempo por operação, filas do RabbitMQ, experimento de pausa, métricas e links das APIs |
+| **Vitrines** (`:5176`) | Contexto | O "site" de cada farmácia, como um cliente dela veria |
 
-Portas usadas no host: `3000`, `3001`, `4001`–`4003`, `5173` (comparador web), `5433` (Postgres) e `15672` (RabbitMQ UI). Todas podem ser trocadas no `.env`.
+Três farmácias simuladas alimentam o sistema, cada uma com um perfil de integração diferente:
 
----
+| Farmácia | Porta | Integração | Formato | Perfil de preço |
+|---|---|---|---|---|
+| BioFarma Verde | 8101 | Webhook assinado (HMAC) | camelCase, preço em reais | caro |
+| FarmaAzul Confiança | 8102 | Webhook assinado (HMAC) | API paginada, preço em centavos | mediano |
+| DrogaPopular Express | 8103 | **Sem webhook**: polling a cada 15 s com ETag | arquivo legado | barato |
 
-## 3. Passo a passo para rodar
+## 3. Tecnologias
 
-### 3.1 Clonar
+| Camada | Tecnologias |
+|---|---|
+| Backend | Python 3.12, FastAPI (Swagger em `/docs` de cada serviço), Pydantic, SQLAlchemy assíncrono, aio-pika |
+| Mensageria | RabbitMQ 4, exchange *topic* `pricehub.eventos`, filas duráveis com `.retry` e `.dlq` |
+| Banco | PostgreSQL 16, **um banco por microsserviço** (`ingestao`, `catalogo`, `auditoria`) |
+| Frontend | React 19, Tailwind CSS 4, Vite, TypeScript, monorepositório de micro-frontends (npm workspaces) |
+| Infraestrutura | Docker e Docker Compose |
 
-```bash
-git clone -b feat/backend-microsservicos https://github.com/joaoramosw/PriceHub-backend.git pricehub
-cd pricehub
+## 4. Arquitetura
+
+```mermaid
+flowchart LR
+  subgraph Externos["Farmácias simuladas (sistemas externos, dados em memória)"]
+    BIO["farmacia-biofarma :8101<br/>webhook · camelCase · R$"]
+    AZUL["farmacia-farmaazul :8102<br/>webhook · paginada · centavos"]
+    POP["farmacia-drogapopular :8103<br/>sem webhook · arquivo legado"]
+  end
+
+  BIO -- "POST /webhooks (HMAC)" --> ING
+  AZUL -- "POST /webhooks (HMAC)" --> ING
+  ING -- "GET a cada 15 s (ETag)" --> POP
+
+  ING["ms-ingestao :8001<br/>Adapter · banco ingestao"]
+  ING -- "ingestao.*" --> MQ{{"RabbitMQ<br/>exchange pricehub.eventos (topic)"}}
+  MQ -- "fila ms-catalogo.eventos-de-ingestao" --> CAT["ms-catalogo :8002<br/>Strategy · Outbox · banco catalogo"]
+  CAT -- "catalogo.* (via outbox)" --> MQ
+  MQ -- "fila ms-log.todos-os-eventos (#)" --> LOG["ms-log :8003<br/>serviço de log · banco auditoria"]
+
+  CAT -. "SSE /tempo-real" .-> WEB["micro-frontends React<br/>comparador · lojas · monitor · vitrines"]
+  LOG -. "SSE /registros/tempo-real" .-> WEB
 ```
 
-### 3.2 Configurar o ambiente
+### Caminho de uma alteração de preço
+
+1. Alguém altera um preço na farmácia (tela de gestão ou API da farmácia).
+2. A farmácia aplica o **Observer**: o observador de webhook envia a alteração assinada com HMAC para o `ms-ingestao`
+   (no caso da DrogaPopular, o `ms-ingestao` percebe a mudança no próximo polling).
+3. O `ms-ingestao` usa o **Adapter** da farmácia para converter o formato dela no modelo canônico, grava a coleta bruta,
+   publica `ingestao.oferta.recebida` no RabbitMQ e **responde na hora** (esse é o *tempo de aceite*).
+4. O `ms-catalogo` consome o evento, associa a oferta a um medicamento único (**Strategy**), atualiza preço e histórico e
+   grava o evento de saída na **outbox** na mesma transação. Um relay publica `catalogo.oferta.atualizada`.
+5. O comparador recebe a mudança por SSE e destaca o card. O `ms-log` registrou cada passo com o mesmo `correlationId`
+   e calcula a *janela de convergência* (do primeiro evento até o catálogo atualizado).
+
+### Serviços e portas
+
+| Serviço | Porta | Responsabilidade | Banco |
+|---|---|---|---|
+| `ms-ingestao` | 8001 | Recebe webhooks, faz polling, adapta cada formato ao modelo canônico e publica eventos | `ingestao` (coletas brutas) |
+| `ms-catalogo` | 8002 | Consome a ingestão, associa ofertas a medicamentos únicos, mantém preço e histórico, publica eventos do catálogo, serve a busca | `catalogo` |
+| `ms-log` | 8003 | Assina **todos** os eventos (`#`), grava, rastreia por `correlationId`, mede aceite x convergência, lê as filas | `auditoria` |
+| `farmacia-*` | 8101-8103 | Farmácias simuladas: API própria + API de gestão; padrão Observer | memória |
+| `frontend` | 5173-5176 | Comparador, gestão das lojas, monitor de eventos, vitrines | - |
+| RabbitMQ | 5672 / 15672 | Broker AMQP e painel de gerenciamento | - |
+| PostgreSQL | 5433 | Um banco por microsserviço | - |
+
+## 5. Como rodar (Docker)
+
+### Pré-requisitos
+
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e aberto.
+* Portas livres: 5173-5176, 8001-8003, 8101-8103, 5433, 5672 e 15672 (veja [Problemas comuns](#13-problemas-comuns) se
+  alguma estiver ocupada).
+* Internet na primeira execução (download das imagens) e para abrir o Swagger, que carrega a interface de uma CDN.
+
+### Passo a passo
 
 ```bash
+git clone https://github.com/joaoramosw/PriceHub-backend.git
+cd PriceHub-backend
+
+# Windows (PowerShell):  copy .env.example .env
 cp .env.example .env
+
+docker compose up -d --build
 ```
 
-Os valores do `.env.example` funcionam como estão. Troque as senhas se quiser, e troque as portas se alguma já estiver ocupada (por exemplo, `RABBITMQ_UI_HOST_PORT=15673`). O `.env` nunca vai para o git.
-
-### 3.3 Subir tudo
+O primeiro build leva alguns minutos. Para acompanhar:
 
 ```bash
-docker compose up -d --build --wait
-docker compose ps
+docker compose ps        # todos devem ficar "healthy" (o frontend fica só "Up")
+docker compose logs -f ms-ingestao ms-catalogo ms-log
 ```
 
-A primeira build leva alguns minutos; as seguintes usam cache. No final, os 9 containers devem aparecer como `healthy`: `postgres`, `rabbitmq`, `farmacia-biofarma`, `farmacia-farmaazul`, `farmacia-drogapopular`, `ingestion-service`, `catalog-service`, `query-service` e `comparador-web`.
+Quando tudo estiver de pé, as farmácias já terão enviado a carga inicial e o comparador mostra 10 medicamentos com
+3 ofertas cada.
 
-### 3.4 Conferir que está funcionando
+### Endereços
 
-```bash
-curl http://127.0.0.1:3000/health
-curl "http://127.0.0.1:3000/medicamentos?busca=losartana"
-```
-
-A segunda chamada deve devolver a Losartana com `qtdFarmacias: 3` e `menorPrecoCentavos: 749`. No boot, o ingestion já sincronizou as 3 farmácias.
-
-> Use `127.0.0.1` em vez de `localhost`: em algumas máquinas Windows, `localhost` resolve para IPv6 e cai em outro processo.
-
-### 3.5 Instalar as dependências do backend (para testes e demos)
-
-```bash
-pnpm -C backend install
-```
-
-O `postinstall` gera automaticamente os clients do Prisma.
-
-### 3.6 Ver o cenário de avaliação
-
-```bash
-pnpm -C backend demo:preco
-```
-
-O script muda o preço da Losartana na FarmaAzul de R$ 8,90 para R$ 7,20, escuta o SSE e imprime a latência de cada etapa. Ao final, restaura o preço original.
-
-### 3.7 Rodar os testes
-
-```bash
-pnpm -C backend lint
-pnpm -C backend test       # unitários + integração (sobe Postgres/RabbitMQ descartáveis via Testcontainers)
-pnpm -C backend test:e2e   # 4 cenários contra o ambiente do passo 3.3
-```
-
-### 3.8 Desenvolver a interface
-
-```bash
-pnpm -C comparador-web install
-pnpm -C comparador-web dev
-```
-
-O Vite serve a interface em http://127.0.0.1:5173 e copia as imagens de `frontend/site1/images/` para a pasta pública da SPA. Em modo Compose, a mesma interface fica em http://127.0.0.1:5173. Para demonstrar uma mudança de preço, use `pnpm -C backend demo:preco`; a interface recebe a atualização por SSE.
-
----
-
-## 4. Endereços úteis
-
-| O quê | URL |
+| O quê | Endereço |
 |---|---|
-| API pública (comparador) | http://127.0.0.1:3000 · documentação em [/docs](http://127.0.0.1:3000/docs) |
-| Eventos em tempo real (SSE) | http://127.0.0.1:3000/eventos/stream |
-| Comparador web | http://127.0.0.1:5173 |
-| ingestion (webhooks, sync) | http://127.0.0.1:3001/docs |
-| BioFarma / FarmaAzul / DrogaPopular | http://127.0.0.1:4001/docs · :4002/docs · :4003/docs |
-| RabbitMQ (filas, mensagens) | http://127.0.0.1:15672 (usuário e senha do `.env`) |
-| catalog (sem porta no host) | `docker compose exec catalog-service wget -qO- http://127.0.0.1:3002/medicamentos` |
+| Comparador (visitante) | http://localhost:5173 |
+| Gestão das lojas | http://localhost:5174 |
+| Monitor de eventos, filas, métricas e links das APIs | http://localhost:5175 |
+| Vitrines das farmácias | http://localhost:5176 |
+| Swagger do ms-ingestao / ms-catalogo / ms-log | http://localhost:8001/docs · http://localhost:8002/docs · http://localhost:8003/docs |
+| Swagger das farmácias | http://localhost:8101/docs · http://localhost:8102/docs · http://localhost:8103/docs |
+| Painel do RabbitMQ | http://localhost:15672 (usuário `pricehub`, senha `pricehub`) |
 
-### Demonstração manual (ex.: para a banca)
+### Configuração (`.env`)
 
-```bash
-# terminal 1 — fica escutando as atualizações
-curl -N http://127.0.0.1:3000/eventos/stream
+| Variável | Padrão | Para quê |
+|---|---|---|
+| `POSTGRES_USUARIO` / `POSTGRES_SENHA` | `pricehub` / `pricehub` | Credenciais do PostgreSQL |
+| `RABBITMQ_USUARIO` / `RABBITMQ_SENHA` | `pricehub` / `pricehub` | Credenciais do RabbitMQ |
+| `SEGREDO_DO_WEBHOOK_BIOFARMA` / `SEGREDO_DO_WEBHOOK_FARMAAZUL` | `segredo-*-dev` | Chave HMAC que assina os webhooks |
+| `INTERVALO_DE_POLLING_S` | `15` | Intervalo do polling da DrogaPopular |
+| `INTERVALO_DE_RECONCILIACAO_S` | `120` | Reconciliação periódica das farmácias com webhook |
+| `NIVEL_DE_LOG` | `INFO` | Nível dos logs JSON dos serviços |
 
-# terminal 2 — muda um preço na farmácia
-curl -X PATCH http://127.0.0.1:4002/admin/produtos/2/preco \
-  -H "content-type: application/json" -H "x-correlation-id: banca-1" \
-  -d '{"precoCentavos":720}'
+Os valores são só para uso local.
 
-# acompanha o caminho do evento por todos os serviços
-docker compose logs --no-log-prefix | grep banca-1
-
-# volta os preços ao original
-curl -X POST http://127.0.0.1:4002/admin/reset
-```
-
-Outras demonstrações: `pnpm -C backend demo:resiliencia` (catalog fora do ar, sem perda) e `pnpm -C backend demo:escala` (2 instâncias do catalog, sem duplicidade).
-
----
-
-## 5. Estrutura do repositório
-
-```
-├── frontend/                 # cópia dos 3 sites do repositório do Davi (somente leitura)
-├── backend/                  # monorepo pnpm + TypeScript
-│   ├── apps/
-│   │   ├── farmacia-sim/       # simulador das 3 farmácias (formatos diferentes de propósito)
-│   │   ├── ingestion-service/  # adapters, webhooks HMAC, sync e polling
-│   │   ├── catalog-service/    # matching, ofertas, histórico, outbox
-│   │   └── query-service/      # read model, API pública, SSE
-│   ├── packages/
-│   │   ├── contracts/          # modelo canônico e eventos (TypeBox)
-│   │   ├── messaging/          # RabbitMQ: publish, consume, retry, DLQ, idempotência
-│   │   ├── observability/      # logger, correlationId, erros, /health
-│   │   └── testing/            # Testcontainers e helpers de e2e
-│   ├── tests/e2e/              # cenários de avaliação
-│   ├── scripts/                # gerar-seed e demos
-│   └── Dockerfile              # um target por serviço
-├── comparador-web/           # SPA React + Vite, consumidora REST/SSE do query-service
-├── infra/                    # init do Postgres, topologia e config do RabbitMQ
-├── docs/                     # arquitetura, ADRs, padrões, guia de IA, material do TCC
-├── docker-compose.yml
-├── AGENTS.md                 # regras para qualquer agente de IA (e pessoas)
-└── CLAUDE.md                 # complemento específico do Claude Code
-```
-
-Stack: Node.js 24, TypeScript strict, Fastify 5, TypeBox, Prisma 7, PostgreSQL 16, RabbitMQ 4.1, Vitest, Biome, Docker Compose.
-
----
-
-## 6. Por onde começar a ler
-
-| Se você quer… | Leia |
-|---|---|
-| Entender a arquitetura em 10 minutos | [`docs/arquitetura/visao-geral.md`](docs/arquitetura/visao-geral.md) e [`fluxo-atualizacao-preco.md`](docs/arquitetura/fluxo-atualizacao-preco.md) |
-| Saber o que cada serviço faz | [`docs/arquitetura/servicos.md`](docs/arquitetura/servicos.md) |
-| Ver os eventos, filas e garantias | [`docs/arquitetura/eventos.md`](docs/arquitetura/eventos.md) |
-| Entender como o mesmo remédio é reconhecido nas 3 farmácias | [`docs/arquitetura/matching.md`](docs/arquitetura/matching.md) |
-| Ver os formatos das farmácias | [`docs/arquitetura/farmacias-simuladas.md`](docs/arquitetura/farmacias-simuladas.md) |
-| Saber por que cada decisão foi tomada | [`docs/adr/`](docs/adr) |
-| Material para o TCC (capítulos 4 e 5) | [`docs/tcc/mapeamento-orientacao.md`](docs/tcc/mapeamento-orientacao.md) e [`resultados-testes.md`](docs/tcc/resultados-testes.md) |
-| Resolver um problema | [`docs/runbook.md`](docs/runbook.md) |
-| Índice completo | [`docs/README.md`](docs/README.md) |
-| Arquitetura e execução da SPA | [`docs/arquitetura/comparador-web.md`](docs/arquitetura/comparador-web.md) |
-
----
-
-## 7. Como continuar o desenvolvimento
-
-### 7.1 Regras do projeto (resumo de [`AGENTS.md`](AGENTS.md))
-
-1. **Investigue antes de codar** e combine um plano curto antes de mudanças grandes.
-2. **Sem comentários no código**: nomes claros; explicações vão para `docs/`.
-3. **Serviços não se chamam por HTTP**; entre eles, só eventos. Cada serviço tem o próprio banco.
-4. **Dinheiro sempre em centavos inteiros** (`precoCentavos`).
-5. **Mudou um contrato de evento?** Atualize [`docs/arquitetura/eventos.md`](docs/arquitetura/eventos.md) no mesmo commit.
-6. **Antes de dizer que terminou:** `docker compose up -d --build --wait <servico>`, `/health` ok, `pnpm -C backend lint` e os testes afetados verdes.
-7. **Commits pequenos** em [Conventional Commits](docs/padroes/git.md) em português: `feat(catalog): adiciona ...`.
-
-### 7.2 Fluxo de trabalho
+### Parar e limpar
 
 ```bash
-git checkout -b feat/<assunto>
-# ... código + testes + docs ...
-pnpm -C backend lint && pnpm -C backend test
-docker compose up -d --build --wait <servico>
-git commit -m "feat(<escopo>): <o que mudou>"
+docker compose down        # para tudo e mantém os dados
+docker compose down -v     # para tudo e apaga os bancos (volta ao "PriceHub vazio")
 ```
 
-Usando agentes de IA (Claude Code, Cursor, Codex, OpenCode): siga [`docs/ia/guia-uso-ia.md`](docs/ia/guia-uso-ia.md), use o [template de prompt](docs/ia/template-prompt.md) e revise com o [checklist](docs/ia/checklist-revisao.md). No Claude Code já existem `/subir`, `/demo`, `/nova-farmacia`, `/novo-evento` e `/revisar`.
+## 6. Tour pela aplicação, com prints
 
-### 7.3 Receitas comuns
+As capturas seguem a ordem da demonstração: o PriceHub começa vazio, as farmácias chegam uma a uma, um preço muda e o
+monitor comprova cada passo.
 
-| Tarefa | Onde começar |
+### 6.1 PriceHub vazio
+
+Sem farmácias no ar, o comparador avisa que o catálogo está vazio e o monitor não tem eventos.
+
+| Comparador vazio | Monitor vazio |
 |---|---|
-| Adicionar uma 4ª farmácia | [`.claude/commands/nova-farmacia.md`](.claude/commands/nova-farmacia.md) (passo a passo serve para qualquer pessoa) |
-| Criar um novo evento | [`.claude/commands/novo-evento.md`](.claude/commands/novo-evento.md) |
-| Ensinar um novo sinônimo de princípio ativo | [`backend/apps/catalog-service/src/modules/matching/sinonimos.ts`](backend/apps/catalog-service/src/modules/matching/sinonimos.ts) + teste em `matching.test.ts` |
-| Alterar uma tabela | `schema.prisma` do serviço + migração (ver [`docs/padroes/banco.md`](docs/padroes/banco.md)) |
-| Mudar os medicamentos/preços de origem | edite `frontend/*/products.js` e rode `pnpm -C backend gerar-seed` |
-| Desenvolver com rebuild automático | `docker compose watch` |
+| ![Comparador vazio](docs/passo-a-passo/01-comparador-vazio.png) | ![Monitor vazio](docs/passo-a-passo/02-monitor-vazio.png) |
 
-### 7.4 Próximos passos (fora do escopo atual)
+### 6.2 Chegada das farmácias
 
-- Trocar o `products.js` fixo dos 3 sites por chamadas às APIs das farmácias simuladas.
-- Equivalência entre laboratórios (genérico × referência) no matching.
-- Autenticação, deploy em nuvem e observabilidade com Prometheus/Grafana.
+Com só a BioFarma no ar, cada medicamento tem uma oferta. Quando as três chegam, o comparador passa a mostrar o menor
+preço, quantas ofertas existem e quanto o visitante economiza.
+
+| Só a BioFarma | As três farmácias |
+|---|---|
+| ![Só BioFarma](docs/passo-a-passo/03-comparador-so-biofarma.png) | ![Comparador completo](docs/passo-a-passo/04-comparador-completo.png) |
+
+Ao clicar em um medicamento, o detalhe lista as ofertas da mais barata para a mais cara:
+
+![Detalhe do medicamento](docs/passo-a-passo/12-comparador-detalhe.png)
+
+### 6.3 Gestão das lojas e vitrines
+
+Cada farmácia é um sistema externo com API própria. Na gestão é possível criar, editar e remover produtos e alterar
+preços. A vitrine mostra o site da farmácia, como um cliente dela veria.
+
+| Gestão das lojas | Vitrine |
+|---|---|
+| ![Gestão das lojas](docs/passo-a-passo/05-lojas.png) | ![Vitrine](docs/passo-a-passo/06-vitrine.png) |
+
+### 6.4 Alteração de preço por webhook
+
+Ao salvar um novo preço na FarmaAzul, o painel **Propagação ao vivo** mostra os eventos em sequência, com o tempo de
+cada um (`ingestao.oferta.recebida` → `ingestao.coleta.realizada` → `catalogo.oferta.atualizada`, em ~26 ms). O
+comparador destaca o card alterado e exibe um aviso, sem recarregar a página.
+
+| Propagação na gestão | Aviso no comparador |
+|---|---|
+| ![Propagação por webhook](docs/passo-a-passo/07-lojas-propagacao-webhook.png) | ![Aviso no comparador](docs/passo-a-passo/08-comparador-aviso.png) |
+
+### 6.5 Alteração de preço por polling
+
+A DrogaPopular não tem webhook. A gestão mostra que a alteração está aguardando a próxima consulta do `ms-ingestao`
+(até 15 s) e, depois, os eventos gerados por ela.
+
+| Aguardando o polling | Atualizado pelo polling |
+|---|---|
+| ![Aguardando polling](docs/passo-a-passo/09-lojas-polling-aguardando.png) | ![Polling atualizado](docs/passo-a-passo/10-lojas-polling-atualizado.png) |
+
+### 6.6 Monitor de eventos: rastreamento por `correlationId`
+
+Todos os eventos que passam pelo RabbitMQ, filtráveis por origem e farmácia. Ao clicar em um evento, a **linha do tempo
+da operação** mostra cada passo, o serviço que o produziu e o tempo decorrido. O botão **Exportar JSON** baixa o log bruto.
+
+![Monitor com linha do tempo](docs/passo-a-passo/11-monitor-linha-do-tempo.png)
+
+### 6.7 Resiliência: o catálogo sai do ar
+
+Na aba **Filas e serviços**, um botão pausa o consumo do `ms-catalogo`. As farmácias continuam sendo atendidas normalmente
+e os eventos ficam retidos na fila. Ao retomar, a fila esvazia e nada se perde.
+
+| Consumo pausado (16 mensagens retidas) | Consumo retomado |
+|---|---|
+| ![Fila crescendo](docs/passo-a-passo/13-filas-catalogo-pausado.png) | ![Fila esvaziada](docs/passo-a-passo/14-filas-retomado.png) |
+
+### 6.8 Microsserviços x monólito: o ganho medido
+
+O `ms-log` calcula, a partir dos eventos reais da execução:
+
+* **Tempo de aceite:** quanto a farmácia esperou (o `ms-ingestao` responde assim que publica no RabbitMQ).
+* **Janela de convergência:** do primeiro evento até o catálogo atualizado (consistência eventual).
+* **Espera equivalente se fosse síncrono:** aceite + convergência, o que a farmácia esperaria numa cadeia HTTP ou num monólito.
+
+No print, com o catálogo pausado durante parte das alterações, a farmácia esperou **24 ms** (mediana) enquanto a
+convergência chegou a **7,78 s**: o produtor não sente a indisponibilidade do consumidor.
+
+![Métricas](docs/passo-a-passo/15-monitor-metricas.png)
+
+> Há mais capturas em [`docs/telas/`](docs/telas/) (incluindo a aba de documentação das APIs) e execuções completas do
+> roteiro, com JSON e resumo, em [`docs/evidencias/exemplo-execucao-local/`](docs/evidencias/exemplo-execucao-local/).
+
+## 7. Roteiro da demonstração e validação ponta a ponta
+
+O script `scripts/validacao_ponta_a_ponta.py` reproduz a demonstração e grava evidências (JSON e um `resumo.md`) em
+`docs/evidencias/<data-hora>/`. Ele precisa de `pip install httpx`.
+
+```bash
+# 0. do zero
+docker compose down -v
+
+# 1. PriceHub sem farmácias: o comparador mostra "catálogo vazio"
+docker compose up -d --build postgres rabbitmq ms-ingestao ms-catalogo ms-log frontend
+python scripts/validacao_ponta_a_ponta.py etapa1
+
+# 2. Sobe uma farmácia de cada vez e observe o monitor (http://localhost:5175)
+docker compose up -d farmacia-biofarma
+docker compose up -d farmacia-farmaazul
+docker compose up -d farmacia-drogapopular
+python scripts/validacao_ponta_a_ponta.py etapa2
+
+# 3. Alteração de preço (pela tela de gestão das lojas ou pelo script)
+python scripts/validacao_ponta_a_ponta.py etapa3
+
+# 4. Resiliência (ms-catalogo pausado) e rajada de alterações
+python scripts/validacao_ponta_a_ponta.py resiliencia
+python scripts/validacao_ponta_a_ponta.py rajada --quantidade 60
+```
+
+Log em texto dos contêineres: `docker compose logs ms-ingestao ms-catalogo ms-log --since 5m`.
+
+## 8. Eventos e filas
+
+| Evento (chave de roteamento) | Produtor | Consumidores |
+|---|---|---|
+| `ingestao.oferta.recebida` | ms-ingestao | ms-catalogo, ms-log |
+| `ingestao.oferta.removida` | ms-ingestao | ms-catalogo, ms-log |
+| `ingestao.oferta.descartada` | ms-ingestao | ms-log |
+| `ingestao.coleta.realizada` | ms-ingestao | ms-catalogo, ms-log |
+| `ingestao.farmacia.indisponivel` | ms-ingestao | ms-log |
+| `catalogo.medicamento.cadastrado` | ms-catalogo | ms-log, comparador (SSE) |
+| `catalogo.oferta.atualizada` | ms-catalogo | ms-log, comparador (SSE) |
+| `catalogo.oferta.indisponivel` | ms-catalogo | ms-log, comparador (SSE) |
+| `catalogo.oferta.nao-correspondida` | ms-catalogo | ms-log |
+
+Todo evento viaja no mesmo envelope:
+
+```json
+{
+  "idDoEvento": "5f3c2e12-5339-4acb-a767-a40e18ad6588",
+  "tipo": "catalogo.oferta.atualizada",
+  "versao": 1,
+  "ocorridoEm": "2026-11-12T02:55:14.590854+00:00",
+  "correlationId": "1d6f7a32-1d82-4fa6-82cc-3daf07ae25e7",
+  "servicoDeOrigem": "ms-catalogo",
+  "dados": { "...": "conteúdo específico de cada evento" }
+}
+```
+
+Cada fila durável tem uma fila `.retry` (nova tentativa após 2 s) e uma `.dlq` (mensagens que esgotaram 5 tentativas).
+O `ms-catalogo` é um consumidor idempotente: guarda o `idDoEvento` na tabela `eventos_processados` e ignora repetições.
+
+## 9. Onde cada conceito está no código
+
+| Conceito | Arquivo |
+|---|---|
+| Observer (sujeito e observadores) | `backend/services/ms-farmacia/app/dominio/catalogo.py`, `.../observadores/` |
+| Adapter + Template Method | `backend/services/ms-ingestao/app/adaptadores/base.py` e um arquivo por farmácia |
+| Strategy (correspondência de medicamentos) | `backend/services/ms-catalogo/app/dominio/correspondencia.py` |
+| Transactional Outbox | `backend/services/ms-catalogo/app/servicos/relay_da_outbox.py` |
+| Consumidor idempotente | `backend/services/ms-catalogo/app/servicos/processador.py` (tabela `eventos_processados`) |
+| Envelope dos eventos | `backend/libs/pricehub_common/pricehub_common/eventos/envelope.py` |
+| Contratos dos eventos | `backend/libs/pricehub_common/pricehub_common/eventos/contratos.py` |
+| Retry e DLQ no RabbitMQ | `backend/libs/pricehub_common/pricehub_common/mensageria/rabbitmq.py` |
+| Validadores da Web API | `esquemas.py` de cada serviço (Pydantic) e `pricehub_common/http.py` (respostas `problem+json`) |
+| Polling com ETag e redução de eventos inúteis | `ms-ingestao/app/adaptadores/drogapopular.py`, `.../servicos/memoria_de_ofertas.py` |
+| Webhook assinado (HMAC-SHA256) | `ms-farmacia/app/observadores/webhook.py`, `ms-ingestao/app/api/rotas.py` |
+| Métricas aceite x convergência | `backend/services/ms-log/app/servicos/metricas.py` |
+
+## 10. Desenvolvimento sem Docker
+
+Com PostgreSQL e RabbitMQ rodando (podem ser só os dois contêineres: `docker compose up -d postgres rabbitmq`):
+
+```bash
+cd backend
+python -m venv .venv && . .venv/bin/activate      # no Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+
+# um terminal por serviço (o Postgres do compose fica na porta 5433)
+cd services/ms-ingestao && URL_DO_BANCO=postgresql+asyncpg://pricehub:pricehub@localhost:5433/ingestao uvicorn app.main:app --port 8001
+cd services/ms-catalogo && URL_DO_BANCO=postgresql+asyncpg://pricehub:pricehub@localhost:5433/catalogo uvicorn app.main:app --port 8002
+cd services/ms-log      && URL_DO_BANCO=postgresql+asyncpg://pricehub:pricehub@localhost:5433/auditoria uvicorn app.main:app --port 8003
+cd services/ms-farmacia && FARMACIA_ID=biofarma SEGREDO_DO_WEBHOOK=segredo-biofarma-dev uvicorn app.main:app --port 8101
+```
+
+Frontend:
+
+```bash
+cd frontend
+npm install
+npm run dev            # sobe os quatro micro-frontends (5173 a 5176)
+```
+
+## 11. Testes
+
+```bash
+cd backend
+./executar_testes.sh   # 38 testes: contratos, Observer, Adapter, validadores, idempotência, outbox, métricas
+ruff check .
+cd ../frontend && npm run verificar-tipos && npm run build
+```
+
+## 12. Estrutura de pastas
+
+```
+backend/
+  libs/pricehub_common/      contratos de eventos, barramento RabbitMQ, logs JSON, fábrica FastAPI, SSE
+  services/ms-farmacia/      farmácias simuladas (uma base de código, três instâncias)
+  services/ms-ingestao/      adaptadores, webhooks, polling, coletas brutas
+  services/ms-catalogo/      catálogo, correspondência, outbox, consultas, tempo real
+  services/ms-log/           serviço de log, rastreamento, métricas, filas, saúde
+frontend/
+  packages/api/              clientes tipados de cada microsserviço e hooks (consulta, SSE)
+  packages/ui/               componentes e formatadores compartilhados
+  apps/comparador/           produto principal para o visitante
+  apps/lojas/                gestão dos produtos de cada farmácia
+  apps/monitor/              eventos ao vivo, filas, comparativo e documentação das APIs
+  apps/vitrines/             sites das três farmácias
+infra/postgres/              criação de um banco por serviço
+scripts/                     validação ponta a ponta com geração de evidências
+docs/
+  passo-a-passo/             capturas da demonstração, em ordem (usadas neste README)
+  telas/                     capturas de cada tela
+  evidencias/                execuções do script de validação
+  GUIA-OVERLEAF.md           guia de ajustes do texto do TCC
+docker-compose.yml           sobe tudo: infraestrutura, microsserviços, farmácias e frontend
+```
+
+## 13. Problemas comuns
+
+**`failed to solve: image "docker.io/pricehub/ms-farmacia:local": already exists`**
+As três farmácias usam a mesma imagem e o build em paralelo pode colidir. A imagem já foi gerada: rode
+`docker compose up -d` de novo (sem `--build`).
+
+**`Bind for 0.0.0.0:5672 failed: port is already allocated`** (ou outra porta)
+Outro contêiner ou programa está usando a porta; descubra qual com `docker ps`. Para mudar a porta só na sua máquina,
+crie um `docker-compose.override.yml` na raiz (o `docker compose` lê esse arquivo automaticamente), por exemplo:
+
+```yaml
+services:
+  rabbitmq:
+    ports: !override
+      - "5673:5672"
+      - "15673:15672"
+```
+
+Os serviços conversam pela rede interna do Docker, então mudar a porta do host não afeta a aplicação (só o endereço do
+painel, que passa a ser http://localhost:15673).
+
+**Contêineres de uma versão antiga do PriceHub reiniciando sem parar**
+O nome do projeto Compose vem da pasta. Se houver contêineres antigos com o mesmo nome, rode
+`docker compose down --remove-orphans` ou suba com outro nome: `docker compose -p pricehub-tcc up -d --build`.
+
+**Comparador vazio depois de subir tudo**
+As farmácias com webhook enviam a carga ao iniciar; a DrogaPopular entra no próximo polling (até 15 s). Confira
+`docker compose ps` e a aba **Filas e serviços** do monitor (`:5175`).
+
+**Swagger em branco**
+O Swagger e o ReDoc carregam a interface de uma CDN, então é preciso estar com internet.
+
+## 14. Decisões de arquitetura
+
+* **RabbitMQ, não Kafka nem Redis Pub/Sub:** o PriceHub precisa de roteamento por tópico, confirmação de processamento (ACK),
+  retentativa e fila de mensagens mortas. O Redis Pub/Sub não guarda a mensagem se o consumidor estiver fora do ar, e o Kafka
+  traz um log retido em disco que este escopo não usa.
+* **Um banco por serviço:** nenhum serviço lê o banco de outro; a integração entre eles é feita por eventos.
+* **Transactional Outbox no catálogo:** o estado e o evento de saída são gravados na mesma transação, então nenhum evento
+  se perde se o RabbitMQ cair entre o commit e a publicação.
+* **Farmácias sem banco:** a orientação foi manter os dados delas em memória. Reiniciar uma farmácia volta à carga inicial.
+* **Consistência eventual:** o catálogo fica correto alguns milissegundos depois da farmácia. O monitor mede essa janela.
+* **Sem autenticação:** uso local e acadêmico. Os webhooks são assinados com HMAC para mostrar a integridade da origem.
 
 ---
 
-## 8. Problemas comuns
-
-| Sintoma | Solução |
-|---|---|
-| `port is already allocated` | troque `POSTGRES_HOST_PORT` / `RABBITMQ_UI_HOST_PORT` no `.env` |
-| Docker Desktop não sobe ou a build cai com `EOF` | disco cheio: libere espaço, rode `wsl --shutdown` e reabra o Docker Desktop |
-| Vitest: `ERR_PACKAGE_IMPORT_NOT_DEFINED "#module-evaluator"` | clone num caminho sem acentos |
-| Testes reclamam de `src/generated/prisma` | rode `pnpm -C backend install` |
-| Preço não chega ao comparador | `docker compose logs --no-log-prefix \| grep <correlationId>` e as filas `.dlq` no RabbitMQ |
-
-Lista completa no [runbook](docs/runbook.md).
+Licença: veja [LICENSE](LICENSE).
