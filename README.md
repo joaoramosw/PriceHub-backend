@@ -404,6 +404,9 @@ docs/
   evidencias/                execuções do script de validação
   GUIA-OVERLEAF.md           guia de ajustes do texto do TCC
 docker-compose.yml           sobe tudo: infraestrutura, microsserviços, farmácias e frontend
+AGENTS.md, CLAUDE.md         instruções para agentes de IA (Codex e Claude Code)
+.agents/skills/              skills para o Codex (commit-pr, tdd, implement, grilling, domain-modeling, playwright)
+.claude/skills/              as mesmas skills para o Claude Code
 ```
 
 ## 13. Problemas comuns
