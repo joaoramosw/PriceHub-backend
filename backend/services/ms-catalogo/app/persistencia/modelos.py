@@ -30,6 +30,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -102,6 +103,40 @@ class HistoricoPreco(Base):
     preco_centavos: Mapped[int] = mapped_column(Integer)
     registrado_em: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=agora_utc)
     correlation_id: Mapped[str] = mapped_column(String(64))
+
+
+async def proteger_historico_precos(engine) -> None:  # type: ignore[no-untyped-def]
+    """Instala a proteção no banco, inclusive quando a tabela já existia."""
+    async with engine.begin() as conexao:
+        if engine.dialect.name == "postgresql":
+            await conexao.execute(
+                text(
+                    "CREATE OR REPLACE FUNCTION impedir_alteracao_historico_precos() "
+                    "RETURNS trigger AS $$ BEGIN RAISE EXCEPTION 'historico_precos e imutavel'; END; $$ LANGUAGE plpgsql"
+                )
+            )
+            await conexao.execute(text("DROP TRIGGER IF EXISTS trg_historico_precos_imutavel ON historico_precos"))
+            await conexao.execute(
+                text(
+                    "CREATE TRIGGER trg_historico_precos_imutavel BEFORE UPDATE OR DELETE ON historico_precos "
+                    "FOR EACH ROW EXECUTE FUNCTION impedir_alteracao_historico_precos()"
+                )
+            )
+        elif engine.dialect.name == "sqlite":
+            await conexao.execute(text("DROP TRIGGER IF EXISTS trg_historico_precos_nao_atualiza"))
+            await conexao.execute(text("DROP TRIGGER IF EXISTS trg_historico_precos_nao_apaga"))
+            await conexao.execute(
+                text(
+                    "CREATE TRIGGER trg_historico_precos_nao_atualiza BEFORE UPDATE ON historico_precos "
+                    "BEGIN SELECT RAISE(ABORT, 'historico_precos e imutavel'); END"
+                )
+            )
+            await conexao.execute(
+                text(
+                    "CREATE TRIGGER trg_historico_precos_nao_apaga BEFORE DELETE ON historico_precos "
+                    "BEGIN SELECT RAISE(ABORT, 'historico_precos e imutavel'); END"
+                )
+            )
 
 
 class EventoProcessado(Base):

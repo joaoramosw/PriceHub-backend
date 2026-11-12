@@ -55,7 +55,7 @@ export function PropagacaoAoVivo({ acompanhamento }: { acompanhamento?: Acompanh
     .slice(-LIMITE_DE_EVENTOS);
 
   const inicio = acompanhamento ? new Date(acompanhamento.iniciadoEm).getTime() : 0;
-  const catalogoAtualizado = eventos.some((evento) => evento.tipo.startsWith("catalogo."));
+  const projecaoAtualizada = eventos.some((evento) => evento.tipo === "catalogo.visao.atualizada");
 
   return (
     <Cartao className="h-fit lg:sticky lg:top-20">
@@ -74,7 +74,7 @@ export function PropagacaoAoVivo({ acompanhamento }: { acompanhamento?: Acompanh
             <p className="mt-1">
               <IndicadorDeConexao situacao={conexao} rotulo="ms-log" />
             </p>
-            {acompanhamento.modo === "polling" && !catalogoAtualizado && (
+            {acompanhamento.modo === "polling" && !projecaoAtualizada && (
               <p className="mt-2 text-amber-700">Loja sem webhook: aguardando a próxima consulta do ms-ingestao (polling, até ~15 s).</p>
             )}
           </div>
@@ -90,7 +90,9 @@ export function PropagacaoAoVivo({ acompanhamento }: { acompanhamento?: Acompanh
               </li>
             ))}
           </ol>
-          {catalogoAtualizado && <p className="mt-3 text-xs font-medium text-emerald-700">Catálogo atualizado: o comparador já mostra o novo valor.</p>}
+          {projecaoAtualizada && (
+            <p className="mt-3 text-xs font-medium text-emerald-700">Projeção atualizada: o serviço de consulta já tem o novo valor.</p>
+          )}
           <a
             className="mt-3 block text-xs text-slate-600 underline"
             href={`${URLS_DOS_APPS.monitor}?correlationId=${acompanhamento.correlationId}`}

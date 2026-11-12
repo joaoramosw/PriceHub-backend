@@ -69,7 +69,7 @@ Três farmácias simuladas alimentam o sistema, cada uma com um perfil de integr
 |---|---|
 | Backend | Python 3.12, FastAPI (Swagger em `/docs` de cada serviço), Pydantic, SQLAlchemy assíncrono, aio-pika |
 | Mensageria | RabbitMQ 4, exchange *topic* `pricehub.eventos`, filas duráveis com `.retry` e `.dlq` |
-| Banco | PostgreSQL 16, **um banco por microsserviço** (`ingestao`, `catalogo`, `auditoria`) |
+| Banco | PostgreSQL 16, **um banco por serviço com persistência** (`ingestao`, `catalogo`, `consulta`, `auditoria`) |
 | Frontend | React 19, Tailwind CSS 4, Vite, TypeScript, monorepositório de micro-frontends (npm workspaces) |
 | Infraestrutura | Docker e Docker Compose |
 
@@ -93,29 +93,43 @@ flowchart LR
   CAT -- "catalogo.* (via outbox)" --> MQ
   MQ -- "fila ms-log.todos-os-eventos (#)" --> LOG["ms-log :8003<br/>serviço de log · banco auditoria"]
 
-  CAT -. "SSE /tempo-real" .-> WEB["micro-frontends React<br/>comparador · lojas · monitor · vitrines"]
+  MQ -- "catalogo.visao.atualizada" --> QRY["ms-consulta :8004<br/>projeções CQRS · banco consulta"]
+  WEB["micro-frontends React<br/>comparador · lojas · monitor · vitrines"] --> BFF["ms-bff :8000<br/>fachada HTTP"]
+  BFF --> QRY
+  BFF --> CAT
+  BFF --> LOG
+  BFF --> BIO
+  BFF --> AZUL
+  BFF --> POP
+  QRY -. "SSE /tempo-real" .-> WEB
   LOG -. "SSE /registros/tempo-real" .-> WEB
 ```
 
+O BFF é a borda HTTP chamada pelo navegador e encaminha cada rota à API responsável. As chamadas entre serviços de domínio
+continuam orientadas a eventos no RabbitMQ; o BFF não acessa bancos. O serviço de consulta guarda uma projeção independente,
+e o catálogo pode republicar snapshots quando recebe `consulta.projecao.solicitada` após a projeção ser criada vazia.
+
 ### Caminho de uma alteração de preço
 
-1. Alguém altera um preço na farmácia (tela de gestão ou API da farmácia).
+1. A gestão envia a alteração pelo BFF à API da farmácia; o BFF devolve o aceite e o `correlationId` da operação.
 2. A farmácia aplica o **Observer**: o observador de webhook envia a alteração assinada com HMAC para o `ms-ingestao`
    (no caso da DrogaPopular, o `ms-ingestao` percebe a mudança no próximo polling).
 3. O `ms-ingestao` usa o **Adapter** da farmácia para converter o formato dela no modelo canônico, grava a coleta bruta,
    publica `ingestao.oferta.recebida` no RabbitMQ e **responde na hora** (esse é o *tempo de aceite*).
 4. O `ms-catalogo` consome o evento, associa a oferta a um medicamento único (**Strategy**), atualiza preço e histórico e
    grava o evento de saída na **outbox** na mesma transação. Um relay publica `catalogo.oferta.atualizada`.
-5. O comparador recebe a mudança por SSE e destaca o card. O `ms-log` registrou cada passo com o mesmo `correlationId`
-   e calcula a *janela de convergência* (do primeiro evento até o catálogo atualizado).
+5. O `ms-catalogo` grava um snapshot de leitura na outbox, na mesma transação da mudança. O `ms-consulta` aplica o evento
+   na projeção do seu banco e envia SSE ao comparador pelo BFF. O `ms-log` registra os passos com o mesmo `correlationId`.
 
 ### Serviços e portas
 
 | Serviço | Porta | Responsabilidade | Banco |
 |---|---|---|---|
-| `ms-ingestao` | 8001 | Recebe webhooks, faz polling, adapta cada formato ao modelo canônico e publica eventos | `ingestao` (coletas brutas) |
-| `ms-catalogo` | 8002 | Consome a ingestão, associa ofertas a medicamentos únicos, mantém preço e histórico, publica eventos do catálogo, serve a busca | `catalogo` |
-| `ms-log` | 8003 | Assina **todos** os eventos (`#`), grava, rastreia por `correlationId`, mede aceite x convergência, lê as filas | `auditoria` |
+| `ms-ingestao` | 8001 interno | Recebe webhooks, faz polling, adapta cada formato ao modelo canônico e publica eventos | `ingestao` (coletas brutas) |
+| `ms-catalogo` | 8002 interno | Consome a ingestão, associa ofertas a medicamentos únicos, mantém preço e histórico imutável e publica snapshots via outbox | `catalogo` |
+| `ms-log` | 8003 interno | Assina **todos** os eventos (`#`), grava, rastreia por `correlationId`, mede aceite x convergência, lê as filas | `auditoria` |
+| `ms-consulta` | 8004 interno | Mantém projeções CQRS a partir de eventos do catálogo; serve busca, detalhe, histórico e SSE | `consulta` |
+| `ms-bff` | 8000 | Fachada HTTP dos micro-frontends; encaminha consultas, gestão das lojas, monitor e comandos de operação | - |
 | `farmacia-*` | 8101-8103 | Farmácias simuladas: API própria + API de gestão; padrão Observer | memória |
 | `frontend` | 5173-5176 | Comparador, gestão das lojas, monitor de eventos, vitrines | - |
 | RabbitMQ | 5672 / 15672 | Broker AMQP e painel de gerenciamento | - |
@@ -126,7 +140,7 @@ flowchart LR
 ### Pré-requisitos
 
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e aberto.
-* Portas livres: 5173-5176, 8001-8003, 8101-8103, 5433, 5672 e 15672 (veja [Problemas comuns](#13-problemas-comuns) se
+* Portas livres: 5173-5176, 8000, 8101-8103, 5433, 5672 e 15672 (veja [Problemas comuns](#13-problemas-comuns) se
   alguma estiver ocupada).
 * Internet na primeira execução (download das imagens) e para abrir o Swagger, que carrega a interface de uma CDN.
 
@@ -149,8 +163,18 @@ O primeiro build leva alguns minutos. Para acompanhar:
 
 ```bash
 docker compose ps        # todos devem ficar "healthy" (o frontend fica só "Up")
-docker compose logs -f ms-ingestao ms-catalogo ms-log
+docker compose logs -f ms-ingestao ms-catalogo ms-consulta ms-bff ms-log
 ```
+
+Para demonstrar réplicas do consumidor de leitura, o `ms-consulta` não publica porta fixa no host e pode ser escalado:
+
+```bash
+docker compose up -d --scale ms-consulta=3
+```
+
+As réplicas compartilham a fila durável de projeção e o banco `consulta`; cada uma mantém uma fila SSE efêmera própria
+para os navegadores conectados a ela. O `ms-ingestao` permanece em uma instância porque o agendador de polling ainda
+não usa eleição distribuída.
 
 Quando tudo estiver de pé, as farmácias já terão enviado a carga inicial e o comparador mostra 10 medicamentos com
 3 ofertas cada.
@@ -163,8 +187,8 @@ Quando tudo estiver de pé, as farmácias já terão enviado a carga inicial e o
 | Gestão das lojas | http://localhost:5174 |
 | Monitor de eventos, filas, métricas e links das APIs | http://localhost:5175 |
 | Vitrines das farmácias | http://localhost:5176 |
-| Swagger do ms-ingestao / ms-catalogo / ms-log | http://localhost:8001/docs · http://localhost:8002/docs · http://localhost:8003/docs |
-| Swagger das farmácias | http://localhost:8101/docs · http://localhost:8102/docs · http://localhost:8103/docs |
+| Swagger do ms-bff / ms-ingestao / ms-catalogo / ms-log / ms-consulta | http://localhost:8000/docs · http://localhost:8000/ingestao/docs · http://localhost:8000/catalogo/docs · http://localhost:8000/log/docs · http://localhost:8000/consulta/docs |
+| Swagger das farmácias | http://localhost:8000/farmacias/biofarma/docs · http://localhost:8000/farmacias/farmaazul/docs · http://localhost:8000/farmacias/drogapopular/docs |
 | Painel do RabbitMQ | http://localhost:15672 (usuário `pricehub`, senha `pricehub`) |
 
 ### Configuração (`.env`)
@@ -178,7 +202,8 @@ Quando tudo estiver de pé, as farmácias já terão enviado a carga inicial e o
 | `INTERVALO_DE_RECONCILIACAO_S` | `120` | Reconciliação periódica das farmácias com webhook |
 | `NIVEL_DE_LOG` | `INFO` | Nível dos logs JSON dos serviços |
 
-Os valores são só para uso local.
+Os valores são só para uso local. Em uma instalação anterior com volume persistente, crie o banco adicional uma vez com
+`docker compose exec postgres createdb -U pricehub consulta` (ajuste o usuário se alterou `POSTGRES_USUARIO`).
 
 ### Parar e limpar
 
@@ -315,6 +340,8 @@ Log em texto dos contêineres: `docker compose logs ms-ingestao ms-catalogo ms-l
 | `catalogo.oferta.atualizada` | ms-catalogo | ms-log, comparador (SSE) |
 | `catalogo.oferta.indisponivel` | ms-catalogo | ms-log, comparador (SSE) |
 | `catalogo.oferta.nao-correspondida` | ms-catalogo | ms-log |
+| `catalogo.visao.atualizada` | ms-catalogo | ms-consulta, ms-log |
+| `consulta.projecao.solicitada` | ms-consulta | ms-catalogo (republica snapshots para reconstrução) |
 
 Todo evento viaja no mesmo envelope:
 
@@ -331,7 +358,9 @@ Todo evento viaja no mesmo envelope:
 ```
 
 Cada fila durável tem uma fila `.retry` (nova tentativa após 2 s) e uma `.dlq` (mensagens que esgotaram 5 tentativas).
-O `ms-catalogo` é um consumidor idempotente: guarda o `idDoEvento` na tabela `eventos_processados` e ignora repetições.
+O `ms-catalogo` e o `ms-consulta` são consumidores idempotentes: guardam o `idDoEvento` e ignoram repetições. A projeção
+também compara `ocorridoEm` para não regredir diante de snapshots atrasados. O histórico no PostgreSQL usa triggers que
+rejeitam `UPDATE` e `DELETE`.
 
 ## 9. Onde cada conceito está no código
 
@@ -341,6 +370,10 @@ O `ms-catalogo` é um consumidor idempotente: guarda o `idDoEvento` na tabela `e
 | Adapter + Template Method | `backend/services/ms-ingestao/app/adaptadores/base.py` e um arquivo por farmácia |
 | Strategy (correspondência de medicamentos) | `backend/services/ms-catalogo/app/dominio/correspondencia.py` |
 | Transactional Outbox | `backend/services/ms-catalogo/app/servicos/relay_da_outbox.py` |
+| Factory simples dos adaptadores | `backend/services/ms-ingestao/app/adaptadores/__init__.py` (`criar_registro`) |
+| BFF | `backend/services/ms-bff/app/roteador.py` |
+| Projeções CQRS | `backend/services/ms-consulta/app/` |
+| Proteção do histórico no banco | `backend/services/ms-catalogo/app/persistencia/modelos.py` (`proteger_historico_precos`) |
 | Consumidor idempotente | `backend/services/ms-catalogo/app/servicos/processador.py` (tabela `eventos_processados`) |
 | Envelope dos eventos | `backend/libs/pricehub_common/pricehub_common/eventos/envelope.py` |
 | Contratos dos eventos | `backend/libs/pricehub_common/pricehub_common/eventos/contratos.py` |
@@ -363,6 +396,8 @@ pip install -r requirements-dev.txt
 cd services/ms-ingestao && URL_DO_BANCO=postgresql+asyncpg://pricehub:pricehub@localhost:5433/ingestao uvicorn app.main:app --port 8001
 cd services/ms-catalogo && URL_DO_BANCO=postgresql+asyncpg://pricehub:pricehub@localhost:5433/catalogo uvicorn app.main:app --port 8002
 cd services/ms-log      && URL_DO_BANCO=postgresql+asyncpg://pricehub:pricehub@localhost:5433/auditoria uvicorn app.main:app --port 8003
+cd services/ms-consulta && URL_DO_BANCO=postgresql+asyncpg://pricehub:pricehub@localhost:5433/consulta uvicorn app.main:app --port 8004
+cd services/ms-bff      && uvicorn app.main:app --port 8000
 cd services/ms-farmacia && FARMACIA_ID=biofarma SEGREDO_DO_WEBHOOK=segredo-biofarma-dev uvicorn app.main:app --port 8101
 ```
 
@@ -378,9 +413,23 @@ npm run dev            # sobe os quatro micro-frontends (5173 a 5176)
 
 ```bash
 cd backend
-./executar_testes.sh   # 38 testes: contratos, Observer, Adapter, validadores, idempotência, outbox, métricas
+./executar_testes.sh   # testes de contratos, Observer, Adapter, BFF, projeções CQRS, imutabilidade e outbox
 ruff check .
 cd ../frontend && npm run verificar-tipos && npm run build
+```
+
+Com a stack Docker iniciada, o teste E2E de interface altera um preço, acompanha o aceite e verifica a projeção/eventos:
+
+```bash
+pip install playwright
+python -m playwright install chromium
+python scripts/teste_e2e_interface.py --farmacia biofarma
+```
+
+O baseline de carga da leitura pelo BFF (concorrência e duração configuráveis) grava percentis e vazão observados:
+
+```bash
+python scripts/benchmark_escalabilidade.py --concorrencia 10 --duracao 30 --saida docs/evidencias/baseline.json
 ```
 
 ## 12. Estrutura de pastas
@@ -390,7 +439,9 @@ backend/
   libs/pricehub_common/      contratos de eventos, barramento RabbitMQ, logs JSON, fábrica FastAPI, SSE
   services/ms-farmacia/      farmácias simuladas (uma base de código, três instâncias)
   services/ms-ingestao/      adaptadores, webhooks, polling, coletas brutas
-  services/ms-catalogo/      catálogo, correspondência, outbox, consultas, tempo real
+  services/ms-catalogo/      catálogo, correspondência, outbox, histórico e publicações
+  services/ms-consulta/      projeções CQRS, leitura e SSE
+  services/ms-bff/           fachada HTTP para os micro-frontends
   services/ms-log/           serviço de log, rastreamento, métricas, filas, saúde
 frontend/
   packages/api/              clientes tipados de cada microsserviço e hooks (consulta, SSE)

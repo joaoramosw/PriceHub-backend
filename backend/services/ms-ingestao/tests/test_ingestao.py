@@ -50,6 +50,13 @@ def test_tres_formatos_diferentes_viram_o_mesmo_modelo_canonico() -> None:
     assert drogapopular.url_do_produto == "http://vitrines/drogapopular/produto/DP-0002"
 
 
+def test_fabrica_rejeita_dois_adaptadores_para_a_mesma_farmacia() -> None:
+    biofarma = AdaptadorBioFarma("http://bio", "http://v", None)
+    duplicado = AdaptadorBioFarma("http://bio2", "http://v", None)
+    with pytest.raises(ValueError, match="adaptador duplicado"):
+        RegistroDeAdaptadores([biofarma, duplicado], {})
+
+
 def test_item_fora_do_contrato_e_descartado_sem_derrubar_o_lote() -> None:
     itens = amostra("biofarma")[:2]
     itens.append({"id": 99, "sku": "BIO-X", "nome": "Sem preço"})

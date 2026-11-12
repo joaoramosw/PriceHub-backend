@@ -21,7 +21,9 @@ PDF ainda descreve só dois serviços e cita Prisma. Agora são:
 | Componente | Papel | Banco próprio |
 |---|---|---|
 | `ms-ingestao` | Webhooks, polling, **Adapter**, publica `ingestao.*` | `ingestao` |
-| `ms-catalogo` | Consome a ingestão, **Strategy** de correspondência, **outbox**, publica `catalogo.*`, busca | `catalogo` |
+| `ms-catalogo` | Consome a ingestão, **Strategy** de correspondência, histórico imutável, **outbox**, publica snapshots | `catalogo` |
+| `ms-consulta` | Projeções de leitura CQRS atualizadas por eventos; busca, histórico e SSE | `consulta` |
+| `ms-bff` | Fachada HTTP usada pelos micro-frontends; encaminha cada operação ao serviço responsável | - |
 | `ms-log` | **Serviço de log** pedido pelo professor: assina todos os eventos, rastreia, mede | `auditoria` |
 | `farmacia-*` (3 instâncias) | Farmácias simuladas com **Observer**, dados em memória | nenhum |
 | Frontend | React + Tailwind, 4 micro-frontends num monorepositório | - |
@@ -98,11 +100,12 @@ microsserviços, eventos, RabbitMQ e a validação por logs. Rascunho (ajustar n
 A comparação de preços entre lojas virtuais exige integrar fontes independentes, que publicam dados em formatos
 diferentes e mudam seus valores a qualquer momento. Este trabalho investiga como uma arquitetura de microsserviços
 com comunicação assíncrona orientada a eventos atende a esse problema, usando como objeto de estudo o PriceHub, um
-agregador de preços de medicamentos. A solução foi dividida em três microsserviços com bancos de dados próprios
-(ingestão, catálogo e registro de eventos), que se comunicam por meio do RabbitMQ. A ingestão aplica o padrão Adapter
-para converter os formatos das fontes em um modelo canônico; o catálogo consome os eventos de forma idempotente e
-publica as alterações por meio do padrão Transactional Outbox; e o serviço de registro assina todos os eventos para
-permitir o rastreamento das operações. Como não há interfaces públicas e gratuitas de consulta de preços nas grandes
+agregador de preços de medicamentos. A solução usa serviços independentes, com bancos próprios para ingestão,
+escrita do catálogo, projeções de leitura e auditoria, integrados por RabbitMQ. A ingestão aplica o padrão Adapter
+para converter os formatos das fontes em um modelo canônico; o catálogo consome eventos de forma idempotente e
+publica alterações e snapshots por meio do padrão Transactional Outbox; o serviço de consulta mantém projeções CQRS,
+e o serviço de registro assina eventos para permitir o rastreamento. Uma fachada BFF encaminha as chamadas dos
+micro-frontends sem compartilhar os bancos dos serviços. Como não há interfaces públicas e gratuitas de consulta de preços nas grandes
 redes de farmácias, foram criadas três farmácias simuladas, que implementam o padrão Observer para notificar as
 alterações. A validação, feita a partir dos registros do serviço de log, mostrou o catálogo vazio, a consolidação de
 10 medicamentos vindos de três formatos distintos e a propagação de alterações de preço em [X] ms (mediana), sem
@@ -264,7 +267,10 @@ https://mermaid.live, exporte em PNG ou SVG e suba no Overleaf como `figuras/con
 ```mermaid
 flowchart LR
   V([Visitante]) --> WEB[Micro-frontends React]
-  WEB --> CAT
+  WEB --> BFF[ms-bff<br/>fachada HTTP]
+  BFF --> QRY[ms-consulta<br/>projeções CQRS]
+  BFF --> CAT
+  BFF --> LOG
   subgraph F[Farmácias simuladas]
     B[BioFarma Verde<br/>webhook]
     A[FarmaAzul Confiança<br/>webhook]
@@ -276,10 +282,14 @@ flowchart LR
   ING[ms-ingestao<br/>Adapter] -->|ingestao.*| MQ{{RabbitMQ<br/>pricehub.eventos}}
   MQ --> CAT[ms-catalogo<br/>Strategy + Outbox]
   CAT -->|catalogo.*| MQ
+  MQ -->|catalogo.visao.atualizada| QRY
+  QRY -->|consulta.projecao.solicitada| MQ
+  MQ -->|pedido de reconstrução| CAT
   MQ --> LOG[ms-log<br/>registro de eventos]
   ING --- DB1[(ingestao)]
   CAT --- DB2[(catalogo)]
   LOG --- DB3[(auditoria)]
+  QRY --- DB4[(consulta)]
 ```
 
 Texto da seção (adaptar):
@@ -287,12 +297,13 @@ Texto da seção (adaptar):
 ```latex
 \subsection{Modelagem arquitetural da solução}
 
-A Figura~\ref{fig:conteineres} apresenta o diagrama de contêineres (nível 2 do Modelo C4) da solução. O PriceHub
-foi dividido em três microsserviços, cada um com processo e banco de dados próprios: o \textit{ms-ingestao}, que
-recebe e padroniza os dados das farmácias; o \textit{ms-catalogo}, que mantém o catálogo centralizado e atende às
-consultas; e o \textit{ms-log}, que registra todos os eventos que trafegam no RabbitMQ. Os serviços não acessam
-o banco uns dos outros nem se chamam diretamente: a única forma de comunicação entre eles é a publicação e o
-consumo de eventos.
+A Figura~\ref{fig:conteineres} apresenta o diagrama de contêineres (nível 2 do Modelo C4) da solução. Os serviços
+de domínio mantêm processos e bancos próprios: o \textit{ms-ingestao}, que recebe e padroniza dados; o
+\textit{ms-catalogo}, responsável pelas escritas; o \textit{ms-consulta}, responsável por projeções CQRS; e o
+\textit{ms-log}, que registra eventos. Os serviços de domínio não compartilham bancos e integram-se por eventos.
+O \textit{ms-bff} é a borda HTTP do navegador e encaminha requisições às APIs responsáveis; não contém regras de
+domínio nem lê bancos alheios. A projeção de leitura tem consistência eventual e pode pedir ao catálogo a
+republicação dos snapshots se iniciar vazia.
 
 \begin{figure}[htbp]
 \centering
@@ -360,8 +371,8 @@ erDiagram
 Acrescentar ao texto (e corrigir o comentário 100, sobre "histórico imutável"):
 
 ```latex
-O histórico de preços é cumulativo: o serviço apenas insere novas linhas e nunca altera ou apaga as anteriores
-(\textit{append-only}). Não se trata de imutabilidade garantida pelo banco, e sim de uma regra da aplicação.
+O histórico de preços é cumulativo e \textit{append-only}: o serviço apenas insere novas linhas. Triggers no
+PostgreSQL rejeitam operações \texttt{UPDATE} e \texttt{DELETE}, garantindo a imutabilidade também no banco.
 Além das tabelas de negócio, o banco do catálogo tem três tabelas de apoio: \texttt{eventos\_processados}, que
 garante a idempotência; \texttt{outbox}, com os eventos a publicar; e \texttt{ofertas\_nao\_correspondidas}, com as
 ofertas que não puderam ser associadas a um medicamento. O \textit{ms-ingestao} mantém, em seu banco, a coleta
@@ -392,6 +403,8 @@ Evento & Produtor & Consumidores e efeito \\
 \texttt{catalogo.oferta.atualizada} & ms-catalogo & ms-log; interface (tempo real) \\
 \texttt{catalogo.oferta.indisponivel} & ms-catalogo & ms-log; interface (tempo real) \\
 \texttt{catalogo.oferta.nao-correspondida} & ms-catalogo & ms-log \\
+\texttt{catalogo.visao.atualizada} & ms-catalogo & ms-consulta: atualiza a projeção; ms-log \\
+\texttt{consulta.projecao.solicitada} & ms-consulta & ms-catalogo: republica snapshots após reconstrução; ms-log \\
 \bottomrule
 \end{tabular}
 \fonte{Autoria própria.}
@@ -433,6 +446,8 @@ sequenceDiagram
   participant R as RabbitMQ
   participant C as ms-catalogo
   participant L as ms-log
+  participant Q as ms-consulta
+  participant B as ms-bff
   G->>F: PATCH /admin/produtos/{id}/preco
   F-->>G: 200 (correlationId)
   F->>I: POST /webhooks/{farmacia} (HMAC, correlationId)
@@ -442,6 +457,10 @@ sequenceDiagram
   R->>C: ingestao.oferta.recebida
   C->>C: transação: idempotência + oferta + histórico + outbox
   C->>R: catalogo.oferta.atualizada (outbox)
+  C->>R: catalogo.visao.atualizada (outbox)
+  R->>Q: atualiza projeção de leitura
+  Q-->>B: SSE após commit da projeção
+  B-->>G: evento para a interface
   R->>L: todos os eventos
 ```
 
@@ -545,7 +564,7 @@ microsserviços. A execução foi feita com os contêineres descritos no Capítu
 
 \section{Etapa 1: PriceHub sem farmácias}
 
-Inicialmente foram iniciados apenas o RabbitMQ, o PostgreSQL, os três microsserviços do PriceHub e a interface.
+Inicialmente foram iniciados o RabbitMQ, o PostgreSQL, os serviços do PriceHub e a interface.
 A Figura~\ref{fig:vazio} mostra o comparador sem nenhum medicamento, e a consulta às estatísticas do catálogo
 retornou zero medicamentos, farmácias e ofertas. O \textit{ms-ingestao} registrou as três farmácias como
 indisponíveis e publicou um único evento \texttt{ingestao.farmacia.indisponivel} para cada uma.
@@ -724,13 +743,13 @@ A página do apêndice está em branco. Conteúdo completo:
 \section*{ADR-01: arquitetura de microsserviços}
 \textbf{Contexto.} O objetivo do trabalho é estudar a integração de fontes heterogêneas com serviços independentes.
 \textbf{Alternativas.} Monólito modular; microsserviços.
-\textbf{Decisão.} Dividir em ms-ingestao, ms-catalogo e ms-log, cada um com processo, implantação e banco próprios.
+\textbf{Decisão.} Separar ingestão, escrita do catálogo, consulta CQRS e auditoria em serviços com processos próprios e bancos onde há persistência; incluir o BFF como borda HTTP sem banco.
 \textbf{Consequências.} Escala e evolução independentes; em troca, mais componentes, rede entre eles e necessidade de observabilidade.
 
 \section*{ADR-02: comunicação assíncrona com RabbitMQ}
 \textbf{Contexto.} A atualização de preços não precisa bloquear quem a produziu, e o catálogo pode ficar indisponível.
-\textbf{Alternativas.} HTTP síncrono entre serviços; Redis Pub/Sub; Apache Kafka; RabbitMQ.
-\textbf{Decisão.} RabbitMQ com uma \textit{exchange topic}, filas duráveis, confirmação manual, fila de nova tentativa e de mensagens mortas.
+\textbf{Alternativas.} HTTP síncrono entre serviços de domínio; Redis Pub/Sub; Apache Kafka; RabbitMQ.
+\textbf{Decisão.} RabbitMQ com uma \textit{exchange topic}, filas duráveis, confirmação manual, fila de nova tentativa e de mensagens mortas. O BFF usa HTTP na borda entre navegador e APIs.
 \textbf{Consequências.} Desacoplamento temporal e absorção de picos. O Redis Pub/Sub descarta a mensagem se o consumidor estiver fora do ar; o Kafka mantém um log em disco que o escopo não exige. Aceita-se a consistência eventual.
 
 \section*{ADR-03: padrão Adapter na ingestão}
@@ -742,7 +761,7 @@ A página do apêndice está em branco. Conteúdo completo:
 \section*{ADR-04: PostgreSQL com um banco por serviço}
 \textbf{Contexto.} Os dados do catálogo são relacionais e o histórico precisa ser consultado por medicamento.
 \textbf{Alternativas.} Banco único compartilhado; um banco por serviço.
-\textbf{Decisão.} PostgreSQL com os bancos ingestao, catalogo e auditoria; nenhum serviço lê o banco de outro.
+\textbf{Decisão.} PostgreSQL com bancos ingestao, catalogo, consulta e auditoria; nenhum serviço lê o banco de outro.
 \textbf{Consequências.} Serviços independentes; consultas que cruzam serviços passam a depender de eventos.
 
 \section*{ADR-05: Transactional Outbox e consumidor idempotente}
@@ -762,6 +781,18 @@ A página do apêndice está em branco. Conteúdo completo:
 \textbf{Alternativas.} Ler os logs de cada contêiner; serviço próprio assinando todos os eventos.
 \textbf{Decisão.} ms-log com fila ligada ao padrão \# e banco próprio.
 \textbf{Consequências.} Rastreamento por correlação e métricas sem alterar os produtores; mais um serviço para operar.
+
+\section*{ADR-08: BFF e separação CQRS de leitura}
+\textbf{Contexto.} A interface precisa consumir o sistema por uma fachada e as consultas devem ser independentes do banco de escrita.
+\textbf{Alternativas.} Chamadas diretas do navegador a cada serviço; BFF na borda e serviço de consulta orientado a eventos.
+\textbf{Decisão.} O BFF encaminha operações às APIs responsáveis; o ms-consulta mantém projeções próprias a partir de snapshots duráveis publicados pelo ms-catalogo.
+\textbf{Consequências.} A interface demonstra o fluxo completo e as consultas escalam separadamente; aceita-se consistência eventual e a reconstrução explícita das projeções.
+
+\section*{ADR-09: imutabilidade do histórico de preços}
+\textbf{Contexto.} O histórico é evidência cumulativa das mudanças de preço e não deve ser editado por operações comuns.
+\textbf{Alternativas.} Convenção no repositório; proteção por triggers no PostgreSQL.
+\textbf{Decisão.} Manter inserções append-only e rejeitar UPDATE/DELETE com triggers do banco.
+\textbf{Consequências.} A invariante vale também fora dos caminhos da aplicação; manutenção administrativa requer procedimento explícito.
 
 \end{apendicesenv}
 ```

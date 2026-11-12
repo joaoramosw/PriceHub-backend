@@ -22,6 +22,7 @@ function resumoDosDados(registro: RegistroDeEvento): string {
   if (registro.tipo === "ingestao.coleta.realizada")
     return `${dados.origem} · ${dados.ofertasPublicadas} publicadas, ${dados.ofertasSemAlteracao} sem alteração · aceite ${dados.duracaoMs} ms`;
   if (registro.tipo === "catalogo.medicamento.cadastrado") return `${dados.nome} (${dados.apresentacao})`;
+  if (registro.tipo === "catalogo.visao.atualizada") return `${dados.medicamentoNome} · projeção de leitura atualizada`;
   return dados.motivo ?? dados.codigoExterno ?? "";
 }
 
@@ -62,7 +63,16 @@ export function EventosAoVivo({ correlationIdInicial }: { correlationIdInicial?:
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
+    <div className="space-y-4">
+      <section className="rounded-xl border border-slate-200 bg-white px-4 py-3" aria-label="Caminho de uma alteração de preço">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Caminho de uma alteração</p>
+        <p className="mt-2 text-sm leading-6 text-slate-700">
+          Gestão → <strong>BFF</strong> → farmácia → webhook ou polling → <strong>ms-ingestao</strong> → RabbitMQ → <strong>ms-catalogo</strong>
+          → outbox e RabbitMQ → <strong>ms-consulta</strong> → comparador. O ms-log registra os eventos com o mesmo correlationId.
+        </p>
+        <p className="mt-1 text-xs text-slate-500">A resposta de aceite chega primeiro; a projeção de leitura converge quando os consumidores processam os eventos.</p>
+      </section>
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_400px]">
       <Cartao>
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {FAMILIAS.map((item) => (
@@ -120,6 +130,7 @@ export function EventosAoVivo({ correlationIdInicial }: { correlationIdInicial?:
         </ul>
       </Cartao>
       <LinhaDoTempo correlationId={selecionado} versao={novos.length} />
+      </div>
     </div>
   );
 }

@@ -13,7 +13,7 @@ from fastapi import FastAPI
 
 from app.api.rotas import roteador
 from app.configuracao import ConfiguracaoDoCatalogo
-from app.persistencia.modelos import Base
+from app.persistencia.modelos import Base, proteger_historico_precos
 from app.servicos.consultas import ConsultasDoCatalogo
 from app.servicos.processador import EVENTOS_CONSUMIDOS, ProcessadorDeEventosDeIngestao
 from app.servicos.relay_da_outbox import RelayDaOutbox
@@ -47,6 +47,7 @@ def criar_app(configuracao: ConfiguracaoDoCatalogo | None = None, barramento: Ba
     async def ciclo_de_vida(app: FastAPI) -> AsyncIterator[None]:
         await banco.aguardar_disponibilidade()
         await banco.criar_tabelas(Base.metadata)
+        await proteger_historico_precos(banco.engine)
         await barramento.conectar()
         relay.iniciar()
         await tempo_real.iniciar()

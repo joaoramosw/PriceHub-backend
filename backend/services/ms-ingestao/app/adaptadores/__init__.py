@@ -12,7 +12,11 @@ from app.configuracao import ConfiguracaoDaIngestao
 
 class RegistroDeAdaptadores:
     def __init__(self, adaptadores: list[AdaptadorDeFarmacia], segredos_de_webhook: dict[str, str]) -> None:
-        self._adaptadores = {adaptador.farmacia_id: adaptador for adaptador in adaptadores}
+        self._adaptadores: dict[str, AdaptadorDeFarmacia] = {}
+        for adaptador in adaptadores:
+            if adaptador.farmacia_id in self._adaptadores:
+                raise ValueError(f"adaptador duplicado para a farmácia {adaptador.farmacia_id}")
+            self._adaptadores[adaptador.farmacia_id] = adaptador
         self._segredos_de_webhook = segredos_de_webhook
 
     def obter(self, farmacia_id: str) -> AdaptadorDeFarmacia | None:
@@ -26,6 +30,7 @@ class RegistroDeAdaptadores:
 
 
 def criar_registro(configuracao: ConfiguracaoDaIngestao, cliente: ClienteDaFarmacia) -> RegistroDeAdaptadores:
+    """Fábrica simples: instancia os adaptadores conforme as integrações configuradas."""
     vitrines = configuracao.url_das_vitrines
     return RegistroDeAdaptadores(
         adaptadores=[

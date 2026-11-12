@@ -4,6 +4,8 @@ import { Cartao, Selo, TituloDeSecao } from "@pricehub/ui";
 const DESCRICOES: Record<string, string> = {
   "ms-ingestao": "Webhooks, polling, padrão Adapter e publicação dos eventos de ingestão.",
   "ms-catalogo": "Catálogo padronizado, comparação de preços, histórico, outbox e SSE.",
+  "ms-consulta": "Projeções CQRS de leitura, reconstruídas a partir dos eventos do catálogo.",
+  "ms-bff": "Entrada HTTP do front-end: encaminha cada rota ao serviço responsável.",
   "ms-log": "Serviço de log: todos os eventos, rastreamento, métricas, filas e saúde.",
   "farmacia-biofarma": "Farmácia simulada (webhook, camelCase, preço em reais).",
   "farmacia-farmaazul": "Farmácia simulada (webhook, paginada, snake_case, centavos).",
@@ -14,6 +16,8 @@ const PADRAO = {
   "ms-ingestao": URLS_DOS_SERVICOS.ingestao,
   "ms-catalogo": URLS_DOS_SERVICOS.catalogo,
   "ms-log": URLS_DOS_SERVICOS.log,
+  "ms-consulta": URLS_DOS_SERVICOS.consulta,
+  "ms-bff": "http://localhost:8000",
   "farmacia-biofarma": URLS_DAS_FARMACIAS.biofarma,
   "farmacia-farmaazul": URLS_DAS_FARMACIAS.farmaazul,
   "farmacia-drogapopular": URLS_DAS_FARMACIAS.drogapopular,

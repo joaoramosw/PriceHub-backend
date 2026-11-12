@@ -39,6 +39,8 @@ class TipoDeEvento(StrEnum):
     CATALOGO_OFERTA_ATUALIZADA = "catalogo.oferta.atualizada"
     CATALOGO_OFERTA_INDISPONIVEL = "catalogo.oferta.indisponivel"
     CATALOGO_OFERTA_NAO_CORRESPONDIDA = "catalogo.oferta.nao-correspondida"
+    CATALOGO_VISAO_ATUALIZADA = "catalogo.visao.atualizada"
+    CONSULTA_PROJECAO_SOLICITADA = "consulta.projecao.solicitada"
 
 
 UnidadeDeConcentracao = Literal["mg", "mg/ml", "g", "ml", "mcg"]
@@ -186,6 +188,23 @@ class CatalogoOfertaNaoCorrespondida(ModeloDeContrato):
     motivo: str
 
 
+class CatalogoVisaoAtualizada(ModeloDeContrato):
+    """Snapshot transacional publicado para atualizar a projeção de leitura (CQRS)."""
+
+    medicamento_id: str
+    medicamento_nome: str
+    farmacia_id: str | None = None
+    resumo: dict
+    detalhe: dict
+    historico: list[dict]
+
+
+class ConsultaProjecaoSolicitada(ModeloDeContrato):
+    """Pedido técnico para reconstruir uma projeção vazia a partir do catálogo."""
+
+    motivo: str = "inicializacao"
+
+
 CONTRATOS_POR_TIPO: dict[TipoDeEvento, type[ModeloDeContrato]] = {
     TipoDeEvento.INGESTAO_OFERTA_RECEBIDA: IngestaoOfertaRecebida,
     TipoDeEvento.INGESTAO_OFERTA_REMOVIDA: IngestaoOfertaRemovida,
@@ -196,6 +215,8 @@ CONTRATOS_POR_TIPO: dict[TipoDeEvento, type[ModeloDeContrato]] = {
     TipoDeEvento.CATALOGO_OFERTA_ATUALIZADA: CatalogoOfertaAtualizada,
     TipoDeEvento.CATALOGO_OFERTA_INDISPONIVEL: CatalogoOfertaIndisponivel,
     TipoDeEvento.CATALOGO_OFERTA_NAO_CORRESPONDIDA: CatalogoOfertaNaoCorrespondida,
+    TipoDeEvento.CATALOGO_VISAO_ATUALIZADA: CatalogoVisaoAtualizada,
+    TipoDeEvento.CONSULTA_PROJECAO_SOLICITADA: ConsultaProjecaoSolicitada,
 }
 
 
