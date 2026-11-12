@@ -1,0 +1,28 @@
+{
+  "name": "pricehub-frontend",
+  "private": true,
+  "description": "Monorepositório dos micro-frontends do PriceHub (React + Tailwind).",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n comparador,lojas,monitor,vitrines -c blue,green,magenta,red \"npm:dev -w @pricehub/comparador\" \"npm:dev -w @pricehub/lojas\" \"npm:dev -w @pricehub/monitor\" \"npm:dev -w @pricehub/vitrines\"",
+    "build": "npm run build --workspaces --if-present",
+    "verificar-tipos": "npm run verificar-tipos --workspaces --if-present"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.5",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.2.0",
+    "tailwindcss": "^4.3.5",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.0"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "modo": "webhook",
+    "urlBase": "http://localhost:8101",
+    "situacao": "indisponivel",
+    "ultimaColetaEm": null,
+    "ultimaVerificacaoEm": "2026-11-12T01:32:34.740049Z",
+    "ultimoErro": "farmácia indisponível em http://localhost:8101/api/produtos: ConnectError: All connection attempts failed",
+    "coletasRealizadas": 0,
+    "falhasConsecutivas": 1
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "modo": "webhook",
+    "urlBase": "http://localhost:8102",
+    "situacao": "indisponivel",
+    "ultimaColetaEm": null,
+    "ultimaVerificacaoEm": "2026-11-12T01:32:34.739205Z",
+    "ultimoErro": "farmácia indisponível em http://localhost:8102/v1/catalogo?page=1&page_size=20: ConnectError: All connection attempts failed",
+    "coletasRealizadas": 0,
+    "falhasConsecutivas": 1
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "modo": "polling",
+    "urlBase": "http://localhost:8103",
+    "situacao": "indisponivel",
+    "ultimaColetaEm": null,
+    "ultimaVerificacaoEm": "2026-11-12T01:32:34.740518Z",
+    "ultimoErro": "farmácia indisponível em http://localhost:8103/legacy/precos.json: ConnectError: All connection attempts failed",
+    "coletasRealizadas": 0,
+    "falhasConsecutivas": 1
+  }
+]

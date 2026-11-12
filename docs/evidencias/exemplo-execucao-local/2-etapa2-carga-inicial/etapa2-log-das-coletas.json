@@ -1,0 +1,172 @@
+[
+  {
+    "id": 68,
+    "idDoEvento": "26e66dc5-7b97-4dfd-9dd7-76a52bde8765",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "186d28ca-0c8d-4023-88bf-52ade809dccd",
+    "farmaciaId": "drogapopular",
+    "ocorridoEm": "2026-11-12T01:32:49.802863+00:00",
+    "recebidoEm": "2026-11-12T01:32:49.844360+00:00",
+    "dados": {
+      "coletaId": "11256d2d-d1d8-429f-bb8b-ac377cc73050",
+      "farmaciaId": "drogapopular",
+      "origem": "polling",
+      "itensRecebidos": 10,
+      "ofertasPublicadas": 10,
+      "ofertasSemAlteracao": 0,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 56.27,
+      "catalogoCompleto": true,
+      "codigosPresentes": [
+        "DP-0001",
+        "DP-0002",
+        "DP-0003",
+        "DP-0004",
+        "DP-0005",
+        "DP-0006",
+        "DP-0007",
+        "DP-0008",
+        "DP-0009",
+        "DP-0010"
+      ]
+    }
+  },
+  {
+    "id": 57,
+    "idDoEvento": "84b41a0a-cb88-4331-b7f7-e1aa85af3152",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "4c903067-8004-4f27-a9c9-17c424db760d",
+    "farmaciaId": "farmaazul",
+    "ocorridoEm": "2026-11-12T01:32:49.755638+00:00",
+    "recebidoEm": "2026-11-12T01:32:49.767302+00:00",
+    "dados": {
+      "coletaId": "bdc11722-37b7-4d78-8eed-061f64ec5816",
+      "farmaciaId": "farmaazul",
+      "origem": "sincronizacao",
+      "itensRecebidos": 10,
+      "ofertasPublicadas": 0,
+      "ofertasSemAlteracao": 10,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 9.73,
+      "catalogoCompleto": true,
+      "codigosPresentes": [
+        "FA-MET-500",
+        "FA-LOS-50",
+        "FA-DIP-500",
+        "FA-OME-20",
+        "FA-HID-25",
+        "FA-NIM-100",
+        "FA-TAD-5",
+        "FA-SIN-20",
+        "FA-IBU-600",
+        "FA-SIM-75"
+      ]
+    }
+  },
+  {
+    "id": 56,
+    "idDoEvento": "ff1b19c7-8546-4346-86d2-bd29464eeaad",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "0baf7af3-57fd-4a74-a448-b83446a42c4e",
+    "farmaciaId": "biofarma",
+    "ocorridoEm": "2026-11-12T01:32:49.753940+00:00",
+    "recebidoEm": "2026-11-12T01:32:49.758615+00:00",
+    "dados": {
+      "coletaId": "b06b2d4d-1384-4080-a213-c74554ddebf3",
+      "farmaciaId": "biofarma",
+      "origem": "sincronizacao",
+      "itensRecebidos": 10,
+      "ofertasPublicadas": 0,
+      "ofertasSemAlteracao": 10,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 7.57,
+      "catalogoCompleto": true,
+      "codigosPresentes": [
+        "BIO-0001",
+        "BIO-0002",
+        "BIO-0003",
+        "BIO-0004",
+        "BIO-0005",
+        "BIO-0006",
+        "BIO-0007",
+        "BIO-0008",
+        "BIO-0009",
+        "BIO-0010"
+      ]
+    }
+  },
+  {
+    "id": 45,
+    "idDoEvento": "cb07478b-b52c-4ed3-b0d6-429fd6e5ffcc",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "1642e161-666c-479e-8c5e-ff4b61901f4e",
+    "farmaciaId": "farmaazul",
+    "ocorridoEm": "2026-11-12T01:32:46.278305+00:00",
+    "recebidoEm": "2026-11-12T01:32:46.325857+00:00",
+    "dados": {
+      "coletaId": "7e626298-6d8c-4af1-af0d-77d6f7d1a8c7",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "itensRecebidos": 10,
+      "ofertasPublicadas": 10,
+      "ofertasSemAlteracao": 0,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 19.38,
+      "catalogoCompleto": true,
+      "codigosPresentes": [
+        "FA-MET-500",
+        "FA-LOS-50",
+        "FA-DIP-500",
+        "FA-OME-20",
+        "FA-HID-25",
+        "FA-NIM-100",
+        "FA-TAD-5",
+        "FA-SIN-20",
+        "FA-IBU-600",
+        "FA-SIM-75"
+      ]
+    }
+  },
+  {
+    "id": 14,
+    "idDoEvento": "8e1017b9-c6ea-4188-91d1-9aea5f209667",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "fa7c368c-b77b-432f-b37c-dcfba6b56b71",
+    "farmaciaId": "biofarma",
+    "ocorridoEm": "2026-11-12T01:32:43.213112+00:00",
+    "recebidoEm": "2026-11-12T01:32:43.244522+00:00",
+    "dados": {
+      "coletaId": "0efa1934-922b-4999-9b3b-b6c3ccbe7b7c",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "itensRecebidos": 10,
+      "ofertasPublicadas": 10,
+      "ofertasSemAlteracao": 0,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 25.13,
+      "catalogoCompleto": true,
+      "codigosPresentes": [
+        "BIO-0001",
+        "BIO-0002",
+        "BIO-0003",
+        "BIO-0004",
+        "BIO-0005",
+        "BIO-0006",
+        "BIO-0007",
+        "BIO-0008",
+        "BIO-0009",
+        "BIO-0010"
+      ]
+    }
+  }
+]

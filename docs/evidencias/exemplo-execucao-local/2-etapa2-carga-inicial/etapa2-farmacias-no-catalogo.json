@@ -1,0 +1,23 @@
+[
+  {
+    "id": "biofarma",
+    "nome": "BioFarma Verde",
+    "totalDeOfertas": 10,
+    "ofertasDisponiveis": 10,
+    "atualizadaEm": "2026-11-12T01:32:43.396406Z"
+  },
+  {
+    "id": "drogapopular",
+    "nome": "DrogaPopular Express",
+    "totalDeOfertas": 10,
+    "ofertasDisponiveis": 10,
+    "atualizadaEm": "2026-11-12T01:32:49.922437Z"
+  },
+  {
+    "id": "farmaazul",
+    "nome": "FarmaAzul Confiança",
+    "totalDeOfertas": 10,
+    "ofertasDisponiveis": 10,
+    "atualizadaEm": "2026-11-12T01:32:46.395907Z"
+  }
+]

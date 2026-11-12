@@ -1,9 +1,0 @@
-{
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "rootDir": ".",
-    "noEmit": true,
-    "customConditions": ["@pricehub/source"]
-  },
-  "include": ["src", "test", "prisma.config.ts"]
-}
