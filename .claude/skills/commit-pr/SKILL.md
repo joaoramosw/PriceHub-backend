@@ -15,6 +15,9 @@ Regras do grupo para o histórico do PriceHub. Valem para qualquer agente (Claud
 - Tudo em **português (PT-BR)**: título, corpo do commit, título e descrição do PR.
 - Nunca commitar `.env`, `node_modules`, `__pycache__`, `dist` ou segredos.
 - Nunca usar `--no-verify`, `push --force` na `main` ou reescrever histórico sem o usuário pedir.
+- Antes do primeiro commit no clone, garantir o hook: `git config core.hooksPath .githooks`
+  (ele remove automaticamente as linhas de coautoria de IA). O CI (`sem-coautoria-ia.yml`) reprova
+  o PR se alguma escapar.
 
 ## Mensagem do commit
 

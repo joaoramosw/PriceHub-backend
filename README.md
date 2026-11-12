@@ -139,6 +139,9 @@ cd PriceHub-backend
 # Windows (PowerShell):  copy .env.example .env
 cp .env.example .env
 
+# uma vez por clone: ativa o hook que barra coautoria de IA nos commits
+git config core.hooksPath .githooks
+
 docker compose up -d --build
 ```
 
@@ -407,6 +410,8 @@ docker-compose.yml           sobe tudo: infraestrutura, microsserviços, farmác
 AGENTS.md, CLAUDE.md         instruções para agentes de IA (Codex e Claude Code)
 .agents/skills/              skills para o Codex (commit-pr, tdd, implement, grilling, domain-modeling, playwright)
 .claude/skills/              as mesmas skills para o Claude Code
+.githooks/                   hook commit-msg que remove coautoria de IA
+.github/workflows/           verificação de coautoria de IA nos PRs e na main
 ```
 
 ## 13. Problemas comuns

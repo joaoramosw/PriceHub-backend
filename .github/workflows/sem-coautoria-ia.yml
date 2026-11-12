@@ -1,0 +1,55 @@
+name: Sem coautoria de IA
+
+# Falha se algum commit ou a descrição do PR tiver Co-Authored-By de IA ou assinatura de ferramenta de IA.
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verifica as mensagens dos commits
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          TOPO: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          padrao='^[[:space:]]*co-authored-by:.*(claude|anthropic|openai|codex|chatgpt|copilot|gemini|cursor)|generated with.*(claude|codex|copilot|chatgpt)'
+          if [ -z "$BASE" ] || [ "$BASE" = "0000000000000000000000000000000000000000" ]; then
+            intervalo="$TOPO"
+          else
+            intervalo="$BASE..$TOPO"
+          fi
+          encontrados=""
+          for commit in $(git rev-list "$intervalo"); do
+            if git log -1 --format=%B "$commit" | grep -qiE "$padrao"; then
+              encontrados="$encontrados $(git log -1 --format='%h %s' "$commit")"$'\n'
+            fi
+          done
+          if [ -n "$encontrados" ]; then
+            echo "::error::Commits com coautoria ou assinatura de IA:"
+            printf '%s' "$encontrados"
+            echo "Reescreva as mensagens sem essas linhas (veja .agents/skills/commit-pr/SKILL.md)."
+            exit 1
+          fi
+          echo "Nenhuma coautoria de IA nos commits."
+
+      - name: Verifica a descrição do PR
+        if: github.event_name == 'pull_request'
+        env:
+          CORPO: ${{ github.event.pull_request.body }}
+        run: |
+          if printf '%s' "$CORPO" | grep -qiE 'co-authored-by:.*(claude|anthropic|openai|codex|chatgpt|copilot|gemini|cursor)|generated with.*(claude|codex|copilot|chatgpt)'; then
+            echo "::error::A descrição do PR tem assinatura de IA. Remova a linha e salve o PR."
+            exit 1
+          fi
+          echo "Descrição do PR sem assinatura de IA."

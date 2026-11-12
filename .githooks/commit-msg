@@ -1,0 +1,16 @@
+#!/bin/sh
+# Remove da mensagem de commit qualquer coautoria ou assinatura de ferramenta de IA.
+# Ativar uma vez por clone:  git config core.hooksPath .githooks
+
+arquivo="$1"
+padrao='^[[:space:]]*co-authored-by:.*(claude|anthropic|openai|codex|chatgpt|copilot|gemini|cursor)|generated with.*(claude|codex|copilot|chatgpt)|🤖'
+
+if grep -qiE "$padrao" "$arquivo"; then
+  temporario="$arquivo.tmp"
+  grep -viE "$padrao" "$arquivo" > "$temporario"
+  # remove linhas em branco que sobraram no fim da mensagem
+  sed -e :a -e '/^\n*$/{$d;N;ba' -e '}' "$temporario" > "$arquivo"
+  rm -f "$temporario"
+  echo "commit-msg: coautoria/assinatura de IA removida da mensagem (regra do repositório)."
+fi
+exit 0
