@@ -3,17 +3,19 @@
  * Podem ser trocados por variáveis de ambiente do Vite (arquivo .env de cada app).
  */
 const ambiente = import.meta.env;
+const bff = ambiente.VITE_URL_BFF ?? "http://localhost:8000";
 
 export const URLS_DOS_SERVICOS = {
-  ingestao: ambiente.VITE_URL_MS_INGESTAO ?? "http://localhost:8001",
-  catalogo: ambiente.VITE_URL_MS_CATALOGO ?? "http://localhost:8002",
-  log: ambiente.VITE_URL_MS_LOG ?? "http://localhost:8003",
+  ingestao: ambiente.VITE_URL_MS_INGESTAO ?? `${bff}/ingestao`,
+  catalogo: ambiente.VITE_URL_MS_CATALOGO ?? `${bff}/catalogo`,
+  consulta: ambiente.VITE_URL_MS_CONSULTA ?? `${bff}/consulta`,
+  log: ambiente.VITE_URL_MS_LOG ?? `${bff}/log`,
 } as const;
 
 export const URLS_DAS_FARMACIAS: Record<IdDaFarmacia, string> = {
-  biofarma: ambiente.VITE_URL_FARMACIA_BIOFARMA ?? "http://localhost:8101",
-  farmaazul: ambiente.VITE_URL_FARMACIA_FARMAAZUL ?? "http://localhost:8102",
-  drogapopular: ambiente.VITE_URL_FARMACIA_DROGAPOPULAR ?? "http://localhost:8103",
+  biofarma: ambiente.VITE_URL_FARMACIA_BIOFARMA ?? `${bff}/farmacias/biofarma`,
+  farmaazul: ambiente.VITE_URL_FARMACIA_FARMAAZUL ?? `${bff}/farmacias/farmaazul`,
+  drogapopular: ambiente.VITE_URL_FARMACIA_DROGAPOPULAR ?? `${bff}/farmacias/drogapopular`,
 };
 
 export const URLS_DOS_APPS = {

@@ -43,6 +43,8 @@ function useValorComAtraso<T>(valor: T, atrasoMs: number): T {
 }
 
 export function App() {
+  const [boasVindas, setBoasVindas] = useState(() => localStorage.getItem("pricehub-boas-vindas-v1") !== "visto");
+  const [etapaDoTour, setEtapaDoTour] = useState<number | null>(null);
   const [textoDaBusca, setTextoDaBusca] = useState("");
   const [categoria, setCategoria] = useState<string>();
   const [selecionado, setSelecionado] = useState<string>();
@@ -88,6 +90,17 @@ export function App() {
   const lista = medicamentos.dados ?? [];
   const catalogoVazio = !medicamentos.carregando && !busca && !categoria && lista.length === 0 && !medicamentos.erro;
   const totais = estatisticas.dados;
+  const etapas = [
+    { titulo: "Encontre o medicamento", texto: "Busque pelo nome, princípio ativo ou fabricante e filtre por categoria." },
+    { titulo: "Compare as farmácias", texto: "Abra um item para ver ofertas, diferença de preço e histórico." },
+    { titulo: "Acompanhe a atualização", texto: "Na Gestão das lojas, altere um preço. O monitor mostra o correlationId, os eventos e a convergência do catálogo." },
+  ];
+
+  const encerrarBoasVindas = () => {
+    localStorage.setItem("pricehub-boas-vindas-v1", "visto");
+    setBoasVindas(false);
+    setEtapaDoTour(null);
+  };
 
   return (
     <div className="min-h-screen">
@@ -198,6 +211,46 @@ export function App() {
         <PainelDoMedicamento medicamentoId={selecionado} versao={versaoDoDetalhe} aoFechar={() => setSelecionado(undefined)} />
       )}
       <PilhaDeAvisos avisos={avisos} />
+      {(boasVindas || etapaDoTour !== null) && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/55 p-4" role="presentation">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="boas-vindas-titulo"
+            className="w-full max-w-lg rounded-2xl bg-white p-7 shadow-2xl"
+          >
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-emerald-700">PriceHub · guia rápido</p>
+            <h2 id="boas-vindas-titulo" className="mt-3 text-2xl font-semibold text-slate-900">
+              {etapaDoTour === null ? "Compare preços e acompanhe o caminho dos dados" : etapas[etapaDoTour].titulo}
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              {etapaDoTour === null
+                ? "Veja como uma mudança feita na farmácia passa pelo BFF, pela ingestão e pelos eventos até chegar ao catálogo."
+                : etapas[etapaDoTour].texto}
+            </p>
+            {etapaDoTour !== null && (
+              <p className="mt-4 text-xs text-slate-400">Etapa {etapaDoTour + 1} de {etapas.length}</p>
+            )}
+            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+              <button onClick={encerrarBoasVindas} className="text-sm text-slate-500 underline underline-offset-4">
+                {etapaDoTour === null ? "Pular apresentação" : "Fechar guia"}
+              </button>
+              {etapaDoTour === null ? (
+                <button onClick={() => setEtapaDoTour(0)} className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white">
+                  Ver o guia
+                </button>
+              ) : (
+                <button
+                  onClick={() => etapaDoTour + 1 === etapas.length ? encerrarBoasVindas() : setEtapaDoTour(etapaDoTour + 1)}
+                  className="rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-medium text-white"
+                >
+                  {etapaDoTour + 1 === etapas.length ? "Começar a usar" : "Próxima etapa"}
+                </button>
+              )}
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   );
 }

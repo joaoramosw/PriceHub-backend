@@ -3,3 +3,4 @@
 CREATE DATABASE ingestao;
 CREATE DATABASE catalogo;
 CREATE DATABASE auditoria;
+CREATE DATABASE consulta;

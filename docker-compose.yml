@@ -79,8 +79,6 @@ services:
       SEGREDO_DO_WEBHOOK_FARMAAZUL: ${SEGREDO_DO_WEBHOOK_FARMAAZUL:-segredo-farmaazul-dev}
       INTERVALO_DE_POLLING_S: ${INTERVALO_DE_POLLING_S:-15}
       INTERVALO_DE_RECONCILIACAO_S: ${INTERVALO_DE_RECONCILIACAO_S:-120}
-    ports:
-      - "8001:8001"
 
   ms-catalogo:
     <<: *servico-python
@@ -93,8 +91,6 @@ services:
       <<: *ambiente-comum
       PORTA: "8002"
       URL_DO_BANCO: postgresql+asyncpg://${POSTGRES_USUARIO:-pricehub}:${POSTGRES_SENHA:-pricehub}@postgres:5432/catalogo
-    ports:
-      - "8002:8002"
 
   ms-log:
     <<: *servico-python
@@ -112,14 +108,54 @@ services:
       SENHA_DO_RABBITMQ: ${RABBITMQ_SENHA:-pricehub}
       SERVICOS_MONITORADOS: >-
         ms-ingestao=http://ms-ingestao:8001,ms-catalogo=http://ms-catalogo:8002,ms-log=http://ms-log:8003,
+        ms-consulta=http://ms-consulta:8004,ms-bff=http://ms-bff:8000,
         farmacia-biofarma=http://farmacia-biofarma:8101,farmacia-farmaazul=http://farmacia-farmaazul:8102,
         farmacia-drogapopular=http://farmacia-drogapopular:8103
       URL_PUBLICA_DOS_SERVICOS: >-
-        ms-ingestao=http://localhost:8001,ms-catalogo=http://localhost:8002,ms-log=http://localhost:8003,
-        farmacia-biofarma=http://localhost:8101,farmacia-farmaazul=http://localhost:8102,
-        farmacia-drogapopular=http://localhost:8103
+        ms-ingestao=http://localhost:8000/ingestao,ms-catalogo=http://localhost:8000/catalogo,ms-log=http://localhost:8000/log,
+        ms-consulta=http://localhost:8000/consulta,ms-bff=http://localhost:8000,
+        farmacia-biofarma=http://localhost:8000/farmacias/biofarma,farmacia-farmaazul=http://localhost:8000/farmacias/farmaazul,
+        farmacia-drogapopular=http://localhost:8000/farmacias/drogapopular
+
+  ms-consulta:
+    <<: *servico-python
+    build:
+      context: ./backend
+      args:
+        SERVICO: ms-consulta
+    image: pricehub/ms-consulta:local
+    environment:
+      <<: *ambiente-comum
+      PORTA: "8004"
+      URL_DO_BANCO: postgresql+asyncpg://${POSTGRES_USUARIO:-pricehub}:${POSTGRES_SENHA:-pricehub}@postgres:5432/consulta
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      ms-catalogo:
+        condition: service_healthy
+
+  ms-bff:
+    <<: *servico-python
+    build:
+      context: ./backend
+      args:
+        SERVICO: ms-bff
+    image: pricehub/ms-bff:local
+    depends_on: []
+    environment:
+      <<: *ambiente-comum
+      PORTA: "8000"
+      URL_DO_CATALOGO: http://ms-catalogo:8002
+      URL_DA_CONSULTA: http://ms-consulta:8004
+      URL_DA_INGESTAO: http://ms-ingestao:8001
+      URL_DO_LOG: http://ms-log:8003
+      URL_DA_BIOFARMA: http://farmacia-biofarma:8101
+      URL_DA_FARMAAZUL: http://farmacia-farmaazul:8102
+      URL_DA_DROGAPOPULAR: http://farmacia-drogapopular:8103
     ports:
-      - "8003:8003"
+      - "8000:8000"
 
   farmacia-biofarma:
     <<: *farmacia

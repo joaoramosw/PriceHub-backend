@@ -136,8 +136,8 @@ async def alterar_e_rastrear(cliente: httpx.AsyncClient, farmacia: str, produto_
 async def etapa3(cliente: httpx.AsyncClient, evidencias: Evidencias) -> None:
     evidencias.registrar("\n## Etapa 3 - Alteração de preço propagada por eventos")
     resultados = []
-    for farmacia in FARMACIAS:
-        produtos = (await cliente.get(f"{FARMACIAS[farmacia]}/admin/produtos")).json()
+    for farmacia, url in FARMACIAS.items():
+        produtos = (await cliente.get(f"{url}/admin/produtos")).json()
         produto = produtos[1]
         novo_preco = produto["precoCentavos"] - 37
         resultados.append(await alterar_e_rastrear(cliente, farmacia, produto["id"], novo_preco))
