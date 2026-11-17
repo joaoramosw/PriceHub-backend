@@ -3,13 +3,12 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from app.dominio.normalizacao import normalizar_principio_ativo
-from app.persistencia.modelos import Base, proteger_historico_precos
+from app.persistencia.modelos import Base
 from app.servicos.consultas import ConsultasDoCatalogo
 from app.servicos.processador import ProcessadorDeEventosDeIngestao
 from app.servicos.relay_da_outbox import RelayDaOutbox
 from pricehub_common.eventos import (
     Concentracao,
-    ConsultaProjecaoSolicitada,
     IngestaoColetaRealizada,
     IngestaoOfertaRecebida,
     OfertaCanonica,
@@ -43,7 +42,6 @@ def oferta(farmacia: str, codigo: str, principio: str, preco: int, registro: str
 async def ambiente(tmp_path):
     banco = BancoDeDados(f"sqlite+aiosqlite:///{tmp_path}/catalogo.db")
     await banco.criar_tabelas(Base.metadata)
-    await proteger_historico_precos(banco.engine)
     barramento = BarramentoEmMemoria("ms-catalogo")
     relay = RelayDaOutbox(banco, barramento, intervalo_s=1, lote=100)
     processador = ProcessadorDeEventosDeIngestao(banco, barramento)
@@ -112,7 +110,7 @@ async def test_evento_repetido_nao_e_aplicado_duas_vezes(ambiente) -> None:
     estatisticas = await consultas.estatisticas()
     assert estatisticas.registros_de_historico == 1
     assert estatisticas.eventos_processados == 1
-    assert estatisticas.eventos_na_outbox_pendentes == 3  # cadastro, atualização da oferta e snapshot CQRS
+    assert estatisticas.eventos_na_outbox_pendentes == 2  # medicamento cadastrado + oferta atualizada
 
 
 async def test_alteracao_de_preco_gera_historico_e_evento_pela_outbox(ambiente) -> None:
@@ -130,55 +128,13 @@ async def test_alteracao_de_preco_gera_historico_e_evento_pela_outbox(ambiente) 
         ),
     )
 
-    assert await relay.publicar_pendentes() == 5
+    assert await relay.publicar_pendentes() == 3
     atualizacoes = [e for e in barramento.publicados if e.tipo == "catalogo.oferta.atualizada"]
     assert atualizacoes[-1].dados["situacao"] == "preco-alterado"
     assert atualizacoes[-1].dados["precoAnteriorCentavos"] == 1150
     assert atualizacoes[-1].correlation_id == "teste"
-    snapshots = [e for e in barramento.publicados if e.tipo == "catalogo.visao.atualizada"]
-    assert len(snapshots) == 2
-    assert snapshots[-1].dados["farmaciaId"] == "biofarma"
-    assert snapshots[-1].dados["detalhe"]["ofertas"][0]["precoCentavos"] == 999
     medicamento = (await consultas.listar_medicamentos(None, None))[0]
     assert [p.preco_centavos for p in await consultas.historico(medicamento.id)] == [1150, 999]
-
-
-async def test_historico_rejeita_update_e_delete_direto_no_banco(ambiente) -> None:
-    from sqlalchemy import text
-    from sqlalchemy.exc import IntegrityError
-
-    processador, barramento, _, _ = ambiente
-    await receber(
-        processador,
-        barramento,
-        IngestaoOfertaRecebida(coleta_id="1", origem="webhook", oferta=oferta("biofarma", "BIO-2", "Losartana", 1150)),
-    )
-    banco = processador._banco
-    with pytest.raises(IntegrityError, match="imutavel"):
-        async with banco.transacao() as sessao:
-            await sessao.execute(text("UPDATE historico_precos SET preco_centavos = 1"))
-    with pytest.raises(IntegrityError, match="imutavel"):
-        async with banco.transacao() as sessao:
-            await sessao.execute(text("DELETE FROM historico_precos"))
-
-
-async def test_solicitacao_reconstroi_projecao_a_partir_do_catalogo(ambiente) -> None:
-    processador, barramento, relay, _ = ambiente
-    await receber(
-        processador,
-        barramento,
-        IngestaoOfertaRecebida(coleta_id="1", origem="webhook", oferta=oferta("biofarma", "BIO-2", "Losartana", 1150)),
-    )
-    solicitacao = barramento.montar_envelope(
-        TipoDeEvento.CONSULTA_PROJECAO_SOLICITADA,
-        ConsultaProjecaoSolicitada(motivo="projecao-vazia"),
-        correlation_id="reconstrucao-1",
-    )
-    await processador(solicitacao)
-    await relay.publicar_pendentes()
-    snapshot = [evento for evento in barramento.publicados if evento.tipo == "catalogo.visao.atualizada"][-1]
-    assert snapshot.correlation_id == "reconstrucao-1"
-    assert snapshot.dados["detalhe"]["nome"] == "Losartana 50mg"
 
 
 async def test_evento_fora_de_ordem_e_ignorado(ambiente) -> None:
@@ -227,3 +183,37 @@ async def test_coleta_completa_marca_como_indisponivel_o_que_sumiu(ambiente) -> 
     await receber(processador, barramento, coleta, TipoDeEvento.INGESTAO_COLETA_REALIZADA)
     estatisticas = await consultas.estatisticas()
     assert (estatisticas.ofertas, estatisticas.ofertas_disponiveis) == (2, 1)
+
+
+async def test_historico_guarda_a_origem_e_troca_da_mais_barata_vira_evento(ambiente) -> None:
+    processador, barramento, relay, consultas = ambiente
+    depois = AGORA + timedelta(minutes=1)
+
+    def recebida(farmacia: str, codigo: str, preco: int, origem: str, quando=AGORA) -> IngestaoOfertaRecebida:
+        dados = oferta(farmacia, codigo, "Losartana", preco, "1018104210023", quando=quando)
+        return IngestaoOfertaRecebida(
+            coleta_id=codigo, origem="webhook", oferta=dados.model_copy(update={"origem_da_alteracao": origem})
+        )
+
+    await receber(processador, barramento, recebida("biofarma", "BIO-2", 1150, "carga-inicial"))
+    await receber(processador, barramento, recebida("farmaazul", "FA-2", 890, "carga-inicial"))
+    # A BioFarma baixa o preço e passa a ser a mais barata.
+    await receber(processador, barramento, recebida("biofarma", "BIO-2", 849, "programada", quando=depois))
+    await relay.publicar_pendentes()
+
+    medicamento = (await consultas.listar_medicamentos(None, None))[0]
+    historico = await consultas.historico(medicamento.id)
+    assert [(p.farmacia_id, p.preco_centavos, p.origem) for p in historico] == [
+        ("biofarma", 1150, "carga-inicial"),
+        ("farmaazul", 890, "carga-inicial"),
+        ("biofarma", 849, "programada"),
+    ]
+    trocas = [e for e in barramento.publicados if e.tipo == "catalogo.menor-preco.alterado"]
+    # Duas trocas: a FarmaAzul chega mais barata (1150 -> 890) e depois a BioFarma baixa (890 -> 849).
+    assert [(t.dados["farmaciaAnteriorId"], t.dados["farmaciaAtualId"]) for t in trocas] == [
+        ("biofarma", "farmaazul"),
+        ("farmaazul", "biofarma"),
+    ]
+    assert trocas[-1].dados["precoAnteriorCentavos"] == 890 and trocas[-1].dados["precoAtualCentavos"] == 849
+    atualizada = [e for e in barramento.publicados if e.tipo == "catalogo.oferta.atualizada"][-1]
+    assert atualizada.dados["origemDaAlteracao"] == "programada"

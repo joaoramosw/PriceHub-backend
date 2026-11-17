@@ -82,6 +82,7 @@ def criar_aplicacao(
     ciclo_de_vida: Callable[[FastAPI], AbstractAsyncContextManager[None]] | None = None,
     tags: list[dict[str, str]] | None = None,
     versao: str = "1.0.0",
+    redirecionar_raiz_para_docs: bool = True,
 ) -> FastAPI:
     app = FastAPI(
         title=titulo,
@@ -95,9 +96,11 @@ def criar_aplicacao(
     )
     app.state.nome_do_servico = servico
 
-    @app.get("/", include_in_schema=False)
-    async def raiz() -> RedirectResponse:
-        return RedirectResponse(url="/docs")
+    if redirecionar_raiz_para_docs:
+
+        @app.get("/", include_in_schema=False)
+        async def raiz() -> RedirectResponse:
+            return RedirectResponse(url="/docs")
 
     app.add_middleware(
         CORSMiddleware,

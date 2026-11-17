@@ -40,4 +40,15 @@ async def test_registrador_e_idempotente_e_metricas_medem_aceite_e_convergencia(
     assert metricas.convergencia.media_ms == 40.0
     assert metricas.equivalente_sincrono.media_ms == 46.0
     assert metricas.ultimas_propagacoes[0].farmacia_id == "farmaazul"
+    assert metricas.convergencia_por_origem["webhook"].mediana_ms == 40.0
+    assert metricas.trocas_da_mais_barata == 0
+
+    alterado = {"farmaciaId": "farmaazul", "situacao": "preco-alterado", "origemDaAlteracao": "programada"}
+    await registrador(evento("catalogo.oferta.atualizada", 60, alterado))
+    await registrador(evento("catalogo.menor-preco.alterado", 61, {"farmaciaAnteriorId": "biofarma", "farmaciaAtualId": "farmaazul"}))
+    metricas = await CalculadoraDeMetricas(banco).calcular()
+    assert metricas.alteracoes_por_farmacia == {"farmaazul": 1}
+    assert metricas.alteracoes_por_origem == {"programada": 1}
+    assert metricas.trocas_da_mais_barata == 1
+    assert metricas.ultimas_trocas_da_mais_barata[0]["farmaciaAtualId"] == "farmaazul"
     await banco.fechar()

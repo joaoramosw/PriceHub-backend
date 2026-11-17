@@ -42,3 +42,4 @@ class MemoriaDeOfertas:
     def esquecer_farmacia(self, farmacia_id: str) -> None:
         for codigo in self.codigos_conhecidos(farmacia_id):
             self.esquecer(farmacia_id, codigo)
+

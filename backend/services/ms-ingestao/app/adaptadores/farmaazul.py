@@ -16,6 +16,7 @@ from app.adaptadores.base import (
 from app.adaptadores.normalizacao import (
     interpretar_concentracao,
     interpretar_forma,
+    origem_conhecida,
     registro_ms_somente_digitos,
     unidade_de_quantidade_para,
 )
@@ -36,12 +37,15 @@ class ItemFarmaAzul(BaseModel):
     registro_anvisa: str | None = None
     preco_centavos: int = Field(gt=0)
     ultima_atualizacao: datetime | None = None
+    origem_preco: str | None = None
 
 
 class PaginaFarmaAzul(BaseModel):
     items: list[dict[str, Any]]
     page: int = Field(ge=1)
     total_pages: int = Field(ge=0)
+
+
 
 
 class WebhookFarmaAzul(BaseModel):
@@ -92,8 +96,10 @@ class AdaptadorFarmaAzul(AdaptadorDeFarmacia):
             preco_centavos=item.preco_centavos,
             url_do_produto=self.url_do_produto(item.codigo),
             atualizado_na_origem_em=item.ultima_atualizacao,
+            origem_da_alteracao=origem_conhecida(item.origem_preco),
             coletado_em=coletado_em,
         )
+
 
     def interpretar_webhook(self, payload: Any) -> NotificacaoInterpretada:
         try:

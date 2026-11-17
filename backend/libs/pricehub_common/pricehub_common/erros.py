@@ -56,3 +56,9 @@ class ServicoIndisponivel(ProblemaHttp):
     status = 503
     titulo = "Dependência indisponível"
     tipo = "https://pricehub.dev/problemas/servico-indisponivel"
+
+
+class TempoEsgotado(ProblemaHttp):
+    status = 504
+    titulo = "Tempo esgotado"
+    tipo = "https://pricehub.dev/problemas/tempo-esgotado"

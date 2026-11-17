@@ -60,12 +60,12 @@ class ResumoDoMedicamento(Saida):
     farmacia_mais_barata_id: str | None
     economia_maxima_centavos: int | None
     atualizado_em: datetime
+    ofertas: list[OfertaComparada]
 
 
 class DetalheDoMedicamento(ResumoDoMedicamento):
     registro_ms: str | None
     chave_canonica: str | None
-    ofertas: list[OfertaComparada]
 
 
 class PontoDoHistorico(Saida):
@@ -74,6 +74,7 @@ class PontoDoHistorico(Saida):
     preco_centavos: int
     registrado_em: datetime
     correlation_id: str
+    origem: str | None
 
 
 class ResumoDaFarmacia(Saida):
@@ -145,6 +146,7 @@ def _resumir(medicamento: Medicamento, comparadas: list[OfertaComparada]) -> dic
         "farmacia_mais_barata_id": menor.farmacia_id if menor else None,
         "economia_maxima_centavos": (maior.preco_centavos - menor.preco_centavos) if menor and maior else None,
         "atualizado_em": ultima_atualizacao,
+        "ofertas": comparadas,
     }
 
 
@@ -179,7 +181,6 @@ class ConsultasDoCatalogo:
                 **_resumir(medicamento, comparadas),
                 registro_ms=medicamento.registro_ms,
                 chave_canonica=medicamento.chave_canonica,
-                ofertas=comparadas,
             )
 
     async def historico(self, medicamento_id: str) -> list[PontoDoHistorico]:
@@ -199,6 +200,7 @@ class ConsultasDoCatalogo:
                 preco_centavos=registro.preco_centavos,
                 registrado_em=registro.registrado_em,
                 correlation_id=registro.correlation_id,
+                origem=registro.origem,
             )
             for registro, farmacia_id, farmacia_nome in linhas
         ]

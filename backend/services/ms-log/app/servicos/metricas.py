@@ -8,7 +8,9 @@ orientada a eventos traz:
   ingestão publicar o evento.
 * **Janela de convergência**: tempo entre o primeiro evento da operação e o
   ``catalogo.oferta.atualizada``. É a consistência eventual: o catálogo fica
-  correto pouco depois, sem bloquear quem produziu o dado.
+  correto pouco depois, sem bloquear quem produziu o dado. Ela é separada por
+  origem (webhook x polling), porque no polling a alteração só é percebida na
+  consulta seguinte.
 
 Em um fluxo síncrono (monolito ou cadeia HTTP), a farmácia esperaria a soma das
 duas etapas, e qualquer falha no catálogo voltaria para ela como erro.
@@ -20,7 +22,7 @@ import statistics
 from collections import Counter, defaultdict
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
 from sqlalchemy import func, select
 
@@ -28,6 +30,7 @@ from app.persistencia.modelos import RegistroDeEvento
 from pricehub_common.persistencia import BancoDeDados
 
 JANELA_DE_REGISTROS = 5000
+FIM_DA_PROPAGACAO = {"catalogo.oferta.atualizada": "preco"}
 
 
 class Saida(BaseModel):
@@ -36,6 +39,7 @@ class Saida(BaseModel):
 
 class AmostraDePropagacao(Saida):
     correlation_id: str
+    tipo: str = "preco"
     farmacia_id: str | None
     origem: str | None
     aceite_ms: float | None
@@ -59,6 +63,11 @@ class Metricas(Saida):
     aceite: Distribuicao
     convergencia: Distribuicao
     equivalente_sincrono: Distribuicao
+    convergencia_por_origem: dict[str, Distribuicao] = Field(description="webhook x polling")
+    alteracoes_por_farmacia: dict[str, int] = Field(description="Preços alterados no catálogo, por farmácia")
+    alteracoes_por_origem: dict[str, int] = Field(description="carga-inicial, manual (tela /admin) ou programada (simulação)")
+    trocas_da_mais_barata: int = Field(description="Vezes que outra farmácia passou a ser a mais barata de um medicamento")
+    ultimas_trocas_da_mais_barata: list[dict] = Field(default_factory=list)
     ultimas_propagacoes: list[AmostraDePropagacao]
 
 
@@ -102,27 +111,36 @@ class CalculadoraDeMetricas:
         amostras: list[AmostraDePropagacao] = []
         for correlation_id, registros in por_correlacao.items():
             registros.sort(key=lambda registro: registro.ocorrido_em)
-            atualizacoes = [r for r in registros if r.tipo == "catalogo.oferta.atualizada"]
+            finais = [r for r in registros if r.tipo in FIM_DA_PROPAGACAO]
             ingestoes = [r for r in registros if r.tipo.startswith("ingestao.")]
-            if not atualizacoes or not ingestoes:
+            if not finais or not ingestoes:
                 continue
             coleta = next((r for r in registros if r.tipo == "ingestao.coleta.realizada"), None)
             amostras.append(
                 AmostraDePropagacao(
                     correlation_id=correlation_id,
-                    farmacia_id=atualizacoes[0].farmacia_id,
+                    tipo=FIM_DA_PROPAGACAO[finais[-1].tipo],
+                    farmacia_id=finais[0].farmacia_id,
                     origem=(coleta.dados or {}).get("origem") if coleta else None,
                     aceite_ms=(coleta.dados or {}).get("duracaoMs") if coleta else None,
-                    convergencia_ms=_ms(ingestoes[0].ocorrido_em, atualizacoes[-1].ocorrido_em),
-                    ofertas_atualizadas=len(atualizacoes),
-                    ocorrido_em=atualizacoes[-1].ocorrido_em,
+                    convergencia_ms=_ms(ingestoes[0].ocorrido_em, finais[-1].ocorrido_em),
+                    ofertas_atualizadas=sum(1 for r in finais if r.tipo == "catalogo.oferta.atualizada"),
+                    ocorrido_em=finais[-1].ocorrido_em,
                 )
             )
         amostras.sort(key=lambda amostra: amostra.ocorrido_em, reverse=True)
 
+        alteracoes = [r for r in recentes if r.tipo == "catalogo.oferta.atualizada" and (r.dados or {}).get("situacao") == "preco-alterado"]
+        alteracoes_por_farmacia = Counter(r.farmacia_id or "desconhecida" for r in alteracoes)
+        alteracoes_por_origem = Counter((r.dados or {}).get("origemDaAlteracao") or "desconhecida" for r in alteracoes)
+        trocas = [r for r in recentes if r.tipo == "catalogo.menor-preco.alterado"]
+
         aceites = [a.aceite_ms for a in amostras if a.aceite_ms is not None]
         convergencias = [a.convergencia_ms for a in amostras]
         sincronos = [a.aceite_ms + a.convergencia_ms for a in amostras if a.aceite_ms is not None]
+        por_origem: dict[str, list[float]] = defaultdict(list)
+        for amostra in amostras:
+            por_origem[amostra.origem or "desconhecida"].append(amostra.convergencia_ms)
         return Metricas(
             total_de_eventos=total,
             por_tipo=dict(por_tipo),
@@ -130,5 +148,10 @@ class CalculadoraDeMetricas:
             aceite=distribuir(aceites),
             convergencia=distribuir(convergencias),
             equivalente_sincrono=distribuir(sincronos),
+            convergencia_por_origem={origem: distribuir(valores) for origem, valores in sorted(por_origem.items())},
             ultimas_propagacoes=amostras[:30],
+            alteracoes_por_farmacia=dict(alteracoes_por_farmacia),
+            alteracoes_por_origem=dict(alteracoes_por_origem),
+            trocas_da_mais_barata=len(trocas),
+            ultimas_trocas_da_mais_barata=[{**(r.dados or {}), "ocorridoEm": r.ocorrido_em.isoformat()} for r in trocas[:10]],
         )

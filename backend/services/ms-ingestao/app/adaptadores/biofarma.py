@@ -19,6 +19,7 @@ from app.adaptadores.normalizacao import (
     interpretar_apresentacao,
     interpretar_concentracao,
     normalizar_espacos,
+    origem_conhecida,
     principio_sem_dose,
     reais_para_centavos,
     registro_ms_somente_digitos,
@@ -42,6 +43,9 @@ class ProdutoBioFarma(BaseModel):
     categoria: str | None = None
     preco: float = Field(gt=0)
     atualizado_em: datetime | None = None
+    origem_do_preco: str | None = None
+
+
 
 
 class WebhookBioFarma(BaseModel):
@@ -86,8 +90,10 @@ class AdaptadorBioFarma(AdaptadorDeFarmacia):
             preco_centavos=reais_para_centavos(item.preco),
             url_do_produto=self.url_do_produto(item.sku),
             atualizado_na_origem_em=item.atualizado_em,
+            origem_da_alteracao=origem_conhecida(item.origem_do_preco),
             coletado_em=coletado_em,
         )
+
 
     def interpretar_webhook(self, payload: Any) -> NotificacaoInterpretada:
         try:

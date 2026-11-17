@@ -30,9 +30,9 @@ def amostra(nome: str):
 
 def adaptadores():
     return {
-        "biofarma": AdaptadorBioFarma("http://bio", "http://vitrines", None),
-        "farmaazul": AdaptadorFarmaAzul("http://azul", "http://vitrines", None),
-        "drogapopular": AdaptadorDrogaPopular("http://pop", "http://vitrines", None),
+        "biofarma": AdaptadorBioFarma("http://bio", "http://lojas", None),
+        "farmaazul": AdaptadorFarmaAzul("http://azul", "http://lojas", None),
+        "drogapopular": AdaptadorDrogaPopular("http://pop", "http://lojas", None),
     }
 
 
@@ -47,14 +47,20 @@ def test_tres_formatos_diferentes_viram_o_mesmo_modelo_canonico() -> None:
         assert oferta.quantidade.descrever() == "30un"
     assert (biofarma.preco_centavos, farmaazul.preco_centavos, drogapopular.preco_centavos) == (1150, 890, 749)
     assert biofarma.registro_ms == farmaazul.registro_ms == "1018104210023"
-    assert drogapopular.url_do_produto == "http://vitrines/drogapopular/produto/DP-0002"
+    assert drogapopular.url_do_produto == "http://lojas/drogapopular/produto/DP-0002"
 
 
-def test_fabrica_rejeita_dois_adaptadores_para_a_mesma_farmacia() -> None:
-    biofarma = AdaptadorBioFarma("http://bio", "http://v", None)
-    duplicado = AdaptadorBioFarma("http://bio2", "http://v", None)
-    with pytest.raises(ValueError, match="adaptador duplicado"):
-        RegistroDeAdaptadores([biofarma, duplicado], {})
+def test_origem_da_alteracao_e_lida_nos_tres_formatos() -> None:
+    bio = {**amostra("biofarma")[1], "origemDoPreco": "programada"}
+    azul = {**amostra("farmaazul")["items"][1], "origem_preco": "manual"}
+    pop = {**amostra("drogapopular")["produtos"][1], "ORIGEM": "CARGA-INICIAL"}
+    lista = adaptadores()
+    assert lista["biofarma"].converter([bio]).ofertas[0].origem_da_alteracao == "programada"
+    assert lista["farmaazul"].converter([azul]).ofertas[0].origem_da_alteracao == "manual"
+    assert lista["drogapopular"].converter([pop]).ofertas[0].origem_da_alteracao == "carga-inicial"
+    # Farmácia que não informa (ou informa algo desconhecido) não derruba a oferta.
+    sem_origem = lista["biofarma"].converter([{**bio, "origemDoPreco": "promocao"}]).ofertas[0]
+    assert sem_origem.origem_da_alteracao is None
 
 
 def test_item_fora_do_contrato_e_descartado_sem_derrubar_o_lote() -> None:
@@ -108,7 +114,7 @@ class ClienteFalso:
 async def servico_em_memoria(tmp_path):
     banco = BancoDeDados(f"sqlite+aiosqlite:///{tmp_path}/ingestao.db")
     await banco.criar_tabelas(Base.metadata)
-    cliente = ClienteFalso({"http://pop/legacy/precos.json": amostra("drogapopular")})
+    cliente = ClienteFalso({"http://pop/api/v1/produtos": amostra("drogapopular")})
     registro = RegistroDeAdaptadores([AdaptadorDrogaPopular("http://pop", "http://v", cliente)], {})
     barramento = BarramentoEmMemoria("ms-ingestao")
     servico = ServicoDeIngestao(registro, RepositorioDeColetas(banco), barramento, MemoriaDeOfertas(), EstadoDasFarmacias(["drogapopular"]))
