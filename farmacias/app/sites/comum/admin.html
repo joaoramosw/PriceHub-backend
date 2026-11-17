@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <base href="__BASE__" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Administração da loja</title>
+  <style>
+    :root { --primaria: #334155; --clara: #f1f5f9; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: #0f172a; background: #f8fafc; }
+    header { background: var(--primaria); color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    header h1 { margin: 0; font-size: 18px; }
+    header small { opacity: .85; }
+    header a { color: #fff; }
+    main { max-width: 1080px; margin: 0 auto; padding: 20px 16px 48px; display: grid; gap: 20px; }
+    section { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; }
+    h2 { margin: 0 0 4px; font-size: 15px; }
+    p.ajuda { margin: 0 0 12px; color: #475569; font-size: 13px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    th { font-size: 12px; color: #64748b; font-weight: 600; }
+    td.preco { font-variant-numeric: tabular-nums; font-weight: 700; }
+    input[type=text] { width: 96px; padding: 6px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font: inherit; }
+    button, select { font: inherit; padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; }
+    button.primario { background: var(--primaria); color: #fff; border-color: var(--primaria); }
+    button:disabled { opacity: .5; cursor: default; }
+    .linha { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .status { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+    .ponto { width: 9px; height: 9px; border-radius: 50%; background: #94a3b8; }
+    .ponto.ligado { background: #16a34a; }
+    .mensagem { margin-top: 10px; font-size: 13px; padding: 8px 10px; border-radius: 6px; background: var(--clara); display: none; }
+    .mensagem.erro { background: #fee2e2; color: #991b1b; }
+    .mensagem code { font-size: 12px; }
+    td.alterado { animation: piscar 1.2s ease-out; }
+    @keyframes piscar { from { background: #fef9c3; } to { background: transparent; } }
+    .sobe { color: #b91c1c; } .desce { color: #15803d; }
+    ul.ultimas { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+    ul.ultimas li { padding: 4px 0; border-bottom: 1px dashed #e2e8f0; font-variant-numeric: tabular-nums; }
+    @media (max-width: 640px) { .ocultar-celular { display: none; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1 id="nome-da-loja">Administração da loja</h1>
+      <small id="integracao"></small>
+    </div>
+    <a href="./">Ver o site da loja</a>
+  </header>
+
+  <main>
+    <section>
+      <h2>Simulação programada de preços</h2>
+      <p class="ajuda">A loja reajusta um produto por vez, seguindo uma tabela de 100 preços por produto. Cada reajuste passa pelo mesmo caminho da edição manual abaixo.</p>
+      <div class="linha">
+        <span class="status"><span class="ponto" id="ponto-simulacao"></span><span id="texto-simulacao">...</span></span>
+        <button type="button" id="alternar-simulacao">...</button>
+        <label>Intervalo
+          <select id="intervalo">
+            <option value="1">1 s (acelerado)</option>
+            <option value="3">3 s</option>
+            <option value="5">5 s</option>
+            <option value="10">10 s</option>
+            <option value="15">15 s</option>
+            <option value="30">30 s</option>
+          </select>
+        </label>
+        <span id="contador" style="color:#475569"></span>
+      </div>
+      <ul class="ultimas" id="ultimas"></ul>
+    </section>
+
+    <section>
+      <h2>Preços da loja</h2>
+      <p class="ajuda">Digite o novo preço em reais e salve. A loja avisa o PriceHub na hora (webhook) ou o PriceHub percebe na próxima consulta (polling).</p>
+      <table>
+        <thead><tr><th class="ocultar-celular">Código</th><th>Produto</th><th>Preço atual</th><th>Novo preço (R$)</th><th></th></tr></thead>
+        <tbody id="produtos"></tbody>
+      </table>
+      <div class="mensagem" id="mensagem"></div>
+      <div class="linha" style="margin-top:12px">
+        <button type="button" id="restaurar">Restaurar preços iniciais</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    'use strict';
+    const precos = new Map();
+    let simulacao = null;
+
+    const reais = (centavos) => (centavos / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    const hora = (iso) => new Date(iso).toLocaleTimeString('pt-BR');
+
+    async function pedir(caminho, opcoes = {}) {
+      const resposta = await fetch(caminho, { headers: { 'content-type': 'application/json' }, cache: 'no-store', ...opcoes });
+      const corpo = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) throw new Error(corpo.detail || corpo.title || `HTTP ${resposta.status}`);
+      return corpo;
+    }
+
+    function mostrar(texto, erro = false) {
+      const caixa = document.getElementById('mensagem');
+      caixa.innerHTML = texto;
+      caixa.className = 'mensagem' + (erro ? ' erro' : '');
+      caixa.style.display = 'block';
+    }
+
+    async function carregarLoja() {
+      const loja = await pedir('gestao/loja');
+      document.title = `Administração · ${loja.nome}`;
+      document.getElementById('nome-da-loja').textContent = `${loja.nome} · Administração`;
+      document.getElementById('integracao').textContent = loja.modoDeIntegracao === 'webhook'
+        ? 'Integração com o PriceHub: webhook (a loja avisa a cada alteração)'
+        : 'Integração com o PriceHub: polling (o PriceHub consulta o arquivo da loja periodicamente)';
+      document.documentElement.style.setProperty('--primaria', loja.tema.primaria);
+      document.documentElement.style.setProperty('--clara', loja.tema.clara);
+    }
+
+    async function carregarProdutos() {
+      const lista = await pedir('gestao/produtos');
+      const corpo = document.getElementById('produtos');
+      if (!corpo.children.length) {
+        corpo.innerHTML = lista.map((p) => `
+          <tr data-id="${p.id}">
+            <td class="ocultar-celular">${p.codigo}</td>
+            <td>${p.nomeComercial} <span style="color:#64748b">${p.concentracao}</span></td>
+            <td class="preco" id="preco-${p.id}"></td>
+            <td><input type="text" inputmode="decimal" id="novo-${p.id}" placeholder="0,00" aria-label="Novo preço de ${p.nomeComercial}"></td>
+            <td><button type="button" class="primario" data-salvar="${p.id}">Salvar</button></td>
+          </tr>`).join('');
+      }
+      for (const p of lista) {
+        const celula = document.getElementById(`preco-${p.id}`);
+        if (precos.get(p.id) !== p.precoCentavos) {
+          celula.textContent = reais(p.precoCentavos);
+          if (precos.has(p.id)) { celula.classList.remove('alterado'); void celula.offsetWidth; celula.classList.add('alterado'); }
+          precos.set(p.id, p.precoCentavos);
+        }
+      }
+    }
+
+    function desenharSimulacao() {
+      document.getElementById('ponto-simulacao').classList.toggle('ligado', simulacao.ativa);
+      document.getElementById('texto-simulacao').textContent = simulacao.ativa ? 'Ligada' : 'Pausada';
+      document.getElementById('alternar-simulacao').textContent = simulacao.ativa ? 'Pausar' : 'Ligar';
+      const select = document.getElementById('intervalo');
+      if (document.activeElement !== select) select.value = String(simulacao.intervaloS);
+      document.getElementById('contador').textContent = `${simulacao.alteracoesAplicadas} reajustes aplicados`;
+      document.getElementById('ultimas').innerHTML = simulacao.ultimas.slice(0, 8).map((a) => {
+        const classe = a.preco_atual_centavos > a.preco_anterior_centavos ? 'sobe' : 'desce';
+        const seta = classe === 'sobe' ? '▲' : '▼';
+        return `<li>${hora(a.instante)} · ${a.nome}: ${reais(a.preco_anterior_centavos)} → <strong class="${classe}">${reais(a.preco_atual_centavos)} ${seta}</strong></li>`;
+      }).join('');
+    }
+
+    async function carregarSimulacao() {
+      simulacao = await pedir('gestao/simulacao');
+      desenharSimulacao();
+    }
+
+    async function configurarSimulacao(mudanca) {
+      simulacao = await pedir('gestao/simulacao', { method: 'PUT', body: JSON.stringify(mudanca) });
+      desenharSimulacao();
+    }
+
+    async function salvar(id) {
+      const campo = document.getElementById(`novo-${id}`);
+      const valor = Number(campo.value.replace(/\./g, '').replace(',', '.'));
+      if (!Number.isFinite(valor) || valor <= 0) { mostrar('Informe um preço válido, por exemplo 12,90.', true); return; }
+      try {
+        const r = await pedir(`gestao/produtos/${id}/preco`, { method: 'PATCH', body: JSON.stringify({ precoCentavos: Math.round(valor * 100) }) });
+        campo.value = '';
+        const aviso = r.notificacao === 'webhook-agendado'
+          ? 'webhook enviado ao PriceHub'
+          : 'o PriceHub vai perceber na próxima consulta (polling)';
+        mostrar(`${r.produto.nomeComercial}: ${reais(r.precoAnteriorCentavos)} → <strong>${reais(r.produto.precoCentavos)}</strong>; ${aviso}. Rastreie no monitor com <code>${r.correlationId}</code>`);
+        await carregarProdutos();
+      } catch (erro) {
+        mostrar(erro.message, true);
+      }
+    }
+
+    document.getElementById('produtos').addEventListener('click', (e) => {
+      const botao = e.target.closest('[data-salvar]');
+      if (botao) salvar(Number(botao.dataset.salvar));
+    });
+    document.getElementById('produtos').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && e.target.id.startsWith('novo-')) salvar(Number(e.target.id.slice(5)));
+    });
+    document.getElementById('alternar-simulacao').addEventListener('click', () => configurarSimulacao({ ativa: !simulacao.ativa }));
+    document.getElementById('intervalo').addEventListener('change', (e) => configurarSimulacao({ intervaloS: Number(e.target.value) }));
+    document.getElementById('restaurar').addEventListener('click', async () => {
+      try {
+        const r = await pedir('gestao/restaurar', { method: 'POST' });
+        mostrar(`${r.produtos} produtos voltaram ao preço inicial (carga completa enviada ao PriceHub).`);
+        await carregarProdutos();
+      } catch (erro) { mostrar(erro.message, true); }
+    });
+
+    (async () => {
+      try {
+        await carregarLoja();
+        await Promise.all([carregarProdutos(), carregarSimulacao()]);
+      } catch (erro) {
+        mostrar(`Não foi possível falar com a loja: ${erro.message}`, true);
+      }
+      setInterval(() => { carregarProdutos().catch(() => {}); carregarSimulacao().catch(() => {}); }, 2000);
+    })();
+  </script>
+</body>
+</html>
