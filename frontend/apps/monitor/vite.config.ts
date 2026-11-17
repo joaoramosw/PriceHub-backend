@@ -2,9 +2,12 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-// Cada micro-frontend é construído e implantado de forma independente (porta 5175).
+import { PROXY_DE_DESENVOLVIMENTO } from "../../proxy-de-desenvolvimento";
+
+// Monitor: outro micro-frontend, servido pelo gateway em /monitor/.
 export default defineConfig({
+  base: "/monitor/",
   plugins: [react(), tailwindcss()],
-  server: { port: 5175, strictPort: true },
+  server: { port: 5175, strictPort: true, proxy: PROXY_DE_DESENVOLVIMENTO },
   preview: { port: 5175 },
 });

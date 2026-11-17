@@ -2,20 +2,16 @@
  * Um cliente por microsserviço. Cada micro-frontend usa só os clientes de que precisa,
  * e nenhum deles fala com banco de dados: tudo passa pelas APIs.
  */
-import { URLS_DAS_FARMACIAS, URLS_DOS_SERVICOS, type IdDaFarmacia } from "./config";
+import { URLS_DOS_SERVICOS, type IdDaFarmacia } from "./config";
 import { buscar, enviar } from "./http";
 import type {
   DetalheDoMedicamento,
   EstadoDaIntegracao,
   EstatisticasDoCatalogo,
-  InformacoesDaLoja,
   Metricas,
   PontoDoHistorico,
-  ProdutoDaLoja,
-  ProdutoEntrada,
   Rastreamento,
   RegistroDeEvento,
-  ResultadoDaOperacao,
   ResumoDaColeta,
   ResumoDoMedicamento,
   SituacaoDaFila,
@@ -48,20 +44,6 @@ export const apiDoCatalogo = {
   retomarConsumo: () => enviar<SituacaoDoConsumo>(`${catalogoUrl}/admin/consumo/retomar`, "POST"),
   urlDoTempoReal: `${catalogoUrl}/tempo-real`,
 };
-
-export function apiDaFarmacia(farmaciaId: IdDaFarmacia) {
-  const base = `${URLS_DAS_FARMACIAS[farmaciaId]}/admin`;
-  return {
-    informacoes: () => buscar<InformacoesDaLoja>(`${base}/loja`),
-    listarProdutos: () => buscar<ProdutoDaLoja[]>(`${base}/produtos`),
-    cadastrar: (produto: ProdutoEntrada) => enviar<ResultadoDaOperacao>(`${base}/produtos`, "POST", produto),
-    atualizar: (id: number, produto: ProdutoEntrada) => enviar<ResultadoDaOperacao>(`${base}/produtos/${id}`, "PUT", produto),
-    alterarPreco: (id: number, precoCentavos: number) =>
-      enviar<ResultadoDaOperacao>(`${base}/produtos/${id}/preco`, "PATCH", { precoCentavos }),
-    remover: (id: number) => enviar<ResultadoDaOperacao>(`${base}/produtos/${id}`, "DELETE"),
-    restaurar: () => enviar<{ produtos: number; correlationId: string }>(`${base}/restaurar`, "POST"),
-  };
-}
 
 export const apiDaIngestao = {
   farmacias: () => buscar<EstadoDaIntegracao[]>(`${ingestaoUrl}/farmacias`),

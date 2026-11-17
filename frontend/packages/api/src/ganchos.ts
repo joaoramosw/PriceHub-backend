@@ -69,7 +69,7 @@ export function useFluxoDeEventos<T = unknown>(url: string, aoReceber: (tipo: st
       "catalogo.oferta.atualizada",
       "catalogo.oferta.indisponivel",
       "catalogo.oferta.nao-correspondida",
-      "catalogo.visao.atualizada",
+      "catalogo.menor-preco.alterado",
     ];
     tiposConhecidos.forEach((tipo) => fonte.addEventListener(tipo, tratar as EventListener));
     fonte.onopen = () => setSituacao("conectado");

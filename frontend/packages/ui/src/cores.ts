@@ -53,11 +53,11 @@ export function temaDa(farmaciaId: string | null | undefined): TemaDaFarmacia {
 
 /** Cor por família de evento, usada na linha do tempo e no feed ao vivo. */
 export function corDoEvento(tipo: string): string {
-  if (tipo.startsWith("catalogo.oferta.atualizada")) return "bg-emerald-100 text-emerald-800 border-emerald-200";
-  if (tipo.startsWith("catalogo.medicamento")) return "bg-teal-100 text-teal-800 border-teal-200";
   if (tipo.includes("indisponivel") || tipo.includes("nao-correspondida") || tipo.includes("descartada"))
-    return "bg-amber-100 text-amber-800 border-amber-200";
-  if (tipo.startsWith("catalogo.")) return "bg-cyan-100 text-cyan-800 border-cyan-200";
-  if (tipo.startsWith("ingestao.coleta")) return "bg-violet-100 text-violet-800 border-violet-200";
-  return "bg-indigo-100 text-indigo-800 border-indigo-200";
+    return "bg-amber-100 text-amber-900 border-amber-200";
+  if (tipo.startsWith("catalogo.oferta.atualizada")) return "bg-emerald-100 text-emerald-900 border-emerald-200";
+  if (tipo.startsWith("catalogo.menor-preco")) return "bg-violet-100 text-violet-900 border-violet-200";
+  if (tipo.startsWith("catalogo.")) return "bg-teal-100 text-teal-900 border-teal-200";
+  if (tipo.startsWith("ingestao.coleta")) return "bg-slate-100 text-slate-800 border-slate-300";
+  return "bg-sky-100 text-sky-900 border-sky-200";
 }

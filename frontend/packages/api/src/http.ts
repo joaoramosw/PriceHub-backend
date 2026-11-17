@@ -9,12 +9,15 @@ export class ErroDaApi extends Error {
   readonly status: number;
   readonly errosDeCampo: ErroDeCampo[];
   readonly correlationId: string | null;
+  /** Corpo problem+json completo, com as extensões do serviço . */
+  readonly corpo: Record<string, unknown>;
 
-  constructor(status: number, mensagem: string, errosDeCampo: ErroDeCampo[], correlationId: string | null) {
+  constructor(status: number, mensagem: string, errosDeCampo: ErroDeCampo[], correlationId: string | null, corpo: Record<string, unknown> = {}) {
     super(mensagem);
     this.status = status;
     this.errosDeCampo = errosDeCampo;
     this.correlationId = correlationId;
+    this.corpo = corpo;
   }
 
   mensagemDoCampo(campo: string): string | undefined {
@@ -37,13 +40,13 @@ export async function requisitar<T>(url: string, opcoes: RequestInit = {}): Prom
       headers: { "content-type": "application/json", ...(opcoes.headers ?? {}) },
     });
   } catch {
-    throw new ErroDaApi(0, `Serviço fora do ar ou inacessível: ${new URL(url).origin}`, [], null);
+    throw new ErroDaApi(0, `Não foi possível falar com ${url.split("/").slice(0, 3).join("/")}. Confira se o gateway e o serviço estão no ar.`, [], null);
   }
   const correlationId = resposta.headers.get("x-correlation-id");
   const corpo = resposta.status === 204 ? null : await resposta.json().catch(() => null);
   if (!resposta.ok) {
     const mensagem = corpo?.detail ?? corpo?.title ?? `HTTP ${resposta.status}`;
-    throw new ErroDaApi(resposta.status, mensagem, corpo?.erros ?? [], correlationId);
+    throw new ErroDaApi(resposta.status, mensagem, corpo?.erros ?? [], correlationId, corpo ?? {});
   }
   return { dados: corpo as T, correlationId, duracaoMs: Math.round(performance.now() - inicio) };
 }

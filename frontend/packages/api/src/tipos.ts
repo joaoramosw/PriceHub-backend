@@ -16,6 +16,8 @@ export interface ResumoDoMedicamento {
   farmaciaMaisBarataId: IdDaFarmacia | null;
   economiaMaximaCentavos: number | null;
   atualizadoEm: string;
+  /** Uma oferta por farmácia, da mais barata para a mais cara (indisponíveis no fim). */
+  ofertas: OfertaComparada[];
 }
 
 export interface OfertaComparada {
@@ -36,7 +38,6 @@ export interface OfertaComparada {
 export interface DetalheDoMedicamento extends ResumoDoMedicamento {
   registroMs: string | null;
   chaveCanonica: string | null;
-  ofertas: OfertaComparada[];
 }
 
 export interface PontoDoHistorico {
@@ -45,7 +46,11 @@ export interface PontoDoHistorico {
   precoCentavos: number;
   registradoEm: string;
   correlationId: string;
+  /** Como o preço mudou na farmácia; null quando a farmácia não informou. */
+  origem: OrigemDaAlteracao | null;
 }
+
+export type OrigemDaAlteracao = "carga-inicial" | "manual" | "programada";
 
 export interface EstatisticasDoCatalogo {
   medicamentos: number;
@@ -61,46 +66,6 @@ export interface SituacaoDoConsumo {
   fila: string;
   pausado: boolean;
   explicacao: string;
-}
-
-// ----- farmácias (API de gestão) ----------------------------------------------
-export interface ProdutoDaLoja {
-  id: number;
-  codigo: string;
-  nomeComercial: string;
-  principioAtivo: string;
-  concentracao: string;
-  formaFarmaceutica: string;
-  quantidadeEmbalagem: number;
-  apresentacao: string;
-  fabricante: string;
-  registroMs: string | null;
-  categoria: string;
-  tarja: string;
-  descricao: string;
-  imagem: string | null;
-  precoCentavos: number;
-  atualizadoEm: string;
-}
-
-export type ProdutoEntrada = Omit<ProdutoDaLoja, "id" | "atualizadoEm" | "apresentacao"> & { apresentacao?: string | null };
-
-export interface ResultadoDaOperacao {
-  produto: ProdutoDaLoja | null;
-  precoAnteriorCentavos: number | null;
-  notificacao: "webhook-agendado" | "aguardando-polling";
-  correlationId: string;
-}
-
-export interface InformacoesDaLoja {
-  farmaciaId: IdDaFarmacia;
-  nome: string;
-  modoDeIntegracao: "webhook" | "polling";
-  perfilDePreco: string;
-  tema: Record<string, string>;
-  totalDeProdutos: number;
-  versaoDoCatalogo: number;
-  rotasNativas: string[];
 }
 
 // ----- ms-ingestao -------------------------------------------------------------
@@ -170,6 +135,7 @@ export interface Distribuicao {
 
 export interface AmostraDePropagacao {
   correlationId: string;
+  tipo: "preco";
   farmaciaId: string | null;
   origem: string | null;
   aceiteMs: number | null;
@@ -185,7 +151,26 @@ export interface Metricas {
   aceite: Distribuicao;
   convergencia: Distribuicao;
   equivalenteSincrono: Distribuicao;
+  /** Convergência separada por origem da coleta (webhook x polling). */
+  convergenciaPorOrigem: Record<string, Distribuicao>;
   ultimasPropagacoes: AmostraDePropagacao[];
+  alteracoesPorFarmacia: Record<string, number>;
+  alteracoesPorOrigem: Record<string, number>;
+  trocasDaMaisBarata: number;
+  ultimasTrocasDaMaisBarata: TrocaDaMaisBarata[];
+}
+
+/** Dados do evento catalogo.menor-preco.alterado. */
+export interface TrocaDaMaisBarata {
+  medicamentoId: string;
+  medicamentoNome: string;
+  farmaciaAnteriorId: string;
+  farmaciaAnteriorNome: string;
+  precoAnteriorCentavos: number;
+  farmaciaAtualId: string;
+  farmaciaAtualNome: string;
+  precoAtualCentavos: number;
+  ocorridoEm: string;
 }
 
 export interface SituacaoDaFila {
