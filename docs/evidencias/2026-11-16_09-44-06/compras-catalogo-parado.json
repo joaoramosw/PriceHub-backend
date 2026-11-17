@@ -1,0 +1,262 @@
+{
+  "resumo": {
+    "eventos": {
+      "total": 10,
+      "confirmadas": 10,
+      "medianaMs": 6.77,
+      "p95Ms": 48.13,
+      "maximoMs": 48.13,
+      "medianaDentroDaLojaMs": 0.18
+    },
+    "sincrono": {
+      "total": 10,
+      "confirmadas": 0,
+      "medianaMs": 3061.41,
+      "p95Ms": 3075.05,
+      "maximoMs": 3075.05,
+      "medianaDentroDaLojaMs": 3012.96
+    }
+  },
+  "tentativas": [
+    {
+      "indice": 0,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0001",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 48.13,
+      "esperaNaLojaMs": 0.18,
+      "pedidoId": "BIO-PED-00165",
+      "correlationId": "9e6ec9ae-4814-4a32-9c4d-367c3cf6fe3f"
+    },
+    {
+      "indice": 1,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0001",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3025.26,
+      "esperaNaLojaMs": 3013.13,
+      "pedidoId": "BIO-PED-00162",
+      "correlationId": "c41e9052-c4bf-405b-971b-a0cfb773b1e5"
+    },
+    {
+      "indice": 2,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0002",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 13.19,
+      "esperaNaLojaMs": 0.18,
+      "pedidoId": "BIO-PED-00163",
+      "correlationId": "86dce652-654e-4038-aaa9-13eb86cae55d"
+    },
+    {
+      "indice": 3,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0002",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3034.82,
+      "esperaNaLojaMs": 3020.52,
+      "pedidoId": "BIO-PED-00164",
+      "correlationId": "3cff4caa-acaa-4514-a172-624f50262db7"
+    },
+    {
+      "indice": 4,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0003",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 44.32,
+      "esperaNaLojaMs": 0.15,
+      "pedidoId": "BIO-PED-00166",
+      "correlationId": "7aad7ded-40a4-4e4f-851b-5033d493a11e"
+    },
+    {
+      "indice": 5,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0003",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3072.34,
+      "esperaNaLojaMs": 3024.17,
+      "pedidoId": "BIO-PED-00167",
+      "correlationId": "d4be656d-50e1-4072-af72-b7c11df675db"
+    },
+    {
+      "indice": 6,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0004",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 44.1,
+      "esperaNaLojaMs": 0.18,
+      "pedidoId": "BIO-PED-00168",
+      "correlationId": "be63b803-fd8e-44e3-aa91-6d0e30bc683b"
+    },
+    {
+      "indice": 7,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0004",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3075.05,
+      "esperaNaLojaMs": 3029.71,
+      "pedidoId": "BIO-PED-00169",
+      "correlationId": "a38b8ba0-82f4-474f-98d3-5c778516aaa8"
+    },
+    {
+      "indice": 8,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0005",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 6.61,
+      "esperaNaLojaMs": 0.22,
+      "pedidoId": "BIO-PED-00170",
+      "correlationId": "630ab2ad-a474-4930-a797-9a6f7c94a2ab"
+    },
+    {
+      "indice": 9,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0005",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3061.22,
+      "esperaNaLojaMs": 3011.48,
+      "pedidoId": "BIO-PED-00172",
+      "correlationId": "456db002-411b-4e60-99ea-6b0959c3d6b2"
+    },
+    {
+      "indice": 10,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0006",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 5.09,
+      "esperaNaLojaMs": 0.19,
+      "pedidoId": "BIO-PED-00171",
+      "correlationId": "e63b545c-941c-48f4-ae39-8d32edc84ecd"
+    },
+    {
+      "indice": 11,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0006",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3061.57,
+      "esperaNaLojaMs": 3011.29,
+      "pedidoId": "BIO-PED-00173",
+      "correlationId": "ad475db6-db65-420b-9988-d43661c371c5"
+    },
+    {
+      "indice": 12,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0007",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 4.9,
+      "esperaNaLojaMs": 0.19,
+      "pedidoId": "BIO-PED-00174",
+      "correlationId": "4292ee2b-a5ae-4565-b77d-a492c5b33a7b"
+    },
+    {
+      "indice": 13,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0007",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3068.52,
+      "esperaNaLojaMs": 3021.8,
+      "pedidoId": "BIO-PED-00175",
+      "correlationId": "2810fcc4-ac58-450d-8a73-0be790f2cc1d"
+    },
+    {
+      "indice": 14,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0008",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 6.12,
+      "esperaNaLojaMs": 0.18,
+      "pedidoId": "BIO-PED-00176",
+      "correlationId": "2342d228-77e0-4444-9614-715811c3f492"
+    },
+    {
+      "indice": 15,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0008",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3058.47,
+      "esperaNaLojaMs": 3011.27,
+      "pedidoId": "BIO-PED-00177",
+      "correlationId": "ae1ea160-254b-402e-894b-9b826bdf99be"
+    },
+    {
+      "indice": 16,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0009",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 6.92,
+      "esperaNaLojaMs": 0.26,
+      "pedidoId": "BIO-PED-00178",
+      "correlationId": "a1ff7533-b057-4f49-abc9-2141bd977939"
+    },
+    {
+      "indice": 17,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0009",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3063.03,
+      "esperaNaLojaMs": 3012.79,
+      "pedidoId": "BIO-PED-00180",
+      "correlationId": "ddbe8025-d42f-4c9c-93d2-3858b7a41c15"
+    },
+    {
+      "indice": 18,
+      "modo": "eventos",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0010",
+      "status": 201,
+      "confirmada": true,
+      "esperaMs": 4.83,
+      "esperaNaLojaMs": 0.24,
+      "pedidoId": "BIO-PED-00179",
+      "correlationId": "b5beaf2e-f0f9-48bc-ba40-e3c0e0279c25"
+    },
+    {
+      "indice": 19,
+      "modo": "sincrono",
+      "farmaciaId": "biofarma",
+      "codigo": "BIO-0010",
+      "status": 503,
+      "confirmada": false,
+      "esperaMs": 3061.26,
+      "esperaNaLojaMs": 3009.67,
+      "pedidoId": "BIO-PED-00181",
+      "correlationId": "ee13855a-107f-474f-821e-48e7e08deec2"
+    }
+  ]
+}

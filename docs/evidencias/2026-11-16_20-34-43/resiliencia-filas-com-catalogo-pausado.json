@@ -1,0 +1,65 @@
+[
+  {
+    "nome": "ms-catalogo.eventos-de-ingestao",
+    "mensagensProntas": 1,
+    "mensagensSemAck": 1,
+    "consumidores": 1,
+    "taxaDePublicacao": 1.2,
+    "taxaDeEntrega": 1.2,
+    "temporaria": false
+  },
+  {
+    "nome": "ms-catalogo.eventos-de-ingestao.dlq",
+    "mensagensProntas": 0,
+    "mensagensSemAck": 0,
+    "consumidores": 0,
+    "taxaDePublicacao": 0.0,
+    "taxaDeEntrega": 0.0,
+    "temporaria": false
+  },
+  {
+    "nome": "ms-catalogo.eventos-de-ingestao.retry",
+    "mensagensProntas": 0,
+    "mensagensSemAck": 0,
+    "consumidores": 0,
+    "taxaDePublicacao": 0.0,
+    "taxaDeEntrega": 0.0,
+    "temporaria": false
+  },
+  {
+    "nome": "ms-log.todos-os-eventos",
+    "mensagensProntas": 0,
+    "mensagensSemAck": 0,
+    "consumidores": 1,
+    "taxaDePublicacao": 1.8,
+    "taxaDeEntrega": 1.8,
+    "temporaria": false
+  },
+  {
+    "nome": "ms-log.todos-os-eventos.dlq",
+    "mensagensProntas": 0,
+    "mensagensSemAck": 0,
+    "consumidores": 0,
+    "taxaDePublicacao": 0.0,
+    "taxaDeEntrega": 0.0,
+    "temporaria": false
+  },
+  {
+    "nome": "ms-log.todos-os-eventos.retry",
+    "mensagensProntas": 0,
+    "mensagensSemAck": 0,
+    "consumidores": 0,
+    "taxaDePublicacao": 0.0,
+    "taxaDeEntrega": 0.0,
+    "temporaria": false
+  },
+  {
+    "nome": "amq_7d1fd435b3ed4799b0665c530e19050c",
+    "mensagensProntas": 0,
+    "mensagensSemAck": 0,
+    "consumidores": 1,
+    "taxaDePublicacao": 0.6,
+    "taxaDeEntrega": 0.6,
+    "temporaria": true
+  }
+]

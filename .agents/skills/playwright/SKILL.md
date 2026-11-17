@@ -22,10 +22,12 @@ configurado no agente, pode usá-lo no lugar do script.)
 
 | Tela | URL |
 |---|---|
-| Comparador | http://localhost:5173 |
-| Gestão das lojas | http://localhost:5174 |
-| Monitor de eventos | http://localhost:5175 |
-| Vitrines | http://localhost:5176 |
+| Comparador | http://localhost:8080 |
+| Detalhe e histórico | http://localhost:8080/medicamento/{id} |
+| Farmácias parceiras | http://localhost:8080/parceiras |
+| Monitor de eventos | http://localhost:8080/monitor/ |
+| Site de uma farmácia | http://localhost:8080/loja/biofarma/ (também farmaazul e drogapopular) |
+| Administração da farmácia | http://localhost:8080/loja/biofarma/admin |
 
 ## Script base
 
@@ -38,10 +40,10 @@ with sync_playwright() as p:
     navegador = p.chromium.launch()
     pagina = navegador.new_page(viewport={"width": 1400, "height": 860})
 
-    pagina.goto("http://localhost:5173")
-    expect(pagina.get_by_text("Compare o preço do seu medicamento")).to_be_visible()
+    pagina.goto("http://localhost:8080")
+    expect(pagina.get_by_text("Compare o preço nas três farmácias")).to_be_visible()
 
-    pagina.get_by_placeholder("Buscar por nome").fill("losartana")
+    pagina.get_by_placeholder("Nome, princípio ativo").fill("losartana")
     expect(pagina.get_by_text("Losartana Potássica 50mg")).to_be_visible()
     pagina.screenshot(path="docs/telas/comparador-busca.png")
 
@@ -52,11 +54,11 @@ with sync_playwright() as p:
 
 Para provar a propagação por eventos, abrir a gestão e o comparador ao mesmo tempo:
 
-1. página A em `:5173` (comparador) e página B em `:5174` (gestão das lojas);
-2. na B, escolher a farmácia, alterar o preço de um produto e salvar;
+1. página A em `/` (comparador) e página B em `/loja/<farmácia>/admin`;
+2. na B, pausar a simulação programada, alterar o preço de um produto e salvar;
 3. na A, esperar o aviso "Preço atualizado" e o novo valor no card (webhook: menos de 2 s;
-   DrogaPopular por polling: até 15 s + margem);
-4. no monitor (`:5175`), conferir a linha do tempo do `correlationId`.
+   DrogaPopular por polling: até 5 s + margem);
+4. no monitor (`/monitor/`), conferir a linha do tempo do `correlationId`.
 
 ## Boas práticas
 

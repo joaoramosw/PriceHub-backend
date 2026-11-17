@@ -43,8 +43,8 @@ Tipos:
 | `chore` | manutenção que não entra nas outras |
 | `style` | formatação, sem mudar lógica |
 
-Escopos sugeridos: `ms-ingestao`, `ms-catalogo`, `ms-log`, `ms-farmacia`, `common`, `comparador`, `lojas`,
-`monitor`, `vitrines`, `infra`, `docs`, `skills`.
+Escopos sugeridos: `ms-ingestao`, `ms-catalogo`, `ms-log`, `farmacias`, `common`, `comparador`,
+`monitor`, `gateway`, `infra`, `docs`, `skills`.
 
 Mudança que quebra compatibilidade: `feat(ms-catalogo)!: ...` e um tópico `- BREAKING CHANGE: ...`.
 

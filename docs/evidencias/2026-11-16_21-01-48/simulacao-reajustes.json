@@ -1,0 +1,110 @@
+[
+  {
+    "farmacia": "biofarma",
+    "alteracao": {
+      "instante": "2026-11-17T00:02:17.889168+00:00",
+      "codigo": "BIO-0006",
+      "nome": "Nimesulida",
+      "preco_anterior_centavos": 1520,
+      "preco_atual_centavos": 1569,
+      "correlation_id": "9832a423-6289-42b7-aa98-a7a06b6a698b"
+    },
+    "eventoNoCatalogo": {
+      "id": 307,
+      "idDoEvento": "a0ec28af-d0eb-486d-bb28-edd636800103",
+      "tipo": "catalogo.oferta.atualizada",
+      "servicoDeOrigem": "ms-catalogo",
+      "correlationId": "9832a423-6289-42b7-aa98-a7a06b6a698b",
+      "farmaciaId": "biofarma",
+      "ocorridoEm": "2026-11-17T00:02:17.905770+00:00",
+      "recebidoEm": "2026-11-17T00:02:17.929592+00:00",
+      "dados": {
+        "ofertaId": "064b5f17-bad9-4b81-956b-9e29fe6be111",
+        "medicamentoId": "32effe70-783b-4f21-bd71-c8ac25294c28",
+        "medicamentoNome": "Nimesulida 100mg",
+        "farmaciaId": "biofarma",
+        "farmaciaNome": "BioFarma Verde",
+        "situacao": "preco-alterado",
+        "precoAnteriorCentavos": 1520,
+        "precoAtualCentavos": 1569,
+        "variacaoPercentual": 3.22,
+        "estrategiaDeCorrespondencia": "registro-ms",
+        "atualizadoNaOrigemEm": "2026-11-17T00:02:17.888819Z",
+        "origemDaAlteracao": "programada"
+      }
+    },
+    "segundosAteOCatalogo": 0.0
+  },
+  {
+    "farmacia": "farmaazul",
+    "alteracao": {
+      "instante": "2026-11-17T00:02:23.006291+00:00",
+      "codigo": "FA-NIM-100",
+      "nome": "Nimesulida 100mg",
+      "preco_anterior_centavos": 1035,
+      "preco_atual_centavos": 1309,
+      "correlation_id": "9f38d1c0-15eb-4147-ac87-3bf5d7bc7b1d"
+    },
+    "eventoNoCatalogo": {
+      "id": 317,
+      "idDoEvento": "793f1f6a-173b-4ada-9d63-35a334519811",
+      "tipo": "catalogo.oferta.atualizada",
+      "servicoDeOrigem": "ms-catalogo",
+      "correlationId": "9f38d1c0-15eb-4147-ac87-3bf5d7bc7b1d",
+      "farmaciaId": "farmaazul",
+      "ocorridoEm": "2026-11-17T00:02:23.018562+00:00",
+      "recebidoEm": "2026-11-17T00:02:23.041124+00:00",
+      "dados": {
+        "ofertaId": "133ce4bf-fa4a-4b9f-a337-0254501136b7",
+        "medicamentoId": "32effe70-783b-4f21-bd71-c8ac25294c28",
+        "medicamentoNome": "Nimesulida 100mg",
+        "farmaciaId": "farmaazul",
+        "farmaciaNome": "FarmaAzul Confiança",
+        "situacao": "preco-alterado",
+        "precoAnteriorCentavos": 1035,
+        "precoAtualCentavos": 1309,
+        "variacaoPercentual": 26.47,
+        "estrategiaDeCorrespondencia": "registro-ms",
+        "atualizadoNaOrigemEm": "2026-11-16T21:02:23-03:00",
+        "origemDaAlteracao": "programada"
+      }
+    },
+    "segundosAteOCatalogo": 0.0
+  },
+  {
+    "farmacia": "drogapopular",
+    "alteracao": {
+      "instante": "2026-11-17T00:02:38.126302+00:00",
+      "codigo": "DP-0003",
+      "nome": "Dipirona Sódica",
+      "preco_anterior_centavos": 599,
+      "preco_atual_centavos": 589,
+      "correlation_id": "eb2670dd-071c-4038-85e6-b2dda7a07b6f"
+    },
+    "eventoNoCatalogo": {
+      "id": 344,
+      "idDoEvento": "bc5abc5f-1f0c-42ab-bb50-6b90063f2ef9",
+      "tipo": "catalogo.oferta.atualizada",
+      "servicoDeOrigem": "ms-catalogo",
+      "correlationId": "6ed38cea-95f9-4474-a028-f06b20f35429",
+      "farmaciaId": "drogapopular",
+      "ocorridoEm": "2026-11-17T00:02:41.234770+00:00",
+      "recebidoEm": "2026-11-17T00:02:41.256570+00:00",
+      "dados": {
+        "ofertaId": "49fbf017-7cf9-4a84-b56e-4f33c7d5356d",
+        "medicamentoId": "92ed5719-4dd2-4555-8fa3-e9a077f78028",
+        "medicamentoNome": "Dipirona Monoidratada 500mg/ml",
+        "farmaciaId": "drogapopular",
+        "farmaciaNome": "DrogaPopular Express",
+        "situacao": "preco-alterado",
+        "precoAnteriorCentavos": 599,
+        "precoAtualCentavos": 589,
+        "variacaoPercentual": -1.67,
+        "estrategiaDeCorrespondencia": "chave-canonica",
+        "atualizadoNaOrigemEm": "2026-11-17T00:02:00Z",
+        "origemDaAlteracao": "programada"
+      }
+    },
+    "segundosAteOCatalogo": 3.1
+  }
+]

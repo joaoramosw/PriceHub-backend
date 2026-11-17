@@ -1,0 +1,38 @@
+[
+  {
+    "farmaciaId": "biofarma",
+    "farmaciaNome": "BioFarma Verde",
+    "modo": "webhook",
+    "urlBase": "http://farmacia-biofarma:8101",
+    "situacao": "indisponivel",
+    "ultimaColetaEm": null,
+    "ultimaVerificacaoEm": "2026-11-17T00:01:02.515948Z",
+    "ultimoErro": "farmácia indisponível em http://farmacia-biofarma:8101/api/produtos: ConnectError: [Errno -2] Name or service not known",
+    "coletasRealizadas": 0,
+    "falhasConsecutivas": 1
+  },
+  {
+    "farmaciaId": "farmaazul",
+    "farmaciaNome": "FarmaAzul Confiança",
+    "modo": "webhook",
+    "urlBase": "http://farmacia-farmaazul:8102",
+    "situacao": "indisponivel",
+    "ultimaColetaEm": null,
+    "ultimaVerificacaoEm": "2026-11-17T00:01:02.563618Z",
+    "ultimoErro": "farmácia indisponível em http://farmacia-farmaazul:8102/v1/catalogo?page=1&page_size=20: ConnectError: [Errno -2] Name or service not known",
+    "coletasRealizadas": 0,
+    "falhasConsecutivas": 1
+  },
+  {
+    "farmaciaId": "drogapopular",
+    "farmaciaNome": "DrogaPopular Express",
+    "modo": "polling",
+    "urlBase": "http://farmacia-drogapopular:8103",
+    "situacao": "indisponivel",
+    "ultimaColetaEm": null,
+    "ultimaVerificacaoEm": "2026-11-17T00:01:02.925515Z",
+    "ultimoErro": "farmácia indisponível em http://farmacia-drogapopular:8103/legacy/precos.json: ConnectTimeout: ",
+    "coletasRealizadas": 0,
+    "falhasConsecutivas": 1
+  }
+]

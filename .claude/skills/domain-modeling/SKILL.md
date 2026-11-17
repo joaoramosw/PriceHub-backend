@@ -12,7 +12,7 @@ própria linguagem e o próprio banco. O código usa os termos do domínio **em 
 
 | Contexto | Serviço | Responsabilidade | Banco |
 |---|---|---|---|
-| Farmácia (externo) | `ms-farmacia` | catálogo próprio de cada farmácia, em memória; avisa alterações (Observer) | - |
+| Farmácia (externo) | `farmacias/` | catálogo próprio de cada farmácia, em memória; avisa alterações (Observer) | - |
 | Ingestão | `ms-ingestao` | receber webhooks, consultar por polling, adaptar formatos ao modelo canônico | `ingestao` |
 | Catálogo | `ms-catalogo` | medicamento único, ofertas, preço atual, histórico, busca | `catalogo` |
 | Auditoria | `ms-log` | registro de todos os eventos, rastreamento, métricas | `auditoria` |
@@ -25,14 +25,17 @@ entidades internas de outro.
 | Termo | Significado | Onde vive |
 |---|---|---|
 | Farmácia | Fonte externa de preços (BioFarma Verde, FarmaAzul Confiança, DrogaPopular Express) | todos |
-| Produto | Item no catálogo da farmácia, no formato dela | ms-farmacia |
+| Produto | Item no catálogo da farmácia, no formato dela | farmacias |
+| Simulação programada | Reajuste automático de um produto por vez, a partir de 100 preços por produto | farmacias |
+| Origem da alteração | Como o preço mudou na farmácia: `carga-inicial`, `manual` (tela /admin) ou `programada` | farmacias → ms-catalogo |
 | Coleta | Recebimento de dados de uma farmácia (webhook, polling ou sincronização) | ms-ingestao |
 | Coleta bruta | O que chegou da farmácia, guardado como veio | ms-ingestao |
 | Oferta canônica | Produto convertido para o modelo comum, preço em centavos | ms-ingestao → ms-catalogo |
 | Item descartado | Item que não pôde ser adaptado (dados inválidos) | ms-ingestao |
 | Medicamento | Identidade única de um remédio (princípio ativo, concentração, forma, quantidade) | ms-catalogo |
 | Oferta | Preço de um medicamento em uma farmácia, com disponibilidade | ms-catalogo |
-| Histórico de preços | Sequência de preços de uma oferta, só acrescentada | ms-catalogo |
+| Histórico de preços | Sequência de preços de uma oferta, só acrescentada, com a origem de cada alteração | ms-catalogo |
+| Farmácia mais barata | Farmácia com o menor preço disponível de um medicamento; quando muda, vira o evento `catalogo.menor-preco.alterado` | ms-catalogo |
 | Correspondência | Associação de uma oferta canônica a um medicamento (Strategy) | ms-catalogo |
 | Oferta não correspondida | Oferta que nenhuma estratégia associou | ms-catalogo |
 | Registro de evento | Cópia de cada evento para rastreamento | ms-log |
@@ -48,6 +51,8 @@ entidades internas de outro.
 - Uma oferta mais antiga que a já registrada não sobrescreve o preço.
 - Oferta removida ou ausente numa coleta completa fica **indisponível**, mas o histórico é mantido.
 - O mesmo evento (`idDoEvento`) é aplicado uma vez só.
+- Empate no menor preço fica com a farmácia de menor id; trocar só a ordem não gera evento.
+- O PriceHub não vende: pedido, carrinho e estoque estão fora do domínio.
 
 ## Eventos de domínio
 

@@ -1,0 +1,358 @@
+[
+  {
+    "farmacia": "biofarma",
+    "codigo": "BIO-0002",
+    "alteracao": {
+      "produto": {
+        "id": 2,
+        "codigo": "BIO-0002",
+        "nomeComercial": "Losartana Potássica",
+        "principioAtivo": "Losartana Potássica",
+        "concentracao": "50mg",
+        "formaFarmaceutica": "comprimido revestido",
+        "quantidadeEmbalagem": 30,
+        "apresentacao": "30 comprimidos revestidos",
+        "fabricante": "Medley / Eurofarma",
+        "registroMs": "MS 1.0181.0421.002-3",
+        "categoria": "Hipertensão & Coração",
+        "tarja": "Tarja Vermelha (Sob Prescrição)",
+        "descricao": "O anti-hipertensivo genérico mais vendido do país. Atua dilatando os vasos sanguíneos e controlando a pressão arterial.",
+        "imagem": "losartana.jpg",
+        "precoCentavos": 1152,
+        "atualizadoEm": "2026-11-16T23:34:43.607035Z"
+      },
+      "precoAnteriorCentavos": 1189,
+      "notificacao": "webhook-agendado",
+      "correlationId": "014961eb-f2f7-4ca5-9500-61719515b221"
+    },
+    "rastreamento": {
+      "correlationId": "014961eb-f2f7-4ca5-9500-61719515b221",
+      "totalDeEventos": 3,
+      "duracaoTotalMs": 10.1,
+      "servicosEnvolvidos": [
+        "ms-catalogo",
+        "ms-ingestao"
+      ],
+      "eventos": [
+        {
+          "tipo": "ingestao.oferta.recebida",
+          "servicoDeOrigem": "ms-ingestao",
+          "farmaciaId": "biofarma",
+          "ocorridoEm": "2026-11-16T23:34:43.609468Z",
+          "desdeOInicioMs": 0.0,
+          "desdeOAnteriorMs": 0.0,
+          "dados": {
+            "coletaId": "cce7d08e-bedb-44dd-8a05-31da22635825",
+            "origem": "webhook",
+            "oferta": {
+              "farmaciaId": "biofarma",
+              "farmaciaNome": "BioFarma Verde",
+              "codigoExterno": "BIO-0002",
+              "nome": "Losartana Potássica 50mg",
+              "principioAtivo": "Losartana Potássica",
+              "concentracao": {
+                "valor": 50.0,
+                "unidade": "mg"
+              },
+              "forma": "comprimido revestido",
+              "quantidade": {
+                "valor": 30.0,
+                "unidade": "unidade"
+              },
+              "fabricante": "Medley / Eurofarma",
+              "registroMs": "1018104210023",
+              "categoria": "Hipertensão & Coração",
+              "precoCentavos": 1152,
+              "urlDoProduto": "http://localhost:8080/loja/biofarma/produto/BIO-0002",
+              "atualizadoNaOrigemEm": "2026-11-16T23:34:43.607035Z",
+              "coletadoEm": "2026-11-16T23:34:43.609193Z"
+            }
+          }
+        },
+        {
+          "tipo": "ingestao.coleta.realizada",
+          "servicoDeOrigem": "ms-ingestao",
+          "farmaciaId": "biofarma",
+          "ocorridoEm": "2026-11-16T23:34:43.611732Z",
+          "desdeOInicioMs": 2.26,
+          "desdeOAnteriorMs": 2.26,
+          "dados": {
+            "coletaId": "cce7d08e-bedb-44dd-8a05-31da22635825",
+            "farmaciaId": "biofarma",
+            "origem": "webhook",
+            "itensRecebidos": 1,
+            "ofertasPublicadas": 1,
+            "ofertasSemAlteracao": 0,
+            "descartadas": 0,
+            "removidas": 0,
+            "duracaoMs": 2.54,
+            "catalogoCompleto": false,
+            "codigosPresentes": []
+          }
+        },
+        {
+          "tipo": "catalogo.oferta.atualizada",
+          "servicoDeOrigem": "ms-catalogo",
+          "farmaciaId": "biofarma",
+          "ocorridoEm": "2026-11-16T23:34:43.619565Z",
+          "desdeOInicioMs": 10.1,
+          "desdeOAnteriorMs": 7.83,
+          "dados": {
+            "ofertaId": "c418f7b4-b8d9-4edb-8b5f-00a492acba29",
+            "medicamentoId": "7caf8f26-2b55-4d93-950a-5177ff5db9cd",
+            "medicamentoNome": "Losartana Potássica 50mg",
+            "farmaciaId": "biofarma",
+            "farmaciaNome": "BioFarma Verde",
+            "situacao": "preco-alterado",
+            "precoAnteriorCentavos": 1189,
+            "precoAtualCentavos": 1152,
+            "variacaoPercentual": -3.11,
+            "estrategiaDeCorrespondencia": "registro-ms",
+            "atualizadoNaOrigemEm": "2026-11-16T23:34:43.607035Z"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "farmacia": "farmaazul",
+    "codigo": "FA-LOS-50",
+    "alteracao": {
+      "produto": {
+        "id": 2,
+        "codigo": "FA-LOS-50",
+        "nomeComercial": "Losartana Potássica 50mg",
+        "principioAtivo": "Losartana Potássica",
+        "concentracao": "50mg",
+        "formaFarmaceutica": "comprimido revestido",
+        "quantidadeEmbalagem": 30,
+        "apresentacao": "30 comprimidos revestidos",
+        "fabricante": "Medley",
+        "registroMs": "1018104210023",
+        "categoria": "Hipertensão & Coração",
+        "tarja": "Tarja Vermelha (Sob Prescrição)",
+        "descricao": "O anti-hipertensivo genérico mais vendido do país. Atua dilatando os vasos sanguíneos e controlando a pressão arterial.",
+        "imagem": "losartana.jpg",
+        "precoCentavos": 832,
+        "atualizadoEm": "2026-11-16T23:34:44.202988Z"
+      },
+      "precoAnteriorCentavos": 869,
+      "notificacao": "webhook-agendado",
+      "correlationId": "a605f5bb-c1a2-4ce5-a9ab-b0335739b7a9"
+    },
+    "rastreamento": {
+      "correlationId": "a605f5bb-c1a2-4ce5-a9ab-b0335739b7a9",
+      "totalDeEventos": 3,
+      "duracaoTotalMs": 9.63,
+      "servicosEnvolvidos": [
+        "ms-catalogo",
+        "ms-ingestao"
+      ],
+      "eventos": [
+        {
+          "tipo": "ingestao.oferta.recebida",
+          "servicoDeOrigem": "ms-ingestao",
+          "farmaciaId": "farmaazul",
+          "ocorridoEm": "2026-11-16T23:34:44.205601Z",
+          "desdeOInicioMs": 0.0,
+          "desdeOAnteriorMs": 0.0,
+          "dados": {
+            "coletaId": "e72b4b76-c066-4e47-816d-4f8f9a45e65c",
+            "origem": "webhook",
+            "oferta": {
+              "farmaciaId": "farmaazul",
+              "farmaciaNome": "FarmaAzul Confiança",
+              "codigoExterno": "FA-LOS-50",
+              "nome": "Losartana Potássica 50mg - 30 comprimidos revestidos",
+              "principioAtivo": "Losartana Potássica",
+              "concentracao": {
+                "valor": 50.0,
+                "unidade": "mg"
+              },
+              "forma": "comprimido revestido",
+              "quantidade": {
+                "valor": 30.0,
+                "unidade": "unidade"
+              },
+              "fabricante": "Medley",
+              "registroMs": "1018104210023",
+              "categoria": null,
+              "precoCentavos": 832,
+              "urlDoProduto": "http://localhost:8080/loja/farmaazul/produto/FA-LOS-50",
+              "atualizadoNaOrigemEm": "2026-11-16T20:34:44-03:00",
+              "coletadoEm": "2026-11-16T23:34:44.205386Z"
+            }
+          }
+        },
+        {
+          "tipo": "ingestao.coleta.realizada",
+          "servicoDeOrigem": "ms-ingestao",
+          "farmaciaId": "farmaazul",
+          "ocorridoEm": "2026-11-16T23:34:44.208392Z",
+          "desdeOInicioMs": 2.79,
+          "desdeOAnteriorMs": 2.79,
+          "dados": {
+            "coletaId": "e72b4b76-c066-4e47-816d-4f8f9a45e65c",
+            "farmaciaId": "farmaazul",
+            "origem": "webhook",
+            "itensRecebidos": 1,
+            "ofertasPublicadas": 1,
+            "ofertasSemAlteracao": 0,
+            "descartadas": 0,
+            "removidas": 0,
+            "duracaoMs": 3.05,
+            "catalogoCompleto": false,
+            "codigosPresentes": []
+          }
+        },
+        {
+          "tipo": "catalogo.oferta.atualizada",
+          "servicoDeOrigem": "ms-catalogo",
+          "farmaciaId": "farmaazul",
+          "ocorridoEm": "2026-11-16T23:34:44.215232Z",
+          "desdeOInicioMs": 9.63,
+          "desdeOAnteriorMs": 6.84,
+          "dados": {
+            "ofertaId": "33693db6-3e11-41df-9fd6-c8327e35c5dd",
+            "medicamentoId": "7caf8f26-2b55-4d93-950a-5177ff5db9cd",
+            "medicamentoNome": "Losartana Potássica 50mg",
+            "farmaciaId": "farmaazul",
+            "farmaciaNome": "FarmaAzul Confiança",
+            "situacao": "preco-alterado",
+            "precoAnteriorCentavos": 869,
+            "precoAtualCentavos": 832,
+            "variacaoPercentual": -4.26,
+            "estrategiaDeCorrespondencia": "registro-ms",
+            "atualizadoNaOrigemEm": "2026-11-16T20:34:44-03:00"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "farmacia": "drogapopular",
+    "codigo": "DP-0002",
+    "alteracao": {
+      "produto": {
+        "id": 2,
+        "codigo": "DP-0002",
+        "nomeComercial": "Losartana Potássica",
+        "principioAtivo": "Losartana Potássica",
+        "concentracao": "50mg",
+        "formaFarmaceutica": "comprimido revestido",
+        "quantidadeEmbalagem": 30,
+        "apresentacao": "30 comprimidos revestidos",
+        "fabricante": "MEDLEY",
+        "registroMs": null,
+        "categoria": "Hipertensão & Coração",
+        "tarja": "Tarja Vermelha (Sob Prescrição)",
+        "descricao": "O anti-hipertensivo genérico mais vendido do país. Atua dilatando os vasos sanguíneos e controlando a pressão arterial.",
+        "imagem": "losartana.jpg",
+        "precoCentavos": 672,
+        "atualizadoEm": "2026-11-16T23:34:44.783805Z"
+      },
+      "precoAnteriorCentavos": 709,
+      "notificacao": "aguardando-polling",
+      "correlationId": "cc0f57d0-6ee6-4110-b1c4-206348e294d0"
+    },
+    "rastreamento": {
+      "correlationId": "81bd8e91-38a0-4299-bd47-76cbef5bac42",
+      "totalDeEventos": 3,
+      "duracaoTotalMs": 9.73,
+      "servicosEnvolvidos": [
+        "ms-catalogo",
+        "ms-ingestao"
+      ],
+      "eventos": [
+        {
+          "tipo": "ingestao.oferta.recebida",
+          "servicoDeOrigem": "ms-ingestao",
+          "farmaciaId": "drogapopular",
+          "ocorridoEm": "2026-11-16T23:34:49.134709Z",
+          "desdeOInicioMs": 0.0,
+          "desdeOAnteriorMs": 0.0,
+          "dados": {
+            "coletaId": "50be970b-aa71-479e-a3fb-03fb0372d23f",
+            "origem": "polling",
+            "oferta": {
+              "farmaciaId": "drogapopular",
+              "farmaciaNome": "DrogaPopular Express",
+              "codigoExterno": "DP-0002",
+              "nome": "LOSARTANA POTASSICA 50MG C/30 COMP REV",
+              "principioAtivo": "Losartana Potassica",
+              "concentracao": {
+                "valor": 50.0,
+                "unidade": "mg"
+              },
+              "forma": "comprimido revestido",
+              "quantidade": {
+                "valor": 30.0,
+                "unidade": "unidade"
+              },
+              "fabricante": "MEDLEY",
+              "registroMs": null,
+              "categoria": null,
+              "precoCentavos": 672,
+              "urlDoProduto": "http://localhost:8080/loja/drogapopular/produto/DP-0002",
+              "atualizadoNaOrigemEm": "2026-11-16T23:34:00Z",
+              "coletadoEm": "2026-11-16T23:34:49.134225Z"
+            }
+          }
+        },
+        {
+          "tipo": "ingestao.coleta.realizada",
+          "servicoDeOrigem": "ms-ingestao",
+          "farmaciaId": "drogapopular",
+          "ocorridoEm": "2026-11-16T23:34:49.136845Z",
+          "desdeOInicioMs": 2.14,
+          "desdeOAnteriorMs": 2.14,
+          "dados": {
+            "coletaId": "50be970b-aa71-479e-a3fb-03fb0372d23f",
+            "farmaciaId": "drogapopular",
+            "origem": "polling",
+            "itensRecebidos": 10,
+            "ofertasPublicadas": 1,
+            "ofertasSemAlteracao": 9,
+            "descartadas": 0,
+            "removidas": 0,
+            "duracaoMs": 6.98,
+            "catalogoCompleto": true,
+            "codigosPresentes": [
+              "DP-0001",
+              "DP-0002",
+              "DP-0003",
+              "DP-0004",
+              "DP-0005",
+              "DP-0006",
+              "DP-0007",
+              "DP-0008",
+              "DP-0009",
+              "DP-0010"
+            ]
+          }
+        },
+        {
+          "tipo": "catalogo.oferta.atualizada",
+          "servicoDeOrigem": "ms-catalogo",
+          "farmaciaId": "drogapopular",
+          "ocorridoEm": "2026-11-16T23:34:49.144441Z",
+          "desdeOInicioMs": 9.73,
+          "desdeOAnteriorMs": 7.6,
+          "dados": {
+            "ofertaId": "3f9f5255-1509-42c4-b3c5-7dbb26ad6e35",
+            "medicamentoId": "7caf8f26-2b55-4d93-950a-5177ff5db9cd",
+            "medicamentoNome": "Losartana Potássica 50mg",
+            "farmaciaId": "drogapopular",
+            "farmaciaNome": "DrogaPopular Express",
+            "situacao": "preco-alterado",
+            "precoAnteriorCentavos": 709,
+            "precoAtualCentavos": 672,
+            "variacaoPercentual": -5.22,
+            "estrategiaDeCorrespondencia": "chave-canonica",
+            "atualizadoNaOrigemEm": "2026-11-16T23:34:00Z"
+          }
+        }
+      ]
+    }
+  }
+]

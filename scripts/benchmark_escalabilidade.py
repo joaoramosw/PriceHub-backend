@@ -1,4 +1,4 @@
-"""Baseline local concorrente da API de leitura exposta pelo BFF."""
+"""Carga concorrente de leitura no catálogo pelo gateway (desempenho da consulta, RNF-03)."""
 
 from __future__ import annotations
 
@@ -72,7 +72,7 @@ async def medir(url: str, concorrencia: int, duracao_s: int) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--url", default="http://localhost:8000/catalogo/medicamentos")
+    parser.add_argument("--url", default="http://localhost:8080/api/catalogo/medicamentos")
     parser.add_argument("--concorrencia", type=int, default=10)
     parser.add_argument("--duracao", type=int, default=30)
     parser.add_argument("--saida", type=Path)
