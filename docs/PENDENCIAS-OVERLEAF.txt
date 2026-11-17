@@ -1,0 +1,209 @@
+PENDÊNCIAS DO TCC NO OVERLEAF
+PriceHub: uma arquitetura eficiente orientada a eventos e microsserviços
+
+Base: PDF de 06/11 (51 páginas), comentários da orientadora no PriceHub.docx, reunião com o
+orientador e comparação com o código atual. O que já foi feito depois de 06/11 deve ser riscado.
+Os trechos LaTeX prontos de cada item estão em docs/GUIA-OVERLEAF.md (seção indicada entre colchetes).
+
+
+============================================================
+1. TEXTO DESATUALIZADO EM RELAÇÃO AO CÓDIGO  (prioridade alta)
+============================================================
+
+- NOVO: as farmácias agora têm estoque e loja virtual (POST /loja/pedidos). Quatro eventos novos:
+  ingestao.venda.registrada, ingestao.venda.cancelada, catalogo.venda.contabilizada,
+  catalogo.venda.estornada. Atualizar a tabela de eventos e o diagrama do Capítulo 4.
+
+- Trocar toda menção a Node.js, Fastify, TypeBox, Prisma, pnpm, Biome e Vitest
+  -> hoje é Python 3.12, FastAPI, Pydantic, SQLAlchemy, aio-pika e pytest.
+- Trocar os nomes antigos dos serviços:
+  ingestion-service -> ms-ingestao | catalog-service -> ms-catalogo | query-service -> não existe mais.
+- Incluir o ms-log (serviço de log pedido pelo professor) em todo lugar que lista os serviços.
+- Remover o CQRS e o "serviço de consulta com projeção própria" (tabelas comparacao_medicamentos e
+  comparacao_ofertas): hoje o próprio ms-catalogo atende a busca.
+  (Ou manter, se o grupo decidir implementar o ms-consulta.)
+- Correspondência de medicamentos: o texto diz "registro MS, EAN e chave composta"; o código usa só
+  registro MS e chave canônica. Tirar o EAN do texto ou implementar a estratégia por EAN.
+- Histórico de preços (comentário 100): não chamar de "imutável"; dizer que é só acrescentado
+  pela aplicação, sem proteção no banco (ou implementar o trigger e manter a palavra).
+- Tirar "RabbitMQ / Kafka" da Figura 3 e das páginas 35 e 36: a solução usa só RabbitMQ.
+  Kafka fica apenas na teoria (Seção 2.4), como contraste.
+- Atualizar números: 9 contêineres (não 8); 38 testes em pytest (não 105 em Vitest).
+- Itens que o texto antigo dá como pendentes e hoje estão prontos:
+  busca por fabricante, interface do comparador, link para a oferta na farmácia, histórico na tela.
+- Seção 4.1.7 (serviço de log): reescrever no presente, porque o ms-log existe. [6.7]
+- Seção 4.2.5: descrever o padrão Observer nas farmácias, que agora está implementado. [6.8]
+
+
+============================================================
+2. PREÂMBULO E FORMATAÇÃO  (comentários da orientadora)  [1]
+============================================================
+
+- Títulos: seção primária em CAIXA ALTA e negrito; secundária em CAIXA ALTA sem negrito;
+  terciária em negrito, maiúscula só na primeira palavra. Fonte 12. (comentários 13 a 22 e 47 a 49)
+- Recuo de parágrafo de 1,25 cm. (comentário 27)
+- Listas no formato a), b), c) / 1), 2), sem negrito; trocar as bolinhas em 4.1.1, 4.1.4, 4.1.6,
+  4.2.1 e 4.2.2. (comentários 63 e 71)
+- Itens de lista começando com minúscula e terminando em ";" (o último em ".").
+- Substituir o travessão longo (—) por "--" em todo o texto.
+- Figuras: título acima e centralizado; "Fonte: Autoria própria." abaixo; tamanho 11; sem itálico.
+  (comentários 89 e 90)
+- Toda figura e tabela citada no texto antes de aparecer.
+- Siglas por extenso na primeira ocorrência. (comentário 87)
+- Lista de siglas: incluir AMQP, DLQ, EDA, HMAC, HTTP, SSE, SQL e ETag; separar PMC e RDC; ordem alfabética.
+- Autores citados em caixa baixa no texto ("Segundo Fowler e Lewis (2014)"). (comentário 74)
+- Corrigir "Capítulo ??" (p. 30) e "Seção 4" (p. 28) usando \label e \ref.
+- "Richardson (2018) apontam" (p. 15) -> "aponta".
+
+
+============================================================
+3. RESUMO E ABSTRACT  [2]
+============================================================
+
+- Reescrever o resumo: hoje fala só de Adapter e testes funcionais. Deve citar microsserviços, eventos,
+  RabbitMQ, Outbox, Observer, serviço de log e os resultados medidos.
+- Preencher os números com a execução do grupo (tempo de aceite e convergência).
+- Palavras-chave: arquitetura de software, microsserviços, arquitetura orientada a eventos,
+  mensageria, RabbitMQ.
+- Fazer o Abstract por último, traduzindo o resumo final.
+
+
+============================================================
+4. CAPÍTULO 1: INTRODUÇÃO  [3]
+============================================================
+
+- Comentário 28: dado recente sobre o crescimento do comércio eletrônico (ABComm ou Webshoppers).
+- Comentário 30: tirar adjetivos sem fonte ao explicar o custo de busca.
+- Comentário 33: explicar por que a regulação não resolve a diferença de preço (o PMC é teto,
+  não o preço praticado).
+- Comentário 37: citar agregadores existentes (Consulta Remédios, Cliquefarma) e deixar claro que
+  o diferencial do TCC é a arquitetura estudada, não o produto.
+- Comentário 39: definir integrar, normalizar e centralizar; dizer que o trabalho implementa um
+  protótipo e o avalia por critérios verificáveis.
+- Comentários 42 e 43: "medicamentos mais consumidos", com fonte (Anvisa, CFF ou InovaFarma),
+  e não "essenciais".
+- Substituir os objetivos específicos (hoje falam só de Adapter e testes funcionais).
+- Ajustar a pergunta de pesquisa para ficar próxima do título.
+
+
+============================================================
+5. CAPÍTULO 2: FUNDAMENTAÇÃO TEÓRICA  [4]
+============================================================
+
+- Figuras na teoria (o professor pediu "demonstrar através de imagens"): hoje só há a Figura 1.
+  Mínimo: fluxo produtor -> exchange -> fila -> consumidor (Seção 2.4) e diagrama do Observer (2.5.2).
+- Nova subseção curta "Garantias de entrega": idempotência, Transactional Outbox, entrega
+  at-least-once e fila de mensagens mortas (DLQ), com citações (Richardson, Kleppmann, Hohpe).
+- Opcional: uma frase sobre micro-frontends (Geers, 2020).
+- Conferir: toda afirmação da teoria com citação (o professor deu o início da Seção 2.3 como exemplo).
+
+
+============================================================
+6. CAPÍTULO 3: METODOLOGIA  [5]
+============================================================
+
+- Usar \label e \ref para citar os Capítulos 4 e 5 (corrige o "Capítulo ??").
+- Nova seção "Critérios de avaliação" (comentário 39), com as quatro situações:
+  a) catálogo vazio;
+  b) carga inicial (30 itens -> 10 medicamentos com 3 ofertas cada);
+  c) alteração de preço (mesmo correlationId do início ao fim);
+  d) catálogo indisponível (farmácias atendidas e nenhuma alteração perdida).
+  Métricas: tempo de aceite e janela de convergência.
+
+
+============================================================
+7. CAPÍTULO 4: DESENVOLVIMENTO DA SOLUÇÃO  [6]
+============================================================
+
+- 4.1 Regras de negócio: acrescentar a regra de oferta indisponível (removida ou ausente em uma
+  coleta completa), mantendo o histórico. [6.1]
+- 4.1 Requisitos (comentários 84, 85 e 86): explicar o que significa prioridade essencial e alta;
+  nova tabela de requisitos não funcionais (RNF-01 a RNF-07) com a forma de verificação de cada um. [6.2]
+- 4.1.3 Arquitetura: refazer as Figuras 2 e 3 (diagrama de contêineres C4 nível 2, sem Kafka) e
+  reescrever o texto com os três microsserviços, FastAPI, Pydantic e os micro-frontends. [6.3]
+- 4.1.4 Banco de dados: refazer a Figura 4 (hoje diz "migrações Prisma") e incluir as tabelas
+  outbox, eventos_processados, coletas_brutas e registros_de_evento. [6.4]
+- 4.1.5 Comunicação por eventos (comentário 101): tabela com cada evento, produtor e consumidores,
+  mais o envelope (idDoEvento, tipo, versao, ocorridoEm, correlationId, servicoDeOrigem, dados)
+  e as filas .retry e .dlq. [6.5]
+- 4.1.6 Padrões e decisões (comentário 106): atualizar a lista para os sete registros de decisão
+  (ADRs) e descrever Template Method, Strategy e Observer. [6.6]
+- 4.1.7 Serviço de log: reescrever no presente. [6.7]
+- 4.2.5 Farmácias: Observer, webhook com HMAC e DrogaPopular por polling com ETag; incluir o quadro
+  "o mesmo medicamento nos três formatos". [6.8]
+
+
+============================================================
+8. CAPÍTULO 5: RESULTADOS  (não existe no PDF; é o que o professor mais pediu)  [7]
+============================================================
+
+- Criar o capítulo seguindo o roteiro: PriceHub vazio -> chegada de cada farmácia ->
+  alteração de preço -> catálogo fora do ar, tudo comprovado pelo ms-log.
+- Rodar o roteiro do README e o script scripts/validacao_ponta_a_ponta.py na máquina do grupo;
+  usar os números dessa execução (não os do exemplo em docs/evidencias/exemplo-execucao-local/).
+- Descrever o ambiente da execução (processador, memória, sistema operacional, Docker Desktop).
+- Etapa 1: print do comparador vazio + estatísticas zeradas + eventos ingestao.farmacia.indisponivel.
+- Etapa 2: registro da carga inicial no ms-log + tabela do catálogo consolidado (10 medicamentos).
+- Etapa 3: alteração de preço por webhook e por polling, com a linha do tempo do correlationId.
+- Etapa 4: resiliência (fila crescendo com o catálogo pausado e esvaziando ao retomar).
+- Métricas: tempo de aceite x janela de convergência x espera equivalente se fosse síncrono.
+- NOVO (compras): seção "a mesma compra nos dois modelos". Rodar
+  `python scripts/validacao_ponta_a_ponta.py compras --quantidade 30` e o experimento da aba
+  "Microsserviços x monólito" do monitor (com e sem "catálogo parado"). Tabela: compras confirmadas e
+  espera do cliente (mediana, p95, pior caso) por modelo; frase: "com o catálogo parado, 0 de N compras
+  síncronas foram concluídas, contra N de N por eventos, e nenhuma venda se perdeu".
+  Referência de execução: docs/evidencias/2026-11-16_09-44-06/ (usar os números do grupo).
+- NOVO: explicar que o modo síncrono é um experimento (simula o monólito: loja e catálogo na mesma
+  transação), não um modo de produção; o PriceHub real usa só eventos.
+- NOVO: parágrafo "o mesmo padrão em e-commerces grandes" com as fontes do monitor (Amazon SP-API e
+  SQS, Mercado Livre orders_v2/missed_feeds, Vogels 2006, Prime Video 2023 como contraponto). Shopee
+  ficou de fora por falta de documentação oficial acessível.
+- Prints tirados pelo grupo (as capturas em docs/passo-a-passo e docs/telas servem de referência).
+- Se o template não tiver o ambiente "quadro", usar "figure"; incluir \usepackage{listings}.
+
+
+============================================================
+9. CAPÍTULO 6: CONCLUSÃO  [8]
+============================================================
+
+- Renomear "5 CONCLUSÕES" para Capítulo 6 (o 5 passa a ser Resultados).
+- Remover o item que diz que microsserviços e RabbitMQ ficariam para o futuro (contradiz o trabalho).
+- Responder à pergunta de pesquisa com os números do Capítulo 5.
+- Citar o custo da arquitetura: mais componentes e consistência eventual.
+- Trabalhos futuros: teste de escalabilidade com várias instâncias do ms-catalogo; farmácias reais;
+  autenticação e alertas de preço; Kafka caso seja necessário reprocessar o histórico.
+
+
+============================================================
+10. APÊNDICE A: REGISTROS DE DECISÃO ARQUITETURAL  [9]
+============================================================
+
+- A página está em branco. Preencher as sete decisões (contexto, alternativas, decisão, consequências):
+  ADR-01 microsserviços | ADR-02 RabbitMQ | ADR-03 Adapter | ADR-04 um banco por serviço |
+  ADR-05 Outbox e consumidor idempotente | ADR-06 Python/FastAPI e micro-frontends React |
+  ADR-07 serviço dedicado de log.
+- Citar o apêndice na Seção 4.1.6.
+
+
+============================================================
+11. REFERÊNCIAS  [10]
+============================================================
+
+- Acrescentar ao .bib apenas as citadas: FastAPI, Pydantic, React, RFC 9457 (problem details),
+  RFC 2104 (HMAC), Nygard (2011, ADRs), Gamma et al. (1994), Kleppmann (2017), Hohpe (2004),
+  Geers (2020).
+
+
+============================================================
+12. CHECKLIST FINAL ANTES DE GERAR O PDF  [11]
+============================================================
+
+- Nenhum "??" no PDF.
+- Nenhuma menção a Prisma, Node.js, Fastify ou "RabbitMQ / Kafka" fora da teoria.
+- Capítulos: 1 Introdução, 2 Fundamentação, 3 Metodologia, 4 Desenvolvimento, 5 Resultados, 6 Conclusão.
+- Apêndice A preenchido e citado.
+- Figuras 3 e 4 refeitas; prints do Capítulo 5 da execução do grupo.
+- Resumo e Abstract refletindo o Capítulo 5.
+- Toda afirmação da teoria com citação.
+- Lista de siglas atualizada e em ordem alfabética.
+- Texto revisado com as palavras do grupo (o professor aceita IA como ferramenta, não como autora).

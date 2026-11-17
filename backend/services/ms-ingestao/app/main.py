@@ -53,7 +53,6 @@ def criar_app(
     agendador = AgendadorDeColetas(
         servico,
         configuracao.intervalo_de_polling_s,
-        configuracao.intervalo_de_reconciliacao_s,
         configuracao.atraso_da_primeira_sincronizacao_s,
     )
 
@@ -76,7 +75,7 @@ def criar_app(
             "Recebe dados das farmácias (webhook e polling), converte cada formato para o modelo canônico "
             "com o **padrão Adapter** e publica eventos no RabbitMQ (exchange `pricehub.eventos`).\n\n"
             "Eventos publicados: `ingestao.oferta.recebida`, `ingestao.oferta.removida`, "
-            "`ingestao.oferta.descartada`, `ingestao.coleta.realizada`, `ingestao.farmacia.indisponivel`."
+            "`ingestao.oferta.descartada`, `ingestao.coleta.realizada` e `ingestao.farmacia.indisponivel`."
         ),
         servico=NOME_DO_SERVICO,
         origens_cors=configuracao.lista_de_origens_cors,

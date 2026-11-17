@@ -176,7 +176,7 @@ class ServicoDeIngestao:
                 )
                 self._memoria.registrar(oferta)
                 resumo.ofertas_publicadas += 1
-            for descartado in resultado.descartados:
+            for descartado in resumo.descartadas:
                 await self._barramento.publicar(
                     TipoDeEvento.INGESTAO_OFERTA_DESCARTADA,
                     IngestaoOfertaDescartada(

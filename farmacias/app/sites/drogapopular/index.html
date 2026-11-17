@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <base href="__BASE__" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DrogaPopular Express • O Menor Preço em Medicamentos</title>
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#fff1f2',
+              100: '#ffe4e6',
+              500: '#f43f5e',
+              600: '#e11d48',
+              700: '#be123c',
+              800: '#9f1239',
+              900: '#881337',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Google Fonts & Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-amber-50/30 text-slate-900 flex flex-col min-h-screen antialiased selection:bg-rose-600 selection:text-white">
+
+  <!-- BARRA DE OFERTAS & TICKER INDEPENDENTE (SEM CONEXÃO COM OUTROS SITES) -->
+  <aside class="bg-rose-950 text-amber-300 text-xs py-2 px-4 border-b border-rose-900">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px] font-semibold">
+      <div class="flex items-center gap-2">
+        <span class="bg-amber-400 text-amber-950 px-2 py-0.5 rounded font-black text-[10px] uppercase tracking-wide">Preço Popular</span>
+        <span>🔥 REMÉDIOS A PARTIR DE R$ 3,99 • O MENOR PREÇO DIRETO DO LABORATÓRIO</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-300 font-normal">
+        <span>⚡ Desconto à vista no PIX</span>
+        <span class="text-rose-800">|</span>
+        <span>Entrega Expressa</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- HEADER PRINCIPAL DROGAPOPULAR -->
+  <header class="bg-white border-b-2 border-rose-600 sticky top-0 z-30 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-20 gap-4 sm:gap-6">
+        
+        <!-- LOGO DROGAPOPULAR EXPRESS -->
+        <a href="index.html" class="flex items-center gap-3 shrink-0">
+          <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-rose-600 to-red-700 flex items-center justify-center text-white shadow-md shadow-rose-600/30 font-black text-2xl">
+            %
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-2xl font-black tracking-tight text-rose-700 font-heading">Droga<span class="text-slate-900">Popular</span></span>
+              <span class="bg-amber-400 text-amber-950 font-black text-[10px] px-1.5 py-0.5 rounded">EXPRESS</span>
+            </div>
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider -mt-1">Preço de Atacado em Medicamentos</p>
+          </div>
+        </a>
+
+        <!-- CAMPO DE BUSCA DE PROMOÇÃO -->
+        <div class="flex-1 max-w-xl mx-2 hidden sm:block">
+          <div class="relative">
+            <input 
+              type="text" 
+              id="search-input"
+              placeholder="Digite o remédio para ver a oferta com preço popular..." 
+              class="w-full pl-4 pr-10 py-2.5 bg-slate-100 hover:bg-white text-slate-900 text-xs sm:text-sm rounded-xl border border-slate-300 focus:border-rose-600 focus:bg-white focus:ring-2 focus:ring-rose-500/20 transition-all outline-hidden font-medium"
+            />
+            <button type="button" class="absolute right-3 top-2.5 text-rose-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- BOTÃO DO CARRINHO PROMOÇÃO -->
+        <div class="flex items-center gap-3">
+        </div>
+
+      </div>
+
+      <!-- BUSCA MOBILE -->
+      <div class="pb-3 sm:hidden">
+        <input 
+          type="text" 
+          oninput="state.searchTerm = this.value; filterAndRenderProducts();"
+          placeholder="Buscar ofertas de remédios..." 
+          class="w-full px-3 py-2 bg-slate-100 text-slate-900 text-xs rounded-xl border border-slate-300 focus:bg-white focus:border-rose-600 outline-hidden"
+        />
+      </div>
+    </div>
+  </header>
+
+  <!-- FAIXA DE BENEFÍCIOS POPULARES -->
+  <section class="bg-rose-600 text-white py-2 px-4 shadow-inner">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-around gap-4 text-xs font-bold text-center">
+      <span class="flex items-center gap-1.5">🏷️ Economia Real Garantida</span>
+      <span class="flex items-center gap-1.5">💊 Genéricos de Confiança</span>
+      <span class="flex items-center gap-1.5">🚚 Frete Econômico a R$ 11,90</span>
+      <span class="flex items-center gap-1.5">⚡ PIX com Desconto Imediato</span>
+    </div>
+  </section>
+
+  <!-- VITRINE DE REMÉDIOS: ESTILO GÔNDOLA POPULAR / FEIRÃO -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+    
+    <!-- BARRA DE DEPARTAMENTOS / CATEGORIAS EM BOTÕES DE DESTAQUE -->
+    <div class="bg-white p-4 rounded-2xl border border-rose-200 shadow-2xs mb-6 space-y-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+        <div>
+          <h2 class="text-xl sm:text-2xl font-black text-rose-700 tracking-tight font-heading flex items-center gap-2">
+            <span>🔥</span> Ofertas de Medicamentos Populares
+          </h2>
+          <p id="results-count" class="text-xs text-slate-500 font-medium">Carregando menores preços...</p>
+        </div>
+
+        <!-- Filtros Rápidos de Tarja & Ordenação -->
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="inline-flex p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-bold">
+            <button type="button" class="tarja-filter-btn px-3 py-1.5 rounded-lg bg-rose-700 text-white transition-all" data-tarja="Todos">Todos</button>
+            <button type="button" class="tarja-filter-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 transition-all" data-tarja="livre">Venda Livre</button>
+            <button type="button" class="tarja-filter-btn px-3 py-1.5 rounded-lg bg-white text-slate-700 transition-all" data-tarja="vermelha">Sob Receita</button>
+          </div>
+
+          <select 
+            id="sort-select" 
+            class="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-xl px-3 py-2 font-bold focus:border-rose-600 outline-hidden cursor-pointer"
+          >
+            <option value="populares">Mais Vendidos</option>
+            <option value="preco-asc">Menor Preço DrogaPopular</option>
+            <option value="preco-desc">Maior Preço</option>
+            <option value="nome-asc">Nome (A - Z)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Categorias em Carrossel/Tags -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none" id="category-filters">
+        <!-- Renderizado dinamicamente pelo app.js -->
+      </div>
+    </div>
+
+    <!-- GRADE DE MEDICAMENTOS (CARDS COM FOCO EM ECONOMIA E PREÇO BAIXO) -->
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 items-stretch">
+      <!-- Cards renderizados dinamicamente pelo app.js -->
+    </div>
+
+    <!-- ESTADO VAZIO -->
+    <div id="empty-state" class="hidden text-center py-16 px-4 bg-white rounded-3xl border border-dashed border-rose-300 my-8">
+      <h3 class="text-lg font-bold text-slate-800 mb-1">Nenhum produto encontrado</h3>
+      <p class="text-xs text-slate-500 max-w-sm mx-auto mb-4">Tente buscar por outro termo ou categoria.</p>
+      <button 
+        type="button" 
+        onclick="document.getElementById('search-input').value=''; state.searchTerm=''; state.selectedCategory='Todos'; state.selectedTarja='Todos'; initCategories(); filterAndRenderProducts();" 
+        class="px-4 py-2 text-xs font-bold text-white bg-rose-600 hover:bg-rose-700 rounded-xl"
+      >
+        Ver Todas as Ofertas
+      </button>
+    </div>
+
+  </main>
+
+  <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 mt-16 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-2">
+      <p class="text-amber-400 font-bold text-sm">DrogaPopular Express • O Menor Preço Garantido</p>
+      <p class="text-slate-500 text-[11px]">
+        Medicamentos e valores meramente ilustrativos. Projeto demonstrativo.
+      </p>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="products.js"></script>
+  <script src="app.js"></script>
+  <script src="comum/loja.js"></script>
+</body>
+</html>

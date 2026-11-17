@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import NamedTuple
+
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +18,14 @@ from app.persistencia.modelos import (
 )
 from pricehub_common.eventos import Envelope
 from pricehub_common.tempo import agora_utc
+
+
+class MaisBarata(NamedTuple):
+    """Retrato da oferta mais barata num instante (valores copiados, não a entidade)."""
+
+    farmacia_id: str
+    farmacia_nome: str
+    preco_centavos: int
 
 
 class RepositorioDoCatalogo:
@@ -59,13 +69,26 @@ class RepositorioDoCatalogo:
             consulta = consulta.where(Oferta.codigo_externo.not_in(codigos_presentes))
         return list((await self.sessao.scalars(consulta)).all())
 
-    def registrar_historico(self, oferta: Oferta, correlation_id: str) -> None:
+    async def mais_barata(self, medicamento_id: str) -> MaisBarata | None:
+        """Oferta disponível mais barata do medicamento (empate: ordem do id da farmácia)."""
+        consulta = (
+            select(Oferta.farmacia_id, Farmacia.nome, Oferta.preco_centavos)
+            .join(Farmacia, Farmacia.id == Oferta.farmacia_id)
+            .where(Oferta.medicamento_id == medicamento_id, Oferta.disponivel.is_(True))
+            .order_by(Oferta.preco_centavos, Oferta.farmacia_id)
+            .limit(1)
+        )
+        linha = (await self.sessao.execute(consulta)).first()
+        return MaisBarata(*linha) if linha else None
+
+    def registrar_historico(self, oferta: Oferta, correlation_id: str, origem: str | None = None) -> None:
         self.sessao.add(
             HistoricoPreco(
                 oferta_id=oferta.id,
                 preco_centavos=oferta.preco_centavos,
                 registrado_em=agora_utc(),
                 correlation_id=correlation_id,
+                origem=origem,
             )
         )
 

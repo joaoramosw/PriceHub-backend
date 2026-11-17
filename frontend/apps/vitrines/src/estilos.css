@@ -1,3 +1,0 @@
-@import "tailwindcss";
-/* Inclui as classes usadas nos pacotes compartilhados do monorepositório. */
-@source "../../../packages/ui/src";

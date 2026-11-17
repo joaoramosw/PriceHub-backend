@@ -23,9 +23,12 @@ FILA_DE_AUDITORIA = "ms-log.todos-os-eventos"
 def extrair_farmacia(dados: dict) -> str | None:
     if "farmaciaId" in dados:
         return dados["farmaciaId"]
-    oferta = dados.get("oferta")
-    if isinstance(oferta, dict):
-        return oferta.get("farmaciaId")
+    if "farmaciaAtualId" in dados:  # catalogo.menor-preco.alterado: a farmácia que passou a ser a mais barata
+        return dados["farmaciaAtualId"]
+    for chave in ("oferta",):
+        aninhado = dados.get(chave)
+        if isinstance(aninhado, dict) and aninhado.get("farmaciaId"):
+            return aninhado["farmaciaId"]
     return None
 
 

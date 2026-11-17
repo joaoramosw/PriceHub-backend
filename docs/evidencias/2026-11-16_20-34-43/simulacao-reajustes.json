@@ -1,0 +1,107 @@
+[
+  {
+    "farmacia": "biofarma",
+    "alteracao": {
+      "instante": "2026-11-16T23:35:01.681479+00:00",
+      "codigo": "BIO-0004",
+      "nome": "Omeprazol",
+      "preco_anterior_centavos": 1989,
+      "preco_atual_centavos": 2009,
+      "correlation_id": "4f5f83e6-de59-4976-b9a4-07de499c3db5"
+    },
+    "eventoNoCatalogo": {
+      "id": 540,
+      "idDoEvento": "312dc9c7-539d-43fe-aeea-223ed840a361",
+      "tipo": "catalogo.oferta.atualizada",
+      "servicoDeOrigem": "ms-catalogo",
+      "correlationId": "4f5f83e6-de59-4976-b9a4-07de499c3db5",
+      "farmaciaId": "biofarma",
+      "ocorridoEm": "2026-11-16T23:35:01.693526+00:00",
+      "recebidoEm": "2026-11-16T23:35:01.714987+00:00",
+      "dados": {
+        "ofertaId": "c8ffa79e-0f36-4046-854a-ca9fe902610a",
+        "medicamentoId": "d6bb8472-f3b0-4456-b5d1-457de9beedcf",
+        "medicamentoNome": "Omeprazol 20mg",
+        "farmaciaId": "biofarma",
+        "farmaciaNome": "BioFarma Verde",
+        "situacao": "preco-alterado",
+        "precoAnteriorCentavos": 1989,
+        "precoAtualCentavos": 2009,
+        "variacaoPercentual": 1.01,
+        "estrategiaDeCorrespondencia": "registro-ms",
+        "atualizadoNaOrigemEm": "2026-11-16T23:35:01.681129Z"
+      }
+    },
+    "segundosAteOCatalogo": 0.0
+  },
+  {
+    "farmacia": "farmaazul",
+    "alteracao": {
+      "instante": "2026-11-16T23:35:06.805672+00:00",
+      "codigo": "FA-HID-25",
+      "nome": "Hidroclorotiazida 25mg",
+      "preco_anterior_centavos": 454,
+      "preco_atual_centavos": 429,
+      "correlation_id": "5131df82-3099-4339-9794-99de68138dcc"
+    },
+    "eventoNoCatalogo": {
+      "id": 549,
+      "idDoEvento": "6d69ec74-7756-4694-a762-d8ea7032f9f9",
+      "tipo": "catalogo.oferta.atualizada",
+      "servicoDeOrigem": "ms-catalogo",
+      "correlationId": "5131df82-3099-4339-9794-99de68138dcc",
+      "farmaciaId": "farmaazul",
+      "ocorridoEm": "2026-11-16T23:35:06.817962+00:00",
+      "recebidoEm": "2026-11-16T23:35:06.830096+00:00",
+      "dados": {
+        "ofertaId": "50e1cd72-f0c9-497d-b17c-2512affb8dc8",
+        "medicamentoId": "0cc130e9-289d-47b5-a94f-a8b3a3c21964",
+        "medicamentoNome": "Hidroclorotiazida 25mg",
+        "farmaciaId": "farmaazul",
+        "farmaciaNome": "FarmaAzul Confiança",
+        "situacao": "preco-alterado",
+        "precoAnteriorCentavos": 454,
+        "precoAtualCentavos": 429,
+        "variacaoPercentual": -5.51,
+        "estrategiaDeCorrespondencia": "registro-ms",
+        "atualizadoNaOrigemEm": "2026-11-16T20:35:06-03:00"
+      }
+    },
+    "segundosAteOCatalogo": 0.0
+  },
+  {
+    "farmacia": "drogapopular",
+    "alteracao": {
+      "instante": "2026-11-16T23:35:21.924839+00:00",
+      "codigo": "DP-0007",
+      "nome": "Tadalafila",
+      "preco_anterior_centavos": 3109,
+      "preco_atual_centavos": 3229,
+      "correlation_id": "a81f434f-e07e-45bb-90ee-bab2a742c4ab"
+    },
+    "eventoNoCatalogo": {
+      "id": 575,
+      "idDoEvento": "b5465b82-fdb0-4136-8311-987bb8027731",
+      "tipo": "catalogo.oferta.atualizada",
+      "servicoDeOrigem": "ms-catalogo",
+      "correlationId": "38600179-e09d-48d6-9d20-ed3c87fa1a9c",
+      "farmaciaId": "drogapopular",
+      "ocorridoEm": "2026-11-16T23:35:24.242965+00:00",
+      "recebidoEm": "2026-11-16T23:35:24.265400+00:00",
+      "dados": {
+        "ofertaId": "3ca9d452-9f0b-464e-9c2f-49b6ea83d45d",
+        "medicamentoId": "8f6227ae-0f14-483b-8421-92b8724d84ef",
+        "medicamentoNome": "Tadalafila 5mg",
+        "farmaciaId": "drogapopular",
+        "farmaciaNome": "DrogaPopular Express",
+        "situacao": "preco-alterado",
+        "precoAnteriorCentavos": 3109,
+        "precoAtualCentavos": 3229,
+        "variacaoPercentual": 3.86,
+        "estrategiaDeCorrespondencia": "chave-canonica",
+        "atualizadoNaOrigemEm": "2026-11-16T23:35:00Z"
+      }
+    },
+    "segundosAteOCatalogo": 2.6
+  }
+]

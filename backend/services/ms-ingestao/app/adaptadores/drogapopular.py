@@ -20,6 +20,7 @@ from app.adaptadores.normalizacao import (
     interpretar_apresentacao,
     interpretar_concentracao,
     normalizar_espacos,
+    origem_conhecida,
     texto_em_reais_para_centavos,
 )
 from pricehub_common.eventos import OfertaCanonica
@@ -35,7 +36,10 @@ class ProdutoDrogaPopular(BaseModel):
     DESCRICAO: str = Field(min_length=1)
     LAB: str | None = None
     PRECO: str = Field(min_length=1)
+    ORIGEM: str | None = None
     gerado_em: datetime | None = None
+
+
 
 
 class ArquivoDrogaPopular(BaseModel):
@@ -65,7 +69,7 @@ class AdaptadorDrogaPopular(AdaptadorDeFarmacia):
     modelo_nativo = ProdutoDrogaPopular
 
     async def baixar_catalogo(self, etag: str | None = None) -> CatalogoBaixado:
-        resposta = await self.cliente.buscar_json(f"{self.url_base}/legacy/precos.json", etag=etag)
+        resposta = await self.cliente.buscar_json(f"{self.url_base}/api/v1/produtos", etag=etag)
         if resposta.nao_modificado:
             return CatalogoBaixado(itens=[], paginas_brutas=[], etag=etag, nao_modificado=True)
         try:
@@ -74,10 +78,15 @@ class AdaptadorDrogaPopular(AdaptadorDeFarmacia):
             raise PayloadInvalidoError(self.farmacia_id, "arquivo de preços fora do contrato") from erro
         gerado_em = data_brasileira_para_utc(arquivo.gerado_em)
         itens = [{**produto, "gerado_em": gerado_em} for produto in arquivo.produtos]
-        return CatalogoBaixado(itens=itens, paginas_brutas=[resposta.corpo], etag=resposta.etag)
+        return CatalogoBaixado(
+            itens=itens,
+            paginas_brutas=[resposta.corpo],
+            etag=resposta.etag,
+        )
 
     def identificar(self, item_bruto: dict[str, Any]) -> str:
         return item_bruto["COD"]
+
 
     def adaptar(self, item: ProdutoDrogaPopular, coletado_em: datetime) -> OfertaCanonica:
         decomposta = decompor_descricao(item.DESCRICAO)
@@ -92,6 +101,7 @@ class AdaptadorDrogaPopular(AdaptadorDeFarmacia):
             preco_centavos=texto_em_reais_para_centavos(item.PRECO),
             url_do_produto=self.url_do_produto(item.COD),
             atualizado_na_origem_em=item.gerado_em,
+            origem_da_alteracao=origem_conhecida(item.ORIGEM),
             coletado_em=coletado_em,
             **decomposta,
         )

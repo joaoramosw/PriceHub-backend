@@ -1,0 +1,20 @@
+{
+  "executadoEm": "2026-11-17T13:38:14.511689+00:00",
+  "url": "http://localhost:8080/api/catalogo/medicamentos",
+  "concorrencia": 20,
+  "duracaoConfiguradaSegundos": 15,
+  "duracaoRealSegundos": 15.06,
+  "requisicoes": 3013,
+  "requisicoesPorSegundo": 200.03,
+  "sucessosPorSegundo": 200.03,
+  "status": {
+    "200": 3013
+  },
+  "latenciaMs": {
+    "media": 97.61,
+    "p50": 90.6,
+    "p95": 129.77,
+    "p99": 163.43,
+    "maximo": 297.91
+  }
+}

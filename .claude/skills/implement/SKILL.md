@@ -48,7 +48,7 @@ Seguir a skill `tdd` em cada passo. Não avançar com teste vermelho.
 - Frontend: `cd frontend && npm run verificar-tipos && npm run build`
 - Sistema rodando: `docker compose up -d --build` e conferir `docker compose ps` (todos healthy).
 - Mudança visível na interface: validar com a skill `playwright` (navegar, interagir, tirar print).
-- Mudança no fluxo de eventos: conferir no monitor (`http://localhost:5175`) a linha do tempo do
+- Mudança no fluxo de eventos: conferir no monitor (`http://localhost:8080/monitor/`) a linha do tempo do
   `correlationId`.
 
 ## 6. Fechar

@@ -39,10 +39,10 @@ class TipoDeEvento(StrEnum):
     CATALOGO_OFERTA_ATUALIZADA = "catalogo.oferta.atualizada"
     CATALOGO_OFERTA_INDISPONIVEL = "catalogo.oferta.indisponivel"
     CATALOGO_OFERTA_NAO_CORRESPONDIDA = "catalogo.oferta.nao-correspondida"
-    CATALOGO_VISAO_ATUALIZADA = "catalogo.visao.atualizada"
-    CONSULTA_PROJECAO_SOLICITADA = "consulta.projecao.solicitada"
+    CATALOGO_MENOR_PRECO_ALTERADO = "catalogo.menor-preco.alterado"
 
 
+OrigemDaAlteracao = Literal["carga-inicial", "manual", "programada"]
 UnidadeDeConcentracao = Literal["mg", "mg/ml", "g", "ml", "mcg"]
 UnidadeDeQuantidade = Literal["unidade", "ml"]
 FormaFarmaceutica = Literal[
@@ -96,6 +96,9 @@ class OfertaCanonica(ModeloDeContrato):
     preco_centavos: int = Field(gt=0, le=10_000_000)
     url_do_produto: str | None = None
     atualizado_na_origem_em: datetime | None = None
+    origem_da_alteracao: OrigemDaAlteracao | None = Field(
+        default=None, description="Como o preço mudou na farmácia: carga-inicial, manual (tela /admin) ou programada (simulação)"
+    )
     coletado_em: datetime
 
     @field_validator("nome", "principio_ativo", "farmacia_nome")
@@ -173,6 +176,7 @@ class CatalogoOfertaAtualizada(ModeloDeContrato):
     variacao_percentual: float | None
     estrategia_de_correspondencia: str
     atualizado_na_origem_em: datetime | None
+    origem_da_alteracao: OrigemDaAlteracao | None = None
 
 
 class CatalogoOfertaIndisponivel(ModeloDeContrato):
@@ -188,21 +192,17 @@ class CatalogoOfertaNaoCorrespondida(ModeloDeContrato):
     motivo: str
 
 
-class CatalogoVisaoAtualizada(ModeloDeContrato):
-    """Snapshot transacional publicado para atualizar a projeção de leitura (CQRS)."""
+class CatalogoMenorPrecoAlterado(ModeloDeContrato):
+    """A farmácia mais barata de um medicamento mudou (evento de negócio do comparador)."""
 
     medicamento_id: str
     medicamento_nome: str
-    farmacia_id: str | None = None
-    resumo: dict
-    detalhe: dict
-    historico: list[dict]
-
-
-class ConsultaProjecaoSolicitada(ModeloDeContrato):
-    """Pedido técnico para reconstruir uma projeção vazia a partir do catálogo."""
-
-    motivo: str = "inicializacao"
+    farmacia_anterior_id: str
+    farmacia_anterior_nome: str
+    preco_anterior_centavos: int
+    farmacia_atual_id: str
+    farmacia_atual_nome: str
+    preco_atual_centavos: int
 
 
 CONTRATOS_POR_TIPO: dict[TipoDeEvento, type[ModeloDeContrato]] = {
@@ -215,8 +215,7 @@ CONTRATOS_POR_TIPO: dict[TipoDeEvento, type[ModeloDeContrato]] = {
     TipoDeEvento.CATALOGO_OFERTA_ATUALIZADA: CatalogoOfertaAtualizada,
     TipoDeEvento.CATALOGO_OFERTA_INDISPONIVEL: CatalogoOfertaIndisponivel,
     TipoDeEvento.CATALOGO_OFERTA_NAO_CORRESPONDIDA: CatalogoOfertaNaoCorrespondida,
-    TipoDeEvento.CATALOGO_VISAO_ATUALIZADA: CatalogoVisaoAtualizada,
-    TipoDeEvento.CONSULTA_PROJECAO_SOLICITADA: ConsultaProjecaoSolicitada,
+    TipoDeEvento.CATALOGO_MENOR_PRECO_ALTERADO: CatalogoMenorPrecoAlterado,
 }
 
 

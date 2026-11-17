@@ -1,0 +1,9 @@
+{
+  "medicamentos": 0,
+  "farmacias": 0,
+  "ofertas": 0,
+  "ofertasDisponiveis": 0,
+  "registrosDeHistorico": 0,
+  "eventosProcessados": 0,
+  "eventosNaOutboxPendentes": 0
+}

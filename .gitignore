@@ -6,3 +6,9 @@
 **/.ruff_cache/
 **/*.egg-info/
 .venv/
+
+# configurações pessoais do Claude Code
+.claude/settings.local.json
+
+# configurações pessoais do Claude Code
+.claude/settings.local.json

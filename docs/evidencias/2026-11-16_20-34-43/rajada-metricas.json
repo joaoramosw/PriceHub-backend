@@ -1,0 +1,344 @@
+{
+  "totalDeEventos": 522,
+  "porTipo": {
+    "catalogo.oferta.atualizada": 40,
+    "ingestao.coleta.realizada": 40,
+    "ingestao.oferta.recebida": 40
+  },
+  "porServico": {
+    "ms-catalogo": 40,
+    "ms-ingestao": 80
+  },
+  "aceite": {
+    "amostras": 40,
+    "mediaMs": 28.68,
+    "medianaMs": 32.3,
+    "p95Ms": 46.73,
+    "maximoMs": 53.47
+  },
+  "convergencia": {
+    "amostras": 40,
+    "mediaMs": 273.83,
+    "medianaMs": 280.95,
+    "p95Ms": 465.47,
+    "maximoMs": 516.3
+  },
+  "equivalenteSincrono": {
+    "amostras": 40,
+    "mediaMs": 302.51,
+    "medianaMs": 325.63,
+    "p95Ms": 491.42,
+    "maximoMs": 546.21
+  },
+  "convergenciaPorOrigem": {
+    "webhook": {
+      "amostras": 40,
+      "mediaMs": 273.83,
+      "medianaMs": 280.95,
+      "p95Ms": 465.47,
+      "maximoMs": 516.3
+    }
+  },
+  "ultimasPropagacoes": [
+    {
+      "correlationId": "2dc52cc2-9949-4d4f-87e4-5abb563d4db3",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 29.91,
+      "convergenciaMs": 516.3,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:52.000711Z"
+    },
+    {
+      "correlationId": "173a3df5-3548-4c48-ab15-41ecdae945b9",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 17.52,
+      "convergenciaMs": 495.06,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.970914Z"
+    },
+    {
+      "correlationId": "6b38edcd-1f47-44e5-b482-a28bf6d896e2",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 25.95,
+      "convergenciaMs": 465.47,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.938328Z"
+    },
+    {
+      "correlationId": "bbee7dfc-adf7-4b65-bc42-8c468ae0b4a8",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 9.43,
+      "convergenciaMs": 445.32,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.912313Z"
+    },
+    {
+      "correlationId": "285b091a-5c1c-48bb-addd-2959eef28f8c",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 32.79,
+      "convergenciaMs": 433.18,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.897112Z"
+    },
+    {
+      "correlationId": "1aa9b880-c256-4ae4-813f-b882dadc31b2",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 10.44,
+      "convergenciaMs": 427.04,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.884017Z"
+    },
+    {
+      "correlationId": "13ab4a23-7083-4339-a0a4-b59f5e477bf8",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 20.96,
+      "convergenciaMs": 419.89,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.869923Z"
+    },
+    {
+      "correlationId": "a16dca4e-2798-4821-b683-aee22bb0d8f4",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 13.9,
+      "convergenciaMs": 408.34,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.855236Z"
+    },
+    {
+      "correlationId": "8bc2a33c-95f5-40c1-a946-1ec03fd75d82",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 11.27,
+      "convergenciaMs": 401.61,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.840611Z"
+    },
+    {
+      "correlationId": "4410f6e2-3478-48c4-b49a-ab3631888d38",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 26.72,
+      "convergenciaMs": 389.76,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.826163Z"
+    },
+    {
+      "correlationId": "505d2e84-4a14-4e97-afa3-effb07ddd829",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 3.88,
+      "convergenciaMs": 382.5,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.810585Z"
+    },
+    {
+      "correlationId": "4171deb2-490e-496e-91c5-45ea7ed04b2c",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 25.74,
+      "convergenciaMs": 369.66,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.792295Z"
+    },
+    {
+      "correlationId": "c8c4f7f2-efab-4c76-8ba6-50708f7ffe14",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 12.81,
+      "convergenciaMs": 354.66,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.770964Z"
+    },
+    {
+      "correlationId": "0899f3a8-3d44-4f72-84b6-69fc0cc4d918",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 28.41,
+      "convergenciaMs": 345.91,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.760211Z"
+    },
+    {
+      "correlationId": "de0c970a-50e3-4bd4-b134-d78a97f769f9",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 35.18,
+      "convergenciaMs": 336.4,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.741401Z"
+    },
+    {
+      "correlationId": "c103d054-95d0-4b60-bec3-10ea79aee667",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 21.0,
+      "convergenciaMs": 328.01,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.730587Z"
+    },
+    {
+      "correlationId": "f27bf9a2-8400-4d52-b8cd-7fe464ee9eeb",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 46.73,
+      "convergenciaMs": 312.85,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.705839Z"
+    },
+    {
+      "correlationId": "570c108b-4d7f-495f-9c0d-ff69809a7a39",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 44.84,
+      "convergenciaMs": 303.31,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.693218Z"
+    },
+    {
+      "correlationId": "e7970cd6-3ce1-468c-9904-e5449f6693f5",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 53.47,
+      "convergenciaMs": 292.58,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.672499Z"
+    },
+    {
+      "correlationId": "751ba94e-f3b4-4cfe-b45c-322986223c41",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 46.99,
+      "convergenciaMs": 284.07,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.661786Z"
+    },
+    {
+      "correlationId": "6faf62c8-0ed1-426a-9e96-ec0616d837f3",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 42.37,
+      "convergenciaMs": 277.83,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.645722Z"
+    },
+    {
+      "correlationId": "cff4ff99-8eba-46fb-83d5-ee0e31a32023",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 37.18,
+      "convergenciaMs": 267.83,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.630397Z"
+    },
+    {
+      "correlationId": "86456f10-b6fd-4249-a829-2c76961bdc1f",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 42.4,
+      "convergenciaMs": 259.58,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.614738Z"
+    },
+    {
+      "correlationId": "f212e1d7-e3d8-4877-a97c-3b4486e35a0f",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 32.99,
+      "convergenciaMs": 248.26,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.597607Z"
+    },
+    {
+      "correlationId": "fe77254a-cc76-4507-a9dc-f7fb6dce5ed6",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 40.74,
+      "convergenciaMs": 236.99,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.579562Z"
+    },
+    {
+      "correlationId": "2bd02b3c-5589-4ad6-8c3f-854d415cfa42",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 33.09,
+      "convergenciaMs": 225.37,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.564732Z"
+    },
+    {
+      "correlationId": "fdcef90a-1899-4797-aea4-f351be24731a",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 43.54,
+      "convergenciaMs": 209.26,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.540464Z"
+    },
+    {
+      "correlationId": "e012bee6-c9fd-4767-bd70-cd11cc3b16df",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 33.79,
+      "convergenciaMs": 199.89,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.529249Z"
+    },
+    {
+      "correlationId": "fbbe9e76-fa32-463c-a039-9bbfe7fa7e89",
+      "tipo": "preco",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "aceiteMs": 41.18,
+      "convergenciaMs": 194.21,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.514067Z"
+    },
+    {
+      "correlationId": "0da59455-e447-418e-9a46-87f927b22e7b",
+      "tipo": "preco",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "aceiteMs": 32.68,
+      "convergenciaMs": 181.74,
+      "ofertasAtualizadas": 1,
+      "ocorridoEm": "2026-11-16T23:34:51.497294Z"
+    }
+  ]
+}

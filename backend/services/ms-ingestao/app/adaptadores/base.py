@@ -72,9 +72,9 @@ class AdaptadorDeFarmacia(ABC):
     modo: ClassVar[ModoDeIntegracao]
     modelo_nativo: ClassVar[type[BaseModel]]
 
-    def __init__(self, url_base: str, url_das_vitrines: str, cliente: ClienteDaFarmacia) -> None:
+    def __init__(self, url_base: str, url_publica_das_lojas: str, cliente: ClienteDaFarmacia) -> None:
         self.url_base = url_base.rstrip("/")
-        self.url_das_vitrines = url_das_vitrines.rstrip("/")
+        self.url_publica_das_lojas = url_publica_das_lojas.rstrip("/")
         self.cliente = cliente
 
     # ----- passos que cada farmácia implementa -----------------------------------
@@ -89,6 +89,8 @@ class AdaptadorDeFarmacia(ABC):
     @abstractmethod
     def adaptar(self, item: Any, coletado_em: datetime) -> OfertaCanonica:
         """Converte um item nativo (já validado) para o modelo canônico."""
+
+
 
     def interpretar_webhook(self, payload: Any) -> NotificacaoInterpretada:
         raise WebhookNaoSuportadoError(f"a farmácia {self.farmacia_id} não envia webhooks")
@@ -106,8 +108,9 @@ class AdaptadorDeFarmacia(ABC):
                 resultado.descartados.append(ItemDescartado(codigo_externo, _resumir_erro(erro)))
         return resultado
 
+
     def url_do_produto(self, codigo_externo: str) -> str:
-        return f"{self.url_das_vitrines}/{self.farmacia_id}/produto/{codigo_externo}"
+        return f"{self.url_publica_das_lojas}/{self.farmacia_id}/produto/{codigo_externo}"
 
     def _identificar_com_seguranca(self, item_bruto: dict[str, Any]) -> str:
         try:

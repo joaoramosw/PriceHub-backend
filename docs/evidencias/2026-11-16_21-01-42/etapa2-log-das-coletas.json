@@ -1,0 +1,150 @@
+[
+  {
+    "id": 101,
+    "idDoEvento": "4a5de3c8-20e7-4dbb-ba73-76edb2300160",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "bfe00ef3-7bd6-4c11-b5d2-bed52947ffad",
+    "farmaciaId": "biofarma",
+    "ocorridoEm": "2026-11-17T00:01:39.811502+00:00",
+    "recebidoEm": "2026-11-17T00:01:39.819167+00:00",
+    "dados": {
+      "coletaId": "dd9c5808-d636-485d-bf58-cb586ac0ff99",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "itensRecebidos": 1,
+      "ofertasPublicadas": 1,
+      "ofertasSemAlteracao": 0,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 2.52,
+      "catalogoCompleto": false,
+      "codigosPresentes": []
+    }
+  },
+  {
+    "id": 98,
+    "idDoEvento": "5359c5ba-5b7c-4274-a0c6-adf6d75b447b",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "c4f42020-f04e-4f0e-8b2e-d482c7b62ffc",
+    "farmaciaId": "biofarma",
+    "ocorridoEm": "2026-11-17T00:01:34.812045+00:00",
+    "recebidoEm": "2026-11-17T00:01:34.830645+00:00",
+    "dados": {
+      "coletaId": "4f0f3b45-354f-4975-a853-6d97ce85bebe",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "itensRecebidos": 1,
+      "ofertasPublicadas": 1,
+      "ofertasSemAlteracao": 0,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 2.11,
+      "catalogoCompleto": false,
+      "codigosPresentes": []
+    }
+  },
+  {
+    "id": 76,
+    "idDoEvento": "b8ca0d97-3328-4250-8ceb-f567800b6e09",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "b461f2bd-289b-471d-9aa5-a408d4380279",
+    "farmaciaId": "drogapopular",
+    "ocorridoEm": "2026-11-17T00:01:31.057481+00:00",
+    "recebidoEm": "2026-11-17T00:01:31.106760+00:00",
+    "dados": {
+      "coletaId": "b77e54b7-be41-4521-a25e-5a94f341e5ab",
+      "farmaciaId": "drogapopular",
+      "origem": "polling",
+      "itensRecebidos": 10,
+      "ofertasPublicadas": 10,
+      "ofertasSemAlteracao": 0,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 70.45,
+      "catalogoCompleto": true,
+      "codigosPresentes": [
+        "DP-0001",
+        "DP-0002",
+        "DP-0003",
+        "DP-0004",
+        "DP-0005",
+        "DP-0006",
+        "DP-0007",
+        "DP-0008",
+        "DP-0009",
+        "DP-0010"
+      ]
+    }
+  },
+  {
+    "id": 45,
+    "idDoEvento": "37879216-f12a-4090-8070-3e274025d74d",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "766c04df-e07d-4228-bec9-32c6808a7c8f",
+    "farmaciaId": "farmaazul",
+    "ocorridoEm": "2026-11-17T00:01:21.736583+00:00",
+    "recebidoEm": "2026-11-17T00:01:21.798455+00:00",
+    "dados": {
+      "coletaId": "cd78f8ba-0970-4f92-aaaa-40b4447ffb56",
+      "farmaciaId": "farmaazul",
+      "origem": "webhook",
+      "itensRecebidos": 10,
+      "ofertasPublicadas": 10,
+      "ofertasSemAlteracao": 0,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 18.64,
+      "catalogoCompleto": true,
+      "codigosPresentes": [
+        "FA-MET-500",
+        "FA-LOS-50",
+        "FA-DIP-500",
+        "FA-OME-20",
+        "FA-HID-25",
+        "FA-NIM-100",
+        "FA-TAD-5",
+        "FA-SIN-20",
+        "FA-IBU-600",
+        "FA-SIM-75"
+      ]
+    }
+  },
+  {
+    "id": 14,
+    "idDoEvento": "83c2820f-3cee-407c-a977-2fa757bbe4ef",
+    "tipo": "ingestao.coleta.realizada",
+    "servicoDeOrigem": "ms-ingestao",
+    "correlationId": "8cc142e2-f6a8-495c-a2c9-5a72ec06dd0b",
+    "farmaciaId": "biofarma",
+    "ocorridoEm": "2026-11-17T00:01:14.848206+00:00",
+    "recebidoEm": "2026-11-17T00:01:14.910585+00:00",
+    "dados": {
+      "coletaId": "10a55690-31f9-47db-b92b-2712a10c452e",
+      "farmaciaId": "biofarma",
+      "origem": "webhook",
+      "itensRecebidos": 10,
+      "ofertasPublicadas": 10,
+      "ofertasSemAlteracao": 0,
+      "descartadas": 0,
+      "removidas": 0,
+      "duracaoMs": 25.94,
+      "catalogoCompleto": true,
+      "codigosPresentes": [
+        "BIO-0001",
+        "BIO-0002",
+        "BIO-0003",
+        "BIO-0004",
+        "BIO-0005",
+        "BIO-0006",
+        "BIO-0007",
+        "BIO-0008",
+        "BIO-0009",
+        "BIO-0010"
+      ]
+    }
+  }
+]

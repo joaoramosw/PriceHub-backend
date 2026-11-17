@@ -95,9 +95,22 @@ def texto_em_reais_para_centavos(texto: str) -> int:
 
 
 def data_brasileira_para_utc(texto: str) -> datetime | None:
-    """'21/10/2026 22:23' (horário de Brasília) -> datetime em UTC."""
-    try:
-        local = datetime.strptime(texto.strip(), "%d/%m/%Y %H:%M").replace(tzinfo=FUSO_DE_BRASILIA)
-    except ValueError:
+    """'21/10/2026 22:23' ou '21/10/2026 22:23:05' (horário de Brasília) -> datetime em UTC."""
+    for formato in ("%d/%m/%Y %H:%M:%S", "%d/%m/%Y %H:%M"):
+        try:
+            local = datetime.strptime(texto.strip(), formato).replace(tzinfo=FUSO_DE_BRASILIA)
+        except ValueError:
+            continue
+        return local.astimezone(UTC)
+    return None
+
+
+ORIGENS_CONHECIDAS = ("carga-inicial", "manual", "programada")
+
+
+def origem_conhecida(valor: str | None) -> str | None:
+    """Origem da alteração informada pela farmácia ("PROGRAMADA", "manual"...) no vocabulário do PriceHub."""
+    if not valor:
         return None
-    return local.astimezone(UTC)
+    normalizada = valor.strip().lower().replace("_", "-").replace(" ", "-")
+    return normalizada if normalizada in ORIGENS_CONHECIDAS else None

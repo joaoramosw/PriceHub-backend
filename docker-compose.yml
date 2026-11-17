@@ -1,10 +1,16 @@
 # PriceHub: microsserviços orientados a eventos.
 #
-# Subir tudo:            docker compose up -d --build
+# Subir tudo:   docker compose up -d --build
+# Abrir:        http://localhost:8080  (gateway: comparador, /parceiras, /monitor/, /loja/<farmácia>/)
+# Ver as tabelas de cada banco:  docker compose --profile ferramentas up -d adminer  (http://localhost:8090)
+#
+# Redes: as farmácias (sistemas externos) só enxergam o ms-ingestao, o ms-log (saúde) e o gateway;
+# não alcançam o RabbitMQ nem os bancos. Cada banco só é visível para o seu microsserviço.
+#
 # Demonstração em etapas (capítulo de resultados):
-#   1) docker compose up -d --build postgres rabbitmq ms-ingestao ms-catalogo ms-log frontend
-#   2) docker compose up -d farmacia-biofarma   (depois farmacia-farmaazul e farmacia-drogapopular)
-#   3) altere um preço em http://localhost:5174 e acompanhe em http://localhost:5175
+#   1) docker compose up -d --build gateway       (sobe PriceHub, bancos e RabbitMQ, sem farmácias)
+#   2) docker compose up -d farmacia-biofarma     (depois farmacia-farmaazul e farmacia-drogapopular)
+#   3) altere um preço em http://localhost:8080/loja/biofarma/admin e acompanhe em http://localhost:8080/monitor/
 
 x-servico-python: &servico-python
   restart: unless-stopped
@@ -12,40 +18,69 @@ x-servico-python: &servico-python
     RABBITMQ_URL: amqp://${RABBITMQ_USUARIO:-pricehub}:${RABBITMQ_SENHA:-pricehub}@rabbitmq:5672/
     NIVEL_DE_LOG: ${NIVEL_DE_LOG:-INFO}
     CORS_ORIGENS: "*"
-  depends_on:
-    postgres:
-      condition: service_healthy
-    rabbitmq:
-      condition: service_healthy
 
-x-farmacia: &farmacia
-  build:
-    context: ./backend
-    args:
-      SERVICO: ms-farmacia
-  image: pricehub/ms-farmacia:local
+x-postgres: &postgres
+  image: postgres:16-alpine
   restart: unless-stopped
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USUARIO:-pricehub}"]
+    interval: 5s
+    timeout: 3s
+    retries: 20
+
+# Sem "image:" fixa: cada instância recebe a sua tag (o cache de build é o mesmo), evitando colisão no build paralelo.
+x-farmacia: &farmacia
+  build: ./farmacias
+  restart: unless-stopped
+  networks: [rede-farmacias]
+
+x-ambiente-da-farmacia: &ambiente-da-farmacia
+  CORS_ORIGENS: "*"
+  SIMULACAO_ATIVA: ${SIMULACAO_ATIVA:-true}
+  INTERVALO_DA_SIMULACAO_S: ${INTERVALO_DA_SIMULACAO_S:-5}
+  ATRASO_INICIAL_DA_SIMULACAO_S: ${ATRASO_INICIAL_DA_SIMULACAO_S:-20}
 
 services:
-  postgres:
-    image: postgres:16-alpine
+  # ----- um banco por microsserviço (database per service) ---------------------------
+  pg-ingestao:
+    <<: *postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USUARIO:-pricehub}
       POSTGRES_PASSWORD: ${POSTGRES_SENHA:-pricehub}
-      POSTGRES_DB: pricehub
+      POSTGRES_DB: ingestao
     volumes:
-      - dados-postgres:/var/lib/postgresql/data
-      - ./infra/postgres:/docker-entrypoint-initdb.d:ro
+      - dados-pg-ingestao:/var/lib/postgresql/data
     ports:
-      - "5433:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USUARIO:-pricehub}"]
-      interval: 5s
-      timeout: 3s
-      retries: 20
+      - "5441:5432"
+    networks: [rede-banco-ingestao]
+
+  pg-catalogo:
+    <<: *postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USUARIO:-pricehub}
+      POSTGRES_PASSWORD: ${POSTGRES_SENHA:-pricehub}
+      POSTGRES_DB: catalogo
+    volumes:
+      - dados-pg-catalogo:/var/lib/postgresql/data
+    ports:
+      - "5442:5432"
+    networks: [rede-banco-catalogo]
+
+  pg-log:
+    <<: *postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USUARIO:-pricehub}
+      POSTGRES_PASSWORD: ${POSTGRES_SENHA:-pricehub}
+      POSTGRES_DB: auditoria
+    volumes:
+      - dados-pg-log:/var/lib/postgresql/data
+    ports:
+      - "5443:5432"
+    networks: [rede-banco-log]
 
   rabbitmq:
     image: rabbitmq:4.1-management-alpine
+    restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USUARIO:-pricehub}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_SENHA:-pricehub}
@@ -54,12 +89,14 @@ services:
       - "15672:15672"
     volumes:
       - dados-rabbitmq:/var/lib/rabbitmq
+    networks: [rede-pricehub]
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s
       timeout: 5s
       retries: 20
 
+  # ----- PriceHub -----------------------------------------------------------------------
   ms-ingestao:
     <<: *servico-python
     build:
@@ -70,15 +107,22 @@ services:
     environment:
       <<: *ambiente-comum
       PORTA: "8001"
-      URL_DO_BANCO: postgresql+asyncpg://${POSTGRES_USUARIO:-pricehub}:${POSTGRES_SENHA:-pricehub}@postgres:5432/ingestao
+      URL_DO_BANCO: postgresql+asyncpg://${POSTGRES_USUARIO:-pricehub}:${POSTGRES_SENHA:-pricehub}@pg-ingestao:5432/ingestao
       URL_DA_BIOFARMA: http://farmacia-biofarma:8101
       URL_DA_FARMAAZUL: http://farmacia-farmaazul:8102
       URL_DA_DROGAPOPULAR: http://farmacia-drogapopular:8103
-      URL_DAS_VITRINES: http://localhost:5176
+      URL_PUBLICA_DAS_LOJAS: ${URL_PUBLICA_DAS_LOJAS:-http://localhost:8080/loja}
       SEGREDO_DO_WEBHOOK_BIOFARMA: ${SEGREDO_DO_WEBHOOK_BIOFARMA:-segredo-biofarma-dev}
       SEGREDO_DO_WEBHOOK_FARMAAZUL: ${SEGREDO_DO_WEBHOOK_FARMAAZUL:-segredo-farmaazul-dev}
-      INTERVALO_DE_POLLING_S: ${INTERVALO_DE_POLLING_S:-15}
-      INTERVALO_DE_RECONCILIACAO_S: ${INTERVALO_DE_RECONCILIACAO_S:-120}
+      INTERVALO_DE_POLLING_S: ${INTERVALO_DE_POLLING_S:-5}
+    depends_on:
+      pg-ingestao:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8001:8001"
+    networks: [rede-pricehub, rede-banco-ingestao, rede-farmacias]
 
   ms-catalogo:
     <<: *servico-python
@@ -90,7 +134,15 @@ services:
     environment:
       <<: *ambiente-comum
       PORTA: "8002"
-      URL_DO_BANCO: postgresql+asyncpg://${POSTGRES_USUARIO:-pricehub}:${POSTGRES_SENHA:-pricehub}@postgres:5432/catalogo
+      URL_DO_BANCO: postgresql+asyncpg://${POSTGRES_USUARIO:-pricehub}:${POSTGRES_SENHA:-pricehub}@pg-catalogo:5432/catalogo
+    depends_on:
+      pg-catalogo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "8002:8002"
+    networks: [rede-pricehub, rede-banco-catalogo]
 
   ms-log:
     <<: *servico-python
@@ -102,102 +154,97 @@ services:
     environment:
       <<: *ambiente-comum
       PORTA: "8003"
-      URL_DO_BANCO: postgresql+asyncpg://${POSTGRES_USUARIO:-pricehub}:${POSTGRES_SENHA:-pricehub}@postgres:5432/auditoria
+      URL_DO_BANCO: postgresql+asyncpg://${POSTGRES_USUARIO:-pricehub}:${POSTGRES_SENHA:-pricehub}@pg-log:5432/auditoria
       URL_DA_API_DO_RABBITMQ: http://rabbitmq:15672/api
       USUARIO_DO_RABBITMQ: ${RABBITMQ_USUARIO:-pricehub}
       SENHA_DO_RABBITMQ: ${RABBITMQ_SENHA:-pricehub}
       SERVICOS_MONITORADOS: >-
         ms-ingestao=http://ms-ingestao:8001,ms-catalogo=http://ms-catalogo:8002,ms-log=http://ms-log:8003,
-        ms-consulta=http://ms-consulta:8004,ms-bff=http://ms-bff:8000,
         farmacia-biofarma=http://farmacia-biofarma:8101,farmacia-farmaazul=http://farmacia-farmaazul:8102,
         farmacia-drogapopular=http://farmacia-drogapopular:8103
       URL_PUBLICA_DOS_SERVICOS: >-
-        ms-ingestao=http://localhost:8000/ingestao,ms-catalogo=http://localhost:8000/catalogo,ms-log=http://localhost:8000/log,
-        ms-consulta=http://localhost:8000/consulta,ms-bff=http://localhost:8000,
-        farmacia-biofarma=http://localhost:8000/farmacias/biofarma,farmacia-farmaazul=http://localhost:8000/farmacias/farmaazul,
-        farmacia-drogapopular=http://localhost:8000/farmacias/drogapopular
-
-  ms-consulta:
-    <<: *servico-python
-    build:
-      context: ./backend
-      args:
-        SERVICO: ms-consulta
-    image: pricehub/ms-consulta:local
-    environment:
-      <<: *ambiente-comum
-      PORTA: "8004"
-      URL_DO_BANCO: postgresql+asyncpg://${POSTGRES_USUARIO:-pricehub}:${POSTGRES_SENHA:-pricehub}@postgres:5432/consulta
+        ms-ingestao=http://localhost:8001,ms-catalogo=http://localhost:8002,ms-log=http://localhost:8003,
+        farmacia-biofarma=http://localhost:8101,farmacia-farmaazul=http://localhost:8102,
+        farmacia-drogapopular=http://localhost:8103
     depends_on:
-      postgres:
+      pg-log:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-      ms-catalogo:
-        condition: service_healthy
-
-  ms-bff:
-    <<: *servico-python
-    build:
-      context: ./backend
-      args:
-        SERVICO: ms-bff
-    image: pricehub/ms-bff:local
-    depends_on: []
-    environment:
-      <<: *ambiente-comum
-      PORTA: "8000"
-      URL_DO_CATALOGO: http://ms-catalogo:8002
-      URL_DA_CONSULTA: http://ms-consulta:8004
-      URL_DA_INGESTAO: http://ms-ingestao:8001
-      URL_DO_LOG: http://ms-log:8003
-      URL_DA_BIOFARMA: http://farmacia-biofarma:8101
-      URL_DA_FARMAAZUL: http://farmacia-farmaazul:8102
-      URL_DA_DROGAPOPULAR: http://farmacia-drogapopular:8103
     ports:
-      - "8000:8000"
+      - "8003:8003"
+    networks: [rede-pricehub, rede-banco-log, rede-farmacias]
 
+  # ----- gateway: micro-frontends + rotas por prefixo -------------------------------------
+  gateway:
+    build: ./frontend
+    image: pricehub/gateway:local
+    restart: unless-stopped
+    depends_on:
+      - ms-ingestao
+      - ms-catalogo
+      - ms-log
+    ports:
+      - "${PORTA_DO_GATEWAY:-8080}:8080"
+    networks: [rede-pricehub, rede-farmacias]
+
+  # ----- ferramenta opcional: ver as tabelas de cada banco ------------------------------
+  adminer:
+    image: adminer:4
+    profiles: [ferramentas]
+    restart: unless-stopped
+    environment:
+      ADMINER_DEFAULT_SERVER: pg-catalogo
+    ports:
+      - "8090:8080"
+    networks: [rede-banco-ingestao, rede-banco-catalogo, rede-banco-log]
+
+  # ----- farmácias simuladas (sistemas externos, dados em memória) ------------------------
   farmacia-biofarma:
     <<: *farmacia
     environment:
+      <<: *ambiente-da-farmacia
       FARMACIA_ID: biofarma
       PORTA: "8101"
       URL_DO_MS_INGESTAO: http://ms-ingestao:8001
       SEGREDO_DO_WEBHOOK: ${SEGREDO_DO_WEBHOOK_BIOFARMA:-segredo-biofarma-dev}
-      CORS_ORIGENS: "*"
     ports:
       - "8101:8101"
 
   farmacia-farmaazul:
     <<: *farmacia
     environment:
+      <<: *ambiente-da-farmacia
       FARMACIA_ID: farmaazul
       PORTA: "8102"
       URL_DO_MS_INGESTAO: http://ms-ingestao:8001
       SEGREDO_DO_WEBHOOK: ${SEGREDO_DO_WEBHOOK_FARMAAZUL:-segredo-farmaazul-dev}
-      CORS_ORIGENS: "*"
+      # 2 s de defasagem em relação à BioFarma, para os reajustes das duas não coincidirem.
+      ATRASO_INICIAL_DA_SIMULACAO_S: ${ATRASO_INICIAL_DA_SIMULACAO_FARMAAZUL_S:-22}
     ports:
       - "8102:8102"
 
   farmacia-drogapopular:
     <<: *farmacia
     environment:
+      <<: *ambiente-da-farmacia
       FARMACIA_ID: drogapopular
       PORTA: "8103"
-      CORS_ORIGENS: "*"
+      # Polling: a loja reajusta a cada 15 s e o PriceHub consulta a cada 5 s, então cada
+      # alteração aparece no PriceHub em até 5 s, sem se perder entre duas consultas.
+      INTERVALO_DA_SIMULACAO_S: ${INTERVALO_DA_SIMULACAO_DROGAPOPULAR_S:-15}
     ports:
       - "8103:8103"
 
-  frontend:
-    build: ./frontend
-    image: pricehub/frontend:local
-    restart: unless-stopped
-    ports:
-      - "5173:5173"
-      - "5174:5174"
-      - "5175:5175"
-      - "5176:5176"
+networks:
+  rede-pricehub:
+  rede-farmacias:
+  rede-banco-ingestao:
+  rede-banco-catalogo:
+  rede-banco-log:
 
 volumes:
-  dados-postgres:
+  dados-pg-ingestao:
+  dados-pg-catalogo:
+  dados-pg-log:
   dados-rabbitmq:

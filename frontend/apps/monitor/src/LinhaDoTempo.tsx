@@ -30,7 +30,7 @@ export function LinhaDoTempo({ correlationId, versao }: { correlationId?: string
               <p className="text-lg font-semibold text-slate-900">{dados.servicosEnvolvidos.length}</p>serviços
             </div>
           </div>
-          <div className="mb-1 grid grid-cols-2 gap-2 text-center text-[11px] font-medium text-slate-500 uppercase">
+          <div className="mb-1 grid grid-cols-2 gap-2 text-center text-xs font-medium text-slate-600">
             {RAIAS.map((raia) => (
               <span key={raia}>{raia}</span>
             ))}
@@ -40,7 +40,9 @@ export function LinhaDoTempo({ correlationId, versao }: { correlationId?: string
               const coluna = RAIAS.indexOf(evento.servicoDeOrigem);
               return (
                 <li key={`${evento.ocorridoEm}-${indice}`} className={`grid grid-cols-2 gap-2`}>
-                  <div className={`rounded-md border px-2 py-1.5 text-xs ${corDoEvento(evento.tipo)} ${coluna === 1 ? "col-start-2" : "col-start-1"}`}>
+                  <div
+                    className={`rounded-md border px-2 py-1.5 text-xs ${corDoEvento(evento.tipo)} ${coluna === 1 ? "col-start-2" : "col-start-1"}`}
+                  >
                     <p className="font-mono">
                       +{formatarMs(evento.desdeOInicioMs)} <span className="opacity-60">(Δ {formatarMs(evento.desdeOAnteriorMs)})</span>
                     </p>

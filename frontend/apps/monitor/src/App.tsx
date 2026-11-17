@@ -1,39 +1,54 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Abas, BarraDeNavegacao } from "@pricehub/ui";
 
-import { Apis } from "./Apis";
-import { Comparativo } from "./Comparativo";
 import { EventosAoVivo } from "./EventosAoVivo";
 import { FilasEServicos } from "./FilasEServicos";
+import { Metricas } from "./Metricas";
 
-type Aba = "eventos" | "filas" | "comparativo" | "apis";
+type Aba = "eventos" | "filas" | "metricas";
 
 const ABAS: { id: Aba; rotulo: string }[] = [
-  { id: "eventos", rotulo: "Eventos ao vivo" },
+  { id: "eventos", rotulo: "Eventos" },
   { id: "filas", rotulo: "Filas e serviços" },
-  { id: "comparativo", rotulo: "Microsserviços x monólito" },
-  { id: "apis", rotulo: "Documentação das APIs" },
+  { id: "metricas", rotulo: "Métricas" },
 ];
 
+/** A aba vem do caminho (/monitor/filas); ?aba= continua aceito para links antigos. */
+function abaDaUrl(): Aba {
+  const doCaminho = window.location.pathname.replace(/^\/monitor\/?/, "").split("/")[0];
+  const pedida = doCaminho || new URLSearchParams(window.location.search).get("aba") || "eventos";
+  return ABAS.some((aba) => aba.id === pedida) ? (pedida as Aba) : "eventos";
+}
+
 export function App() {
-  const parametros = new URLSearchParams(window.location.search);
-  const [aba, setAba] = useState<Aba>((parametros.get("aba") as Aba) ?? "eventos");
+  const [aba, setAba] = useState<Aba>(abaDaUrl);
+  const correlationId = new URLSearchParams(window.location.search).get("correlationId") ?? undefined;
+
+  useEffect(() => {
+    const aoVoltar = () => setAba(abaDaUrl());
+    window.addEventListener("popstate", aoVoltar);
+    return () => window.removeEventListener("popstate", aoVoltar);
+  }, []);
+
+  const trocarDeAba = (nova: Aba) => {
+    window.history.pushState(null, "", `/monitor/${nova}`);
+    setAba(nova);
+  };
 
   return (
     <div className="min-h-screen">
       <BarraDeNavegacao atual="monitor" />
       <main className="mx-auto max-w-7xl px-4 py-6">
         <h1 className="text-2xl font-semibold text-slate-900">Monitor de eventos</h1>
-        <p className="mt-1 mb-5 max-w-3xl text-sm text-slate-500">
-          O que acontece por dentro do PriceHub: cada evento publicado no RabbitMQ, o caminho de uma alteração entre os microsserviços, as
-          filas e o efeito medido da comunicação assíncrona.
+        <p className="mt-1 mb-5 max-w-3xl text-sm text-slate-600">
+          O que acontece por dentro do PriceHub: cada evento publicado no RabbitMQ, as filas, a saúde de cada serviço e os tempos medidos
+          entre a alteração na farmácia e o preço no comparador.
         </p>
-        <Abas abas={ABAS} atual={aba} aoTrocar={setAba} />
-        {aba === "eventos" && <EventosAoVivo correlationIdInicial={parametros.get("correlationId") ?? undefined} />}
+        <Abas abas={ABAS} atual={aba} aoTrocar={trocarDeAba} />
+        {aba === "eventos" && <EventosAoVivo correlationIdInicial={correlationId} />}
         {aba === "filas" && <FilasEServicos />}
-        {aba === "comparativo" && <Comparativo />}
-        {aba === "apis" && <Apis />}
+        {aba === "metricas" && <Metricas />}
       </main>
     </div>
   );

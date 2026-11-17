@@ -16,21 +16,16 @@ import uuid
 from collections.abc import Callable
 from datetime import UTC, datetime
 
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
-
 from app.dominio.correspondencia import OfertaNormalizada, ServicoDeCorrespondencia
 from app.dominio.normalizacao import descrever_apresentacao
-from app.persistencia.modelos import Farmacia, HistoricoPreco, Medicamento, Oferta
-from app.persistencia.repositorios import RepositorioDoCatalogo
-from app.servicos.consultas import DetalheDoMedicamento, PontoDoHistorico, ResumoDoMedicamento, _comparar_ofertas, _resumir
+from app.persistencia.modelos import Medicamento, Oferta
+from app.persistencia.repositorios import MaisBarata, RepositorioDoCatalogo
 from pricehub_common.eventos import (
     CatalogoMedicamentoCadastrado,
+    CatalogoMenorPrecoAlterado,
     CatalogoOfertaAtualizada,
     CatalogoOfertaIndisponivel,
     CatalogoOfertaNaoCorrespondida,
-    CatalogoVisaoAtualizada,
-    ConsultaProjecaoSolicitada,
     Envelope,
     IngestaoColetaRealizada,
     IngestaoOfertaRecebida,
@@ -50,7 +45,6 @@ EVENTOS_CONSUMIDOS = [
     TipoDeEvento.INGESTAO_OFERTA_RECEBIDA.value,
     TipoDeEvento.INGESTAO_OFERTA_REMOVIDA.value,
     TipoDeEvento.INGESTAO_COLETA_REALIZADA.value,
-    TipoDeEvento.CONSULTA_PROJECAO_SOLICITADA.value,
 ]
 
 
@@ -99,73 +93,10 @@ class ProcessadorDeEventosDeIngestao:
                 )
             elif isinstance(dados, IngestaoColetaRealizada):
                 saidas = await self._conciliar_coleta(repositorio, dados, envelope)
-            if isinstance(dados, ConsultaProjecaoSolicitada):
-                ids_atualizados = list((await repositorio.sessao.scalars(select(Medicamento.id))).all())
-                farmacias_por_medicamento = {}
-                saidas = []
-            else:
-                farmacias_por_medicamento = {
-                    str(saida.dados["medicamentoId"]): str(saida.dados["farmaciaId"])
-                    for saida in saidas
-                    if saida.dados.get("medicamentoId") and saida.dados.get("farmaciaId")
-                }
-                ids_atualizados = sorted(
-                    {str(saida.dados["medicamentoId"]) for saida in saidas if saida.dados.get("medicamentoId")}
-                )
-            for medicamento_id in ids_atualizados:
-                snapshot = await self._criar_snapshot(repositorio, medicamento_id, farmacias_por_medicamento.get(medicamento_id))
-                if snapshot is not None:
-                    saidas.append(self._evento(TipoDeEvento.CATALOGO_VISAO_ATUALIZADA, snapshot, envelope))
             for saida in saidas:
                 repositorio.enfileirar_na_outbox(saida)
         if saidas:
             self._ao_gravar_na_outbox()
-
-    async def _criar_snapshot(
-        self, repositorio: RepositorioDoCatalogo, medicamento_id: str, farmacia_id: str | None = None
-    ) -> CatalogoVisaoAtualizada | None:
-        medicamento = await repositorio.sessao.scalar(
-            select(Medicamento).options(selectinload(Medicamento.ofertas)).where(Medicamento.id == medicamento_id)
-        )
-        if medicamento is None:
-            return None
-        farmacias = (await repositorio.sessao.scalars(select(Farmacia))).all()
-        nomes = {farmacia.id: farmacia.nome for farmacia in farmacias}
-        ofertas = _comparar_ofertas(medicamento, nomes)
-        resumo = _resumir(medicamento, ofertas)
-        detalhe = DetalheDoMedicamento(
-            **resumo,
-            registro_ms=medicamento.registro_ms,
-            chave_canonica=medicamento.chave_canonica,
-            ofertas=ofertas,
-        )
-        linhas = (
-            await repositorio.sessao.execute(
-                select(HistoricoPreco, Oferta.farmacia_id, Farmacia.nome)
-                .join(Oferta, Oferta.id == HistoricoPreco.oferta_id)
-                .join(Farmacia, Farmacia.id == Oferta.farmacia_id)
-                .where(Oferta.medicamento_id == medicamento_id)
-                .order_by(HistoricoPreco.registrado_em, HistoricoPreco.id)
-            )
-        ).all()
-        historico = [
-            PontoDoHistorico(
-                farmacia_id=farmacia_id,
-                farmacia_nome=farmacia_nome,
-                preco_centavos=registro.preco_centavos,
-                registrado_em=registro.registrado_em,
-                correlation_id=registro.correlation_id,
-            )
-            for registro, farmacia_id, farmacia_nome in linhas
-        ]
-        return CatalogoVisaoAtualizada(
-            medicamento_id=medicamento_id,
-            medicamento_nome=medicamento.nome,
-            farmacia_id=farmacia_id,
-            resumo=ResumoDoMedicamento(**resumo).model_dump(by_alias=True, mode="json"),
-            detalhe=detalhe.model_dump(by_alias=True, mode="json"),
-            historico=[ponto.model_dump(by_alias=True, mode="json") for ponto in historico],
-        )
 
     def _evento(self, tipo: TipoDeEvento, dados: ModeloDeContrato, origem: Envelope) -> Envelope:
         return self._barramento.montar_envelope(tipo, dados, origem.correlation_id)
@@ -197,6 +128,7 @@ class ProcessadorDeEventosDeIngestao:
             ]
 
         medicamento: Medicamento = resultado.medicamento
+        mais_barata_antes = None if resultado.tipo == "novo" else await repositorio.mais_barata(medicamento.id)
         if resultado.tipo == "novo":
             repositorio.adicionar(medicamento)
             saidas.append(
@@ -267,7 +199,7 @@ class ProcessadorDeEventosDeIngestao:
             return saidas
 
         await repositorio.sessao.flush()
-        repositorio.registrar_historico(oferta, envelope.correlation_id)
+        repositorio.registrar_historico(oferta, envelope.correlation_id, oferta_recebida.origem_da_alteracao)
         saidas.append(
             self._evento(
                 TipoDeEvento.CATALOGO_OFERTA_ATUALIZADA,
@@ -283,11 +215,44 @@ class ProcessadorDeEventosDeIngestao:
                     variacao_percentual=_variacao_percentual(preco_anterior, oferta.preco_centavos),
                     estrategia_de_correspondencia=resultado.estrategia,
                     atualizado_na_origem_em=oferta.atualizado_na_origem_em,
+                    origem_da_alteracao=oferta_recebida.origem_da_alteracao,
                 ),
                 envelope,
             )
         )
+        troca = await self._troca_da_mais_barata(repositorio, medicamento, mais_barata_antes, envelope)
+        if troca is not None:
+            saidas.append(troca)
         return saidas
+
+    async def _troca_da_mais_barata(
+        self,
+        repositorio: RepositorioDoCatalogo,
+        medicamento: Medicamento,
+        antes: MaisBarata | None,
+        envelope: Envelope,
+    ) -> Envelope | None:
+        """Publica ``catalogo.menor-preco.alterado`` quando outra farmácia passa a ser a mais barata."""
+        depois = await repositorio.mais_barata(medicamento.id)
+        if antes is None or depois is None:
+            return None
+        if antes.farmacia_id == depois.farmacia_id:
+            return None
+        logger.info("farmácia mais barata mudou", medicamentoId=medicamento.id, de=antes.farmacia_id, para=depois.farmacia_id)
+        return self._evento(
+            TipoDeEvento.CATALOGO_MENOR_PRECO_ALTERADO,
+            CatalogoMenorPrecoAlterado(
+                medicamento_id=medicamento.id,
+                medicamento_nome=medicamento.nome,
+                farmacia_anterior_id=antes.farmacia_id,
+                farmacia_anterior_nome=antes.farmacia_nome,
+                preco_anterior_centavos=antes.preco_centavos,
+                farmacia_atual_id=depois.farmacia_id,
+                farmacia_atual_nome=depois.farmacia_nome,
+                preco_atual_centavos=depois.preco_centavos,
+            ),
+            envelope,
+        )
 
     async def _retirar_oferta(
         self, repositorio: RepositorioDoCatalogo, farmacia_id: str, codigo_externo: str, motivo: str, envelope: Envelope

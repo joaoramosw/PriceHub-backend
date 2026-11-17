@@ -12,7 +12,7 @@ Ciclo curto: **vermelho → verde → refatorar**. Um comportamento por vez.
 | Parte | Pasta de testes | Como rodar |
 |---|---|---|
 | Biblioteca comum | `backend/libs/pricehub_common/tests/` | `cd backend/libs/pricehub_common && python -m pytest -q` |
-| ms-farmacia | `backend/services/ms-farmacia/tests/` | `cd backend/services/ms-farmacia && python -m pytest -q` |
+| Farmácias (externas) | `farmacias/tests/` | `cd farmacias && python -m pytest -q` |
 | ms-ingestao | `backend/services/ms-ingestao/tests/` (amostras em `tests/amostras/`) | `cd backend/services/ms-ingestao && python -m pytest -q` |
 | ms-catalogo | `backend/services/ms-catalogo/tests/` | `cd backend/services/ms-catalogo && python -m pytest -q` |
 | ms-log | `backend/services/ms-log/tests/` | `cd backend/services/ms-log && python -m pytest -q` |
@@ -45,7 +45,7 @@ Ambiente: `cd backend && python -m venv .venv && pip install -r requirements-dev
   estratégias é respeitada.
 - **Consumidor idempotente:** o mesmo envelope processado duas vezes não duplica oferta nem histórico.
 - **Outbox:** a mudança de estado e o evento de saída são gravados juntos; o relay publica e marca como enviado.
-- **Observer (ms-farmacia):** alterar, cadastrar ou remover produto notifica todos os observadores anexados.
+- **Observer (farmacias):** alterar, cadastrar ou remover produto notifica todos os observadores anexados.
 - **Validadores da API:** entrada fora do contrato responde 422 no formato `problem+json`.
 - **Eventos:** use o barramento em memória (`pricehub_common/mensageria/memoria.py`) em vez do RabbitMQ real.
 

@@ -1,0 +1,42 @@
+{
+  "pedido": {
+    "id": "DP-PED-00002",
+    "produtoId": 1,
+    "codigo": "DP-0001",
+    "nomeComercial": "Metformina",
+    "quantidade": 1,
+    "precoUnitarioCentavos": 999,
+    "totalCentavos": 999,
+    "estoqueRestante": 48,
+    "modo": "eventos",
+    "situacao": "confirmado",
+    "motivo": null,
+    "esperaDoClienteMs": 0.26,
+    "correlationId": "4929e31c-79ed-4c88-a78d-d2bbc7616602",
+    "criadoEm": "2026-11-16T12:44:17.397659Z"
+  },
+  "contabilizacao": {
+    "id": 1180,
+    "idDoEvento": "e2d1f0e1-f78e-423a-955d-162131a98765",
+    "tipo": "catalogo.venda.contabilizada",
+    "servicoDeOrigem": "ms-catalogo",
+    "correlationId": "315ef806-1769-4182-a5f1-e301b1484bf6",
+    "farmaciaId": "drogapopular",
+    "ocorridoEm": "2026-11-16T12:44:32.145210+00:00",
+    "recebidoEm": "2026-11-16T12:44:32.153660+00:00",
+    "dados": {
+      "vendaId": "9ef335a2-307f-4c3c-952a-7a2ec9755b09",
+      "pedidoId": "DP-PED-00002",
+      "farmaciaId": "drogapopular",
+      "farmaciaNome": "DrogaPopular Express",
+      "codigoExterno": "DP-0001",
+      "ofertaId": "2fed32a2-4288-40e4-b914-c78ee85ecfce",
+      "medicamentoId": "53b5215e-489c-419a-9df8-7d63497463de",
+      "medicamentoNome": "Cloridrato de Metformina 500mg",
+      "quantidade": 1,
+      "totalCentavos": 999,
+      "modo": "eventos",
+      "unidadesVendidasDaOferta": 2
+    }
+  }
+}
